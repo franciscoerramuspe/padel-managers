@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser, FaCalendarCheck } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser, FaCalendarCheck, FaChartLine } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 
 interface SidebarProps {
-  username: string;
+  username?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ username }) => {
@@ -28,6 +28,12 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
     { icon: FaCalendarCheck, text: 'Calendario de reservas', href: '/booking-calendar' },
     { icon: FaUsers, text: 'Usuarios', href: '/users' },
     { icon: FaCog, text: 'Configuraciones', href: '/settings' },
+    {
+      text: 'Ingresos',
+      href: '/incomes',
+      icon: FaChartLine,
+      badge: null,
+    },
   ];
 
   return (
@@ -38,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
             <FaUser className="text-white text-xl" />
           </div>
           <div>
-            <p className="font-bold text-sm">Bienvenido, {username.split(' ')[0]} <span className="text-blue-500"></span></p>
+            <p className="font-bold text-sm">Bienvenido, {username?.split(' ')[0] || 'Usuario'} <span className="text-blue-500"></span></p>
           </div>
         </div>
         <div className="mb-4 bg-blue-100 rounded-lg overflow-hidden shadow-md">

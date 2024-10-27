@@ -5,7 +5,7 @@ interface Step2Props {
     availableTimeSlots: string[];
     prices: { [key: number]: number };
   };
-  setCourtData: React.Dispatch<React.SetStateAction<any>>;
+  setCourtData: React.Dispatch<React.SetStateAction<any>>;  
   onNext: () => void;
   onPrevious: () => void;
 }
