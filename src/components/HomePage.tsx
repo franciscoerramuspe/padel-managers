@@ -11,6 +11,11 @@ export default function HomePage() {
           Create User
         </button>
       </Link>
+      <Link href="/dashboard" passHref>
+        <button className="bg-white text-purple-600 text-2xl font-bold py-4 px-8 rounded-full shadow-lg hover:bg-purple-100 transition duration-300 ease-in-out transform hover:scale-105 mt-4">
+          Dashboard
+        </button>
+      </Link>
     </div>
   );
 }
