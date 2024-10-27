@@ -12,6 +12,7 @@ interface CourtData {
   isCovered: boolean;
   image: File | null;
   availableTimeSlots: string[];
+  prices: { [key: number]: number };
   subType: string;
 }
 
@@ -23,6 +24,7 @@ export default function AddNewCourtPage() {
     isCovered: false,
     image: null,
     availableTimeSlots: [],
+    prices: {},
   });
 
   const handleNext = () => {

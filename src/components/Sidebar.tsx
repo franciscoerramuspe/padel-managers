@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser, FaCalendarCheck } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
     { icon: FaHome, text: 'Inicio', href: '/dashboard' },
     { icon: GiTennisCourt, text: 'Canchas', href: '/courts' },
     { icon: FaCalendarAlt, text: 'Reservas', href: '/bookings', badge: '10 Reservas' },
+    { icon: FaCalendarCheck, text: 'Calendario de reservas', href: '/booking-calendar' },
     { icon: FaUsers, text: 'Usuarios', href: '/users' },
     { icon: FaCog, text: 'Configuraciones', href: '/settings' },
   ];
