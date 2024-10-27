@@ -21,11 +21,11 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   };
 
   const menuItems = [
-    { icon: FaHome, text: 'Dashboard', href: '/dashboard' },
-    { icon: GiTennisCourt, text: 'Courts', href: '/courts' },
-    { icon: FaCalendarAlt, text: 'Reservations', href: '/bookings' },
-    { icon: FaUsers, text: 'Users', href: '/users' },
-    { icon: FaCog, text: 'Settings', href: '/settings' },
+    { icon: FaHome, text: 'Inicio', href: '/dashboard' },
+    { icon: GiTennisCourt, text: 'Canchas', href: '/courts' },
+    { icon: FaCalendarAlt, text: 'Reservas', href: '/bookings' },
+    { icon: FaUsers, text: 'Usuarios', href: '/users' },
+    { icon: FaCog, text: 'Configuraciones', href: '/settings' },
   ];
 
   return (
@@ -76,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
             className="flex items-center justify-center w-full font-semibold p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-300"
           >
             <FaSignOutAlt className="mr-2" />
-            Logout
+            Cerrar sesión
           </button>
         </div>
       )}
