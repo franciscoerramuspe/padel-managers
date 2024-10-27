@@ -61,7 +61,13 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
             <FaUser className="text-blue-600 text-xl" />
           </div>
           <div>
-            <p className="font-semibold">Hola, {username.split(' ')[0]}!</p>
+            {username.split(' ')[0] ? (
+              <>
+                <p className="font-semibold">Hola, {username.split(' ')[0]}!</p>
+              </>
+            ) : (
+              <p className="font-semibold">Hola!</p>
+            )}
           </div>
         </div>
         <button
