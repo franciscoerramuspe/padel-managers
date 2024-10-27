@@ -1,20 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-interface AddCourtModalProps {
+interface EditCourtModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddCourt: (court: { name: string; isCovered: boolean; availableTimeSlots: string[]; type: string }) => void;
+  onEditCourt: (court: { id: number; name: string; isCovered: boolean; availableTimeSlots: string[]; type: string }) => void;
+  court: { id: number; name: string; isCovered: boolean; availableTimeSlots: string[]; type: string };
 }
 
-const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCourt }) => {
-  const [courtName, setCourtName] = useState('');
-  const [isCovered, setIsCovered] = useState(false);
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>([]);
-  const [courtType, setCourtType] = useState('padel');
+const EditCourtModal: React.FC<EditCourtModalProps> = ({ isOpen, onClose, onEditCourt, court }) => {
+  const [courtName, setCourtName] = useState(court.name);
+  const [isCovered, setIsCovered] = useState(court.isCovered);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>(court.availableTimeSlots);
+  const [courtType, setCourtType] = useState(court.type);
 
-  // New state variables for error messages
-  const [courtNameError, setCourtNameError] = useState('');
-  const [timeSlotsError, setTimeSlotsError] = useState('');
+  useEffect(() => {
+    setCourtName(court.name);
+    setIsCovered(court.isCovered);
+    setSelectedTimeSlots(court.availableTimeSlots);
+    setCourtType(court.type);
+  }, [court]);
 
   const timeSlots = [
     '08:00 - 09:30', '09:30 - 11:00', '11:00 - 12:30', '12:30 - 14:00',
@@ -24,30 +28,14 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Reset error messages
-    setCourtNameError('');
-    setTimeSlotsError('');
-
-    // Validate court name
-    if (!courtName.trim()) {
-      setCourtNameError('Court name is required');
-      return;
-    }
-
-    // Validate time slots
-    if (selectedTimeSlots.length === 0) {
-      setTimeSlotsError('Please select at least one time slot');
-      return;
-    }
-
-    const newCourt = {
+    const updatedCourt = {
+      id: court.id,
       name: courtName,
       isCovered,
       availableTimeSlots: selectedTimeSlots,
       type: courtType,
     };
-    onAddCourt(newCourt);
+    onEditCourt(updatedCourt);
     onClose();
   };
 
@@ -56,7 +44,7 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full shadow-2xl border-4 border-gradient-to-r from-blue-500 to-purple-600">
-        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Add New Court</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">Edit Court</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="border-2 border-blue-300 rounded-lg p-4">
             <label htmlFor="courtName" className="block text-sm font-semibold text-gray-700 mb-1">Court Name</label>
@@ -66,8 +54,8 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
               value={courtName}
               onChange={(e) => setCourtName(e.target.value)}
               className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
-            {courtNameError && <p className="text-red-500 text-sm font-semibold mt-1">{courtNameError}</p>}
           </div>
           <div className="border-2 border-purple-300 rounded-lg p-4">
             <label className="block text-sm font-semibold text-gray-700 mb-2">Court Type</label>
@@ -130,7 +118,6 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
                 </label>
               ))}
             </div>
-            {timeSlotsError && <p className="text-red-500 font-semibold text-sm mt-1">{timeSlotsError}</p>}
           </div>
           <div className="flex justify-end space-x-2">
             <button
@@ -144,7 +131,7 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              Add Court
+              Save Changes
             </button>
           </div>
         </form>
@@ -153,4 +140,4 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
   );
 };
 
-export default AddCourtModal;
+export default EditCourtModal;
