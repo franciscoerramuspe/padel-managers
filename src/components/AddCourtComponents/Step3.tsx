@@ -9,6 +9,7 @@ interface Step3Props {
     isCovered: boolean;
     image: File | null;
     availableTimeSlots: string[];
+    prices: { [key: number]: number };
   };
   onSubmit: () => void;
   onPrevious: () => void;
@@ -20,9 +21,9 @@ const Step3: React.FC<Step3Props> = ({ courtData, onSubmit, onPrevious }) => {
       <h2 className="text-3xl font-bold text-white mb-6">Resumen de la cancha</h2>
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 pr-4">
+          <div className="md:w-1/2 pr-4 ">
             {courtData.image && (
-              <div className="mb-4">
+              <div className="mb-2">
                 <Image
                   src={URL.createObjectURL(courtData.image)}
                   alt="Court preview"
@@ -51,8 +52,26 @@ const Step3: React.FC<Step3Props> = ({ courtData, onSubmit, onPrevious }) => {
               ))}
             </ul>
           </div>
+          
         </div>
+        
       </div>
+      <div className="bg-white p-6 rounded-lg shadow-lg">
+      <div>
+        <h4 className="text-xl font-semibold text-black mb-2">Precios:</h4>
+        <ul className="grid grid-cols-2 gap-2">
+          {Object.entries(courtData.prices).map(([duration, price]) => (
+            <li key={duration} className="flex items-center justify-between text-black">
+              <span>{duration} hora{parseFloat(duration) > 1 ? 's' : ''}</span>
+              <span className="font-semibold text-green-600">${price.toFixed(2)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+        
+      </div>
+
       <div className="flex justify-between mt-6">
         <button
           onClick={onPrevious}

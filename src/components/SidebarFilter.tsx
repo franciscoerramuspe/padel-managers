@@ -22,7 +22,7 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({ isOpen, onClose }) => {
   return (
     <div className={`fixed inset-y-0 right-0 ${isCollapsed ? 'w-16' : 'w-64'} bg-white shadow-lg p-6 transform transition-all duration-300 ease-in-out`}>
       <div className={`flex justify-between items-center mb-6 ${isCollapsed ? 'flex-col' : ''}`}>
-        <h2 className={`text-2xl font-bold ${isCollapsed ? 'hidden' : ''}`}>Filters</h2>
+        <h2 className={`text-2xl text-black font-bold ${isCollapsed ? 'hidden' : ''}`}>Filtros</h2>
         <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
           <FaTimes />
         </button>
@@ -30,20 +30,20 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({ isOpen, onClose }) => {
 
       <div className={`space-y-4 ${isCollapsed ? 'hidden' : ''}`}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Court Type</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de canchas</label>
           <select
             value={courtType}
             onChange={(e) => setCourtType(e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2"
+            className="w-full border border-gray-300 text-black rounded-md px-3 py-2"
           >
-            <option value="all">All Courts</option>
+            <option value="all">Todas las canchas</option>
             <option value="padel">Padel</option>
             <option value="tennis">Futbol</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Rango de fechas</label>
           <input
             type="date"
             value={dateRange.start}
@@ -61,9 +61,9 @@ const SidebarFilter: React.FC<SidebarFilterProps> = ({ isOpen, onClose }) => {
 
       <button
         onClick={handleApplyFilter}
-        className={`mt-6 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 ${isCollapsed ? 'hidden' : ''}`}
+        className={`mt-6 w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300 ${isCollapsed ? 'hidden' : ''}`}
       >
-        Apply Filters
+        Aplicar filtros
       </button>
 
       <button
