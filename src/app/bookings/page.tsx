@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
 import BookingsTable from '@/components/BookingsTable';
 import { FaCalendarAlt, FaFilter } from 'react-icons/fa';
 import SidebarFilter from '@/components/SidebarFilter';
@@ -47,7 +46,6 @@ export default function BookingsPage() {
 
   return (
     <div className="flex bg-gray-100 min-h-screen">
-      <Sidebar />
       <div className={`flex-1 p-8 transition-all duration-300 ${isFilterOpen ? (isFilterCollapsed ? 'mr-16' : 'mr-64') : ''}`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex justify-between items-center mb-8">

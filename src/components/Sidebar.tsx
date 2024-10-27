@@ -5,7 +5,11 @@ import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser } from 'rea
 import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '@/lib/supabase';
 
-const Sidebar = () => {
+interface SidebarProps {
+  username: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -57,8 +61,7 @@ const Sidebar = () => {
             <FaUser className="text-blue-600 text-xl" />
           </div>
           <div>
-            <p className="font-semibold">Hola!</p>
-            <p className="text-sm">{'{username}'}</p>
+            <p className="font-semibold">Hola, {username.split(' ')[0]}!</p>
           </div>
         </div>
         <button
