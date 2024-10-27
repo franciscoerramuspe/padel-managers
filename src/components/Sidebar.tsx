@@ -17,7 +17,7 @@ const Sidebar = () => {
   const menuItems = [
     { icon: FaHome, text: 'Dashboard', href: '/dashboard' },
     { icon: GiTennisCourt, text: 'Courts', href: '/courts' },
-    { icon: FaCalendarAlt, text: 'Reservations', href: '/reservations' },
+    { icon: FaCalendarAlt, text: 'Reservations', href: '/bookings' },
     { icon: FaUsers, text: 'Users', href: '/users' },
     { icon: FaCog, text: 'Settings', href: '/settings' },
   ];

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Sidebar from '@/components/Sidebar';
 
@@ -22,10 +22,12 @@ const playerStats = [
 ];
 
 export default function Dashboard() {
+  const [isSidebarCollapsed,] = useState(false);
+
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 min-h-screen bg-white text-black p-8">
+      <div className={`flex-1 min-h-screen bg-white text-black p-8 transition-all duration-300 ${isSidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Padel Management Dashboard</h1>
         </header>
