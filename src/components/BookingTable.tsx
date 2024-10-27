@@ -9,18 +9,18 @@ interface BookingTableProps {
 
 const BookingTable: React.FC<BookingTableProps> = ({ padelBookings, footballBookings }) => {
   const padelColumns = [
-    { title: 'Court', dataIndex: 'court', key: 'court' },
-    { title: 'Date', dataIndex: 'date', key: 'date' },
-    { title: 'Time', dataIndex: 'time', key: 'time' },
-    { title: 'Players', dataIndex: 'players', key: 'players' },
+    { title: 'Cancha', dataIndex: 'court', key: 'court' },
+    { title: 'Fecha', dataIndex: 'date', key: 'date' },
+    { title: 'Horario', dataIndex: 'time', key: 'time' },
+    { title: 'Jugadores', dataIndex: 'players', key: 'players' },
   ];
 
   const footballColumns = [
-    { title: 'Court', dataIndex: 'court', key: 'court' },
-    { title: 'Type', dataIndex: 'type', key: 'type' },
-    { title: 'Date', dataIndex: 'date', key: 'date' },
-    { title: 'Time', dataIndex: 'time', key: 'time' },
-    { title: 'Team', dataIndex: 'team', key: 'team' },
+    { title: 'Cancha', dataIndex: 'court', key: 'court' },
+    { title: 'Tipo', dataIndex: 'type', key: 'type' },
+    { title: 'Fecha', dataIndex: 'date', key: 'date' },
+    { title: 'Horario', dataIndex: 'time', key: 'time' },
+    { title: 'Equipo', dataIndex: 'team', key: 'team' },
   ];
 
   return (

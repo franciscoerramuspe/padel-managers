@@ -71,11 +71,11 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings }) => {
           <table className="min-w-full bg-white">
             <thead>
               <tr className="bg-blue-500 text-white uppercase text-sm leading-normal">
-                <th className="py-3 px-6 text-center">Court</th>
-                <th className="py-3 px-6 text-center">Date</th>
-                <th className="py-3 px-6 text-center">Time</th>
-                <th className="py-3 px-6 text-center">Players</th>
-                <th className="py-3 px-6 text-center">Category</th>
+                <th className="py-3 px-6 text-center">Cancha</th>
+                <th className="py-3 px-6 text-center">Fecha</th>
+                <th className="py-3 px-6 text-center">Horario</th>
+                <th className="py-3 px-6 text-center">Jugadores</th>
+                <th className="py-3 px-6 text-center">Categoría</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm">
@@ -110,10 +110,10 @@ const BookingsTable: React.FC<BookingsTableProps> = ({ bookings }) => {
           <table className="min-w-full bg-white">
             <thead>
               <tr className="bg-green-500 text-white uppercase text-sm leading-normal">
-                <th className="py-3 px-6 text-center">Court</th>
-                <th className="py-3 px-6 text-center">Date</th>
-                <th className="py-3 px-6 text-center">Time</th>
-                <th className="py-3 px-6 text-center">Team</th>
+                <th className="py-3 px-6 text-center">Cancha</th>
+                <th className="py-3 px-6 text-center">Fecha</th>
+                <th className="py-3 px-6 text-center">Horario</th>
+                <th className="py-3 px-6 text-center">Equipo</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm">
