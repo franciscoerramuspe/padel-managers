@@ -44,9 +44,11 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
                     onMouseEnter={() => setHoveredItem(item.text)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >
-                    <item.icon className={`mr-3 text-l  ${
-                      hoveredItem === item.text ? 'text-blue-600' : 'text-white'
-                    }`} />
+                    <item.icon
+                      className={`mr-3 text-l ${
+                        hoveredItem === item.text ? 'text-blue-600' : 'text-white'
+                      }`}
+                    />
                     <span className="text-lg font-semibold">{item.text}</span>
                   </div>
                 </Link>
@@ -55,29 +57,27 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
           </ul>
         </nav>
       </div>
-      <div className="mt-auto">
-        <div className="flex items-center mb-4 p-3 bg-blue-600 rounded-lg">
-          <div className="w-12 h-12 bg-gray-300 rounded-full mr-3 flex items-center justify-center">
-            <FaUser className="text-blue-600 text-xl" />
+
+      {/* Conditionally Render Logout Button */}
+      {username && (
+        <div className="mt-auto">
+          <div className="flex items-center mb-4 p-3 bg-blue-600 rounded-lg">
+            <div className="w-12 h-12 bg-gray-300 rounded-full mr-3 flex items-center justify-center">
+              <FaUser className="text-blue-600 text-xl" />
+            </div>
+            <div>
+              <p className="font-semibold">Hola, {username.split(' ')[0]}!</p>
+            </div>
           </div>
-          <div>
-            {username.split(' ')[0] ? (
-              <>
-                <p className="font-semibold">Hola, {username.split(' ')[0]}!</p>
-              </>
-            ) : (
-              <p className="font-semibold">Hola!</p>
-            )}
-          </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center w-full font-semibold p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-300"
+          >
+            <FaSignOutAlt className="mr-2" />
+            Logout
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center justify-center w-full font-semibold p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-300"
-        >
-          <FaSignOutAlt className="mr-2" />
-          Logout
-        </button>
-      </div>
+      )}
     </div>
   );
 };
