@@ -1,85 +1,240 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { FaCalendarAlt, FaClock, FaUsers, FaChartBar } from 'react-icons/fa';
+import { GiTennisCourt } from 'react-icons/gi';
 
-// Mock data (replace with actual data fetching in a real application)
+const quickStats = [
+  { 
+    title: 'Reservas Hoy', 
+    value: '12', 
+    icon: FaCalendarAlt, 
+    color: 'bg-blue-500',
+    href: '/bookings'
+  },
+  { 
+    title: 'Usuarios Registrados', 
+    value: '45', 
+    icon: FaUsers, 
+    color: 'bg-orange-500',
+    href: '/users'
+  },
+  { 
+    title: 'Canchas Registradas', 
+    value: '8', 
+    icon: GiTennisCourt, 
+    color: 'bg-purple-500',
+    href: '/courts'
+  },
+  { 
+    title: 'Ingresos del Día', 
+    value: '$1,250', 
+    icon: FaChartBar, 
+    color: 'bg-green-500',
+    href: '/finances' // Asumiendo que existe o se creará esta ruta
+  },
+];
+
 const courts = [
-  { id: 1, name: 'Court A', status: 'Available' },
-  { id: 2, name: 'Court B', status: 'Occupied' },
-  { id: 3, name: 'Court C', status: 'Maintenance' },
+  { 
+    id: 1, 
+    name: 'Cancha Gatorade', 
+    status: 'Disponible',
+    image: '/assets/images.jpg',
+    nextAvailable: '14:00',
+    type: 'padel'
+  },
+  { 
+    id: 2, 
+    name: 'Cancha Powerade', 
+    status: 'Ocupada',
+    image: '/assets/images.jpg',
+    nextAvailable: '16:30',
+    type: 'padel'
+  },
+  { 
+    id: 3, 
+    name: 'Cancha Red Bull', 
+    status: 'Mantenimiento',
+    image: '/assets/futbol.jpg',
+    nextAvailable: '18:00',
+    type: 'football'
+  },
 ];
 
-const reservations = [
-  { id: 1, court: 'Court A', time: '14:00 - 15:00', players: 'John, Jane' },
-  { id: 2, court: 'Court B', time: '15:00 - 16:00', players: 'Mike, Sarah' },
+const upcomingReservations = [
+  { 
+    id: 1, 
+    court: 'Cancha Gatorade',
+    time: '14:00 - 15:00',
+    players: ['John Doe', 'Jane Smith'],
+    type: 'padel'
+  },
+  { 
+    id: 2, 
+    court: 'Cancha Powerade',
+    time: '15:00 - 16:00',
+    players: ['Mike Johnson', 'Sarah Brown'],
+    type: 'padel'
+  },
+  { 
+    id: 3, 
+    court: 'Cancha Red Bull',
+    time: '16:00 - 17:00',
+    players: ['Alex Wilson', 'Emma Davis'],
+    type: 'football'
+  },
+  { 
+    id: 4, 
+    court: 'Cancha Gatorade',
+    time: '17:00 - 18:00',
+    players: ['Tom Harris', 'Lucy White'],
+    type: 'padel'
+  },
+  { 
+    id: 5, 
+    court: 'Cancha Powerade',
+    time: '18:00 - 19:00',
+    players: ['James Brown', 'Emily Taylor'],
+    type: 'padel'
+  },
 ];
 
-const playerStats = [
-  { id: 1, name: 'John Doe', gamesPlayed: 20, winRate: '65%' },
-  { id: 2, name: 'Jane Smith', gamesPlayed: 15, winRate: '73%' },
+const activeUsers = [
+  { id: 1, name: 'John Doe', role: 'Admin', lastActive: '5 min ago', avatar: '/assets/user.png' },
+  { id: 2, name: 'Jane Smith', role: 'User', lastActive: '10 min ago', avatar: '/assets/user.png' },
+  { id: 3, name: 'Mike Johnson', role: 'User', lastActive: '15 min ago', avatar: '/assets/user.png' },
+  { id: 4, name: 'Sarah Brown', role: 'Manager', lastActive: '20 min ago', avatar: '/assets/user.png' },
+  { id: 5, name: 'Alex Wilson', role: 'User', lastActive: '25 min ago', avatar: '/assets/user.png' },
 ];
 
 export default function Dashboard() {
-  const [isSidebarCollapsed,] = useState(false);
-
   return (
-    <div className="flex bg-white">
-      <div
-        className={`flex-1 min-h-screen p-8 transition-all duration-300 ${
-          isSidebarCollapsed ? 'ml-16' : 'ml-64'
-        }`}
-      >
-        <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gray-800">Padel Management Dashboard</h1>
-        </header>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {quickStats.map((stat, index) => (
+            <Link key={index} href={stat.href}>
+              <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow cursor-pointer transform hover:-translate-y-1 transition-transform duration-200">
+                <div className="flex items-center">
+                  <div className={`${stat.color} rounded-full p-3 text-white mr-4`}>
+                    <stat.icon className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">{stat.title}</p>
+                    <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <section className="bg-gray-100 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Court Status</h2>
-            <ul>
-              {courts.map((court) => (
-                <li key={court.id} className="mb-2 flex justify-between items-center">
-                  <span className="text-gray-700">{court.name}</span>
-                  <span className={`px-2 py-1 rounded text-white ${
-                    court.status === 'Available' ? 'bg-green-500' :
-                    court.status === 'Occupied' ? 'bg-red-500' : 'bg-yellow-500'
+        {/* Featured Courts Section - More Compact */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Canchas Destacadas</h2>
+            <Link href="/courts" className="text-blue-600 hover:text-blue-700 font-semibold flex items-center">
+              Ver todas
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {courts.map((court) => (
+              <div key={court.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+                <div className="relative h-32">
+                  <Image
+                    src={court.image}
+                    alt={court.name}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                  <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
+                    court.status === 'Disponible' ? 'bg-green-500 text-white' :
+                    court.status === 'Ocupada' ? 'bg-red-500 text-white' :
+                    'bg-yellow-500 text-white'
                   }`}>
                     {court.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <Link href="/courts" passHref>
-              <button className="mt-4 bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                Manage Courts
-              </button>
-            </Link>
-          </section>
+                  </div>
+                </div>
+                <div className="p-3">
+                  <h3 className="font-semibold text-gray-800">{court.name}</h3>
+                  <p className="text-sm text-gray-600">Próximo turno: {court.nextAvailable}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <section className="bg-gray-100 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Upcoming Reservations</h2>
-            <ul>
-              {reservations.map((reservation) => (
-                <li key={reservation.id} className="mb-2">
-                  <p className="text-gray-700"><strong>{reservation.court}</strong> - {reservation.time}</p>
-                  <p className="text-sm text-gray-600">Players: {reservation.players}</p>
-                </li>
+        {/* 50/50 Split Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Upcoming Reservations */}
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Próximas Reservas</h2>
+              <Link href="/bookings" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                Ver todas
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {upcomingReservations.map((reservation) => (
+                <div key={reservation.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="bg-blue-100 rounded-full p-2 mr-3">
+                      <FaClock className="text-blue-600 w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">{reservation.court}</p>
+                      <p className="text-sm text-gray-600">{reservation.time}</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {reservation.players.join(' vs ')}
+                  </div>
+                </div>
               ))}
-            </ul>
-          </section>
+            </div>
+          </div>
 
-          <section className="bg-gray-100 p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Top Players</h2>
-            <ul>
-              {playerStats.map((player) => (
-                <li key={player.id} className="mb-2">
-                  <p className="text-gray-700"><strong>{player.name}</strong></p>
-                  <p className="text-sm text-gray-600">Games: {player.gamesPlayed} | Win Rate: {player.winRate}</p>
-                </li>
+          {/* Active Users */}
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">Usuarios Activos</h2>
+              <Link href="/users" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                Ver todos
+              </Link>
+            </div>
+            <div className="space-y-3">
+              {activeUsers.map((user) => (
+                <div key={user.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="relative w-10 h-10 mr-3">
+                      <Image
+                        src={user.avatar}
+                        alt={user.name}
+                        layout="fill"
+                        className="rounded-full"
+                      />
+                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">{user.name}</p>
+                      <p className="text-sm text-gray-600">{user.role}</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {user.lastActive}
+                  </div>
+                </div>
               ))}
-            </ul>
-          </section>
+            </div>
+          </div>
         </div>
       </div>
     </div>

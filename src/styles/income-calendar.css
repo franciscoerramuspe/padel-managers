@@ -1,0 +1,86 @@
+.income-calendar {
+    width: 100%;
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .income-calendar .react-calendar {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.9rem;
+  }
+  
+  .income-calendar .react-calendar__tile {
+    padding: 0.5em 0.25em;
+    position: relative;
+    height: 40px;
+  }
+  
+  .income-calendar .react-calendar__month-view__days__day {
+    color: #1a1a1a;
+    font-weight: 500;
+  }
+  
+  .income-calendar .react-calendar__navigation button {
+    color: #1a1a1a;
+    font-size: 1.2em;
+    background: none;
+    min-width: 44px;
+    margin: 5px;
+    border-radius: 8px;
+  }
+  
+  .income-calendar .react-calendar__navigation button:enabled:hover,
+  .income-calendar .react-calendar__navigation button:enabled:focus {
+    background-color: #f0f0f0;
+  }
+  
+  .income-calendar .react-calendar__tile--now {
+    background: #e8f4ff;
+    border-radius: 8px;
+  }
+  
+  .income-calendar .react-calendar__tile--active {
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .income-calendar .react-calendar__tile--hasIncome {
+    background: none;
+  }
+  
+  .income-calendar .react-calendar__tile--hasIncome::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+  }
+  
+  .income-calendar .high-income-day::after {
+    background-color: #22c55e;
+  }
+  
+  .income-calendar .medium-income-day::after {
+    background-color: #eab308;
+  }
+  
+  .income-calendar .low-income-day::after {
+    background-color: #ef4444;
+  }
+  
+  .income-calendar .react-calendar__month-view__weekdays__weekday {
+    padding: 0.75em;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: #6b7280;
+  }
