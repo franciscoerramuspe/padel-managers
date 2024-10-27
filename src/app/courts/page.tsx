@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
 import AddCourtModal from '@/components/AddCourtModal';
 import EditCourtModal from '@/components/EditCourtModal';
+import Image from 'next/image';
   
 interface Court {
   id: number;
@@ -14,14 +15,15 @@ interface Court {
   isCovered: boolean;
   availableTimeSlots: string[];
   type: string;
+  image: string;
 }
 
 export default function CourtsPage() {
   const [user, setUser] = useState<User | null>(null);
   const [courts, setCourts] = useState<Court[]>([
-    { id: 1, name: 'Cancha 1', availability: true, isCovered: false, availableTimeSlots: [], type: 'padel' },
-    { id: 2, name: 'Cancha 2', availability: false, isCovered: true, availableTimeSlots: [], type: 'padel' },
-    { id: 3, name: 'Cancha 3', availability: true, isCovered: false, availableTimeSlots: [], type: 'football' },
+    { id: 1, name: 'Cancha 1', availability: true, isCovered: false, availableTimeSlots: [], type: 'padel', image: '/assets/images.jpg' },
+    { id: 2, name: 'Cancha 2', availability: false, isCovered: true, availableTimeSlots: [], type: 'padel', image: '/assets/images.jpg' },
+    { id: 3, name: 'Cancha 3', availability: true, isCovered: false, availableTimeSlots: [], type: 'football', image: '/assets/images.jpg' },
   ]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -45,10 +47,6 @@ export default function CourtsPage() {
     setCourts([...courts, { ...newCourt, id, availability: true }]);
   };
 
-  const handleEditCourt = (updatedCourt: Court) => {
-    setCourts(courts.map(court => court.id === updatedCourt.id ? updatedCourt : court));
-  };
-
   const openEditModal = (court: Court) => {
     setEditingCourt(court);
     setIsEditModalOpen(true);
@@ -60,7 +58,7 @@ export default function CourtsPage() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <Link href="/dashboard" className="text-white hover:text-purple-200 transition-colors mb-2 inline-block">
-              ← Back to Dashboard
+              ← Volver al inicio
             </Link>
             <h1 className="text-4xl font-bold text-black">Gestión de canchas</h1>
             {user && (
@@ -79,15 +77,24 @@ export default function CourtsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courts.map((court) => (
-            <div key={court.id} className="bg-white rounded-lg overflow-hidden transition duration-300 ease-in-out transform hover:scale-105 border border-gray-200 shadow-lg hover:shadow-xl">
-              <div className="p-6 border-l-4 border-blue-500">
-                <h2 className="text-2xl font-semibold mb-2 text-gray-800">{court.name}</h2>
-                <p className={`text-lg mb-2 ${court.availability ? 'text-green-600' : 'text-red-600'} font-medium`}>
+            <div key={court.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="relative h-48">
+                <Image
+                  src={court.image}
+                  alt={court.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="w-full h-full"
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="text-xl text-black font-semibold mb-2">{court.name}</h3>
+                <p className={`text-sm font-medium ${court.availability ? 'text-green-600' : 'text-red-600'}`}>
                   {court.availability ? 'Disponible' : 'No disponible'}
                 </p>
-                <p className="text-sm mb-2 text-gray-600">{court.isCovered ? 'Techada' : 'Abierta'}</p>
-                <p className="text-sm mb-2 text-gray-600">Tipo: {court.type}</p>
-                <p className="text-sm mb-4 text-gray-600">Horarios disponibles: {court.availableTimeSlots.join(', ')}</p>
+                <p className="text-sm text-gray-600">{court.isCovered ? 'Techada' : 'Abierta'}</p>
+                <p className="text-sm text-gray-600">Tipo: {court.type}</p>
+                <p className="text-sm text-gray-600 mb-4">Horarios disponibles:</p>
                 <div className="flex justify-between">
                   <button
                     onClick={() => openEditModal(court)}
