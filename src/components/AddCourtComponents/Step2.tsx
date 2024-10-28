@@ -18,7 +18,7 @@ const Step2: React.FC<Step2Props> = ({ courtData, setCourtData, onNext, onPrevio
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="border-2 border-white rounded-lg p-4">
         <label className="block text-lg font-semibold text-white mb-2">Horarios disponibles</label>
         <p className="text-sm text-white mb-2">Selecciona los horarios disponibles para la cancha.</p>
@@ -51,11 +51,15 @@ const Step2: React.FC<Step2Props> = ({ courtData, setCourtData, onNext, onPrevio
       </div>
       <div className="mt-6 border-2 border-white rounded-lg p-4">
         <label className="block text-lg font-semibold text-white mb-2">Precios por duración</label>
-        <p className="text-sm text-white mb-2">Establece los precios para diferentes duraciones de reserva.</p>
-        <div className="grid grid-cols-2 gap-4">
+        <p className="text-sm text-white mb-4">Establece los precios para diferentes duraciones de reserva.</p>
+        
+        {/* Grid responsivo para los inputs de precios */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[1, 1.5, 2, 2.5, 3, 3.5].map((duration) => (
-            <div key={duration} className="flex items-center">
-              <span className="text-white text-sm font-semibold mr-2">{duration} hora{duration > 1 ? 's' : ''}</span>
+            <div key={duration} className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="text-white text-sm font-semibold min-w-[80px]">
+                {duration} hora{duration > 1 ? 's' : ''}
+              </span>
               <div className="relative flex-1">
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                 <input
@@ -75,16 +79,16 @@ const Step2: React.FC<Step2Props> = ({ courtData, setCourtData, onNext, onPrevio
           ))}
         </div>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-6">
         <button
           onClick={onPrevious}
-          className="bg-orange-500 text-white py-2 font-semibold px-4 rounded-md hover:bg-orange-400 transition-colors"
+          className="bg-orange-500 text-white py-2 px-4 font-semibold rounded-md hover:bg-orange-600 transition-colors"
         >
           Anterior
         </button>
         <button
           onClick={onNext}
-          className="bg-blue-500 text-white py-2 px-4 font-semibold rounded-md hover:bg-blue-400 transition-colors"
+          className="bg-blue-600 text-white py-2 px-6 font-semibold rounded-md hover:bg-blue-700 transition-colors"
         >
           Siguiente
         </button>

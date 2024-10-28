@@ -8,34 +8,72 @@ import ScheduleFilter from '@/components/ScheduleFilter';
 
 const bookingsData = [
   { 
-    courtName: 'Padel Court 1', 
+    courtName: 'Cancha Gatorade', 
     type: 'padel', 
     date: '2024-03-15', 
-    time: '09:00 AM - 10:30 AM', 
-    players: ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Brown'],
-    category: '3ra'
+    time: '09:00 AM - 10:30 AM',  // Mañana
+    reserveeName: 'Luis Perez',
+    category: '3ra',
+    contactPhone: '+1 234-567-8900'
   },
   { 
-    courtName: 'Padel Court 2', 
+    courtName: 'Cancha Powerade', 
+    type: 'padel', 
+    date: '2024-03-16', 
+    time: '02:00 PM - 3:30 PM',  // Tarde
+    reserveeName: 'Luis Lopez',
+    category: '1ra',
+    contactPhone: '+1 987-654-3210'
+  },
+  { 
+    courtName: 'Cancha Coca Cola', 
+    type: 'padel', 
+    date: '2024-03-16', 
+    time: '15:00 PM - 16:30 PM',  // Noche
+    reserveeName: 'Enrique Lopez',
+    category: '1ra',
+    contactPhone: '+1 987-654-3210'
+  },
+  { 
+    courtName: 'Cancha Pepsi', 
     type: 'padel', 
     date: '2024-03-16', 
     time: '02:00 PM - 3:30 PM', 
     players: ['Alex Wilson', 'Emma Davis', 'Chris Lee', 'Olivia Taylor'],
-    category: '1ra'
+    category: '1ra',
+    contactPhone: '+1 987-654-3210'
   },
   { 
-    courtName: 'Football Field 1', 
+    courtName: 'Cancha 1', 
     type: 'football', 
     date: '2024-03-15', 
     time: '04:00 PM - 5:30 PM', 
-    team: 'Red Dragons'
+    reserveeName: 'Enrique Lopez',
+    contactPhone: '+1 987-654-3210'
   },
   { 
-    courtName: 'Football Field 2', 
+    courtName: 'Cancha 2', 
     type: 'football', 
     date: '2024-03-16', 
     time: '07:00 PM - 8:30 PM', 
-    team: 'Blue Sharks'
+    reserveeName: 'Enrique Lopez',
+    contactPhone: '+1 987-654-3210'
+  },
+  { 
+    courtName: 'Cancha 3', 
+    type: 'football', 
+    date: '2024-03-16', 
+    time: '07:00 PM - 8:30 PM', 
+    reserveeName: 'Enrique Lopez',
+    contactPhone: '+1 987-654-3210'
+  },
+  { 
+    courtName: 'Cancha 4', 
+    type: 'football', 
+    date: '2024-03-16', 
+    time: '07:00 PM - 8:30 PM', 
+    reserveeName: 'Enrique Lopez',
+    contactPhone: '+1 987-654-3210'
   },
 ];
 
