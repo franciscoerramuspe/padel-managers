@@ -1,52 +1,54 @@
 "use client";
 
 import React, { useState } from 'react';
-import SettingsTabs from '@/components/SettingsTabs';
-import GeneralSettings from '@/components/GeneralSettings';
-import PaymentSettings from '@/components/PaymentsSettings/PaymentSettings';
-import SubscriptionSettings from '@/components/SubscriptionSettings';
+import ProfileSettings from './ProfileSettings';
+import { FaUser, FaPlug,  FaShieldAlt, } from 'react-icons/fa';
+import IntegrationsPanel from './IntegrationsPanel';
+import SecuritySettings from './SecuritySettings';
+
+const tabs = [
+  { id: 'profile', label: 'Perfil', icon: FaUser },
+  { id: 'integrations', label: 'Integraciones', icon: FaPlug },
+  { id: 'security', label: 'Seguridad', icon: FaShieldAlt },
+];
 
 export default function SettingsContent() {
-  const [activeTab, setActiveTab] = useState('General');
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'General':
-        return <GeneralSettings />;
-      case 'Payment':
-        return <PaymentSettings />;
-      case 'Subscription':
-        return <SubscriptionSettings />;
-      default:
-        return <GeneralSettings />;
-    }
-  };
+  const [activeTab, setActiveTab] = useState('profile');
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Settings</h1>
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search settings..."
-            className="pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <svg
-            className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
+    <div className="min-h-screen bg-gray-50 p-8">
+      {/* Tabs Container */}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Configuraciones</h1>
+          <div className="flex space-x-1 bg-white rounded-lg shadow-sm p-1">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 mr-2" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          {activeTab === 'profile' && <ProfileSettings />}
+          {activeTab === 'integrations' && <IntegrationsPanel />}
+          {activeTab === 'security' && <SecuritySettings />}
         </div>
       </div>
-      <SettingsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-      {renderContent()}
     </div>
   );
 }
