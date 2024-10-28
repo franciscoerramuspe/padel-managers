@@ -3,8 +3,22 @@ import React, { useState, useEffect } from 'react';
 interface EditCourtModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onEditCourt: (court: { id: number; name: string; isCovered: boolean; availableTimeSlots: string[]; type: string }) => void;
-  court: { id: number; name: string; isCovered: boolean; availableTimeSlots: string[]; type: string };
+  onEditCourt: (court: {
+    id: string;
+    name: string;
+    type: string;
+    isCovered: boolean;
+    court_size: string;
+    hourly_rate: number;
+  }) => void;
+  court: {
+    id: string;
+    name: string;
+    type: string;
+    isCovered: boolean;
+    court_size: string;
+    hourly_rate: number;
+  };
 }
 
 const EditCourtModal: React.FC<EditCourtModalProps> = ({ isOpen, onClose, onEditCourt, court }) => {

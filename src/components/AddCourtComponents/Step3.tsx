@@ -29,7 +29,7 @@ const Step3: React.FC<Step3Props> = ({ courtData, onSubmit, onPrevious }) => {
                   alt="Court preview"
                   width={300}
                   height={200}
-                  className="rounded-lg object-cover"
+                  className="rounded-lg object-cover w-full h-full"
                 />
               </div>
             )}

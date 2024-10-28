@@ -6,39 +6,115 @@ import { supabase } from '@/lib/supabase';
 import AddCourtModal from '@/components/AddCourtModal';
 import EditCourtModal from '@/components/EditCourtModal';
 import Image from 'next/image';
+import CourtModal from '@/components/CourtModal';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
   
 interface Court {
-  id: number;
+  id: string;
   name: string;
-  availability: boolean;
-  isCovered: boolean;
-  availableTimeSlots: string[];
   type: string;
+  availability: string;
   image: string;
+  court_size: string;
+  hourly_rate: number;
 }
 
 export default function CourtsPage() {
-  const [courts, setCourts] = useState<Court[]>([
-    { id: 1, name: 'Cancha 1', availability: true, isCovered: false, availableTimeSlots: [], type: 'padel', image: '/assets/images.jpg' },
-    { id: 2, name: 'Cancha 2', availability: false, isCovered: true, availableTimeSlots: [], type: 'padel', image: '/assets/images.jpg' },
-    { id: 3, name: 'Cancha 3', availability: true, isCovered: false, availableTimeSlots: [], type: 'football', image: '/assets/images.jpg' },
-  ]);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingCourt, setEditingCourt] = useState<Court | null>(null);
+  const [courts, setCourts] = useState<Court[]>([]);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    mode: 'add' as 'add' | 'edit',
+    selectedCourt: null as Court | null
+  });
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    court: null as Court | null
+  });
 
-  const handleDelete = (id: number) => {
-    setCourts(courts.filter(court => court.id !== id));
-  };
+  useEffect(() => {
+    fetchCourts();
+  }, []);
 
-  const handleAddCourt = (newCourt: Omit<Court, 'id' | 'availability'>) => {
-    const id = courts.length > 0 ? Math.max(...courts.map(c => c.id)) + 1 : 1;
-    setCourts([...courts, { ...newCourt, id, availability: true }]);
+  const fetchCourts = async () => {
+    try {
+      const response = await fetch('/api/courts');
+      const data = await response.json();
+      setCourts(data);
+    } catch (error) {
+      console.error('Error fetching courts:', error);
+    }
   };
 
   const openEditModal = (court: Court) => {
-    setEditingCourt(court);
-    setIsEditModalOpen(true);
+    setModalState({
+      isOpen: true,
+      mode: 'edit',
+      selectedCourt: court
+    });
+  };
+
+  const handleSubmit = async (courtData: Partial<Court>) => {
+    try {
+      if (modalState.mode === 'add') {
+        const response = await fetch('/api/courts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(courtData),
+        });
+
+        if (!response.ok) throw new Error('Failed to create court');
+        
+        const newCourt = await response.json();
+        setCourts([...courts, newCourt]);
+      } else {
+        const response = await fetch(`/api/courts/${modalState.selectedCourt?.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(courtData),
+        });
+
+        if (!response.ok) throw new Error('Failed to update court');
+
+        const updatedCourt = await response.json();
+        setCourts(courts.map(c => 
+          c.id === modalState.selectedCourt?.id 
+            ? updatedCourt
+            : c
+        ));
+      }
+      setModalState({ isOpen: false, mode: 'add', selectedCourt: null });
+    } catch (error) {
+      console.error('Error submitting court:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (deleteModal.court) {
+      try {
+        const response = await fetch(`/api/courts/${deleteModal.court.id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) throw new Error('Failed to delete court');
+
+        setCourts(courts.filter(c => c.id !== deleteModal.court?.id));
+        setDeleteModal({ isOpen: false, court: null });
+      } catch (error) {
+        console.error('Error deleting court:', error);
+      }
+    }
+  };
+
+  // Add this new function to open the delete modal
+  const openDeleteModal = (court: Court) => {
+    setDeleteModal({
+      isOpen: true,
+      court: court
+    });
   };
 
   return (
@@ -81,9 +157,8 @@ export default function CourtsPage() {
                 <Image
                   src={court.image}
                   alt={court.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="w-full h-full"
+                  fill
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="p-4">
@@ -96,7 +171,7 @@ export default function CourtsPage() {
                 <p className="text-sm text-gray-600 mb-4">Horarios disponibles:</p>
                 <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                   <button
-                    onClick={() => openEditModal(court)}
+                    onClick={() => setModalState({ isOpen: true, mode: 'edit', selectedCourt: court })}
                     className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -105,7 +180,7 @@ export default function CourtsPage() {
                     Editar
                   </button>
                   <button
-                    onClick={() => handleDelete(court.id)}
+                    onClick={() => openDeleteModal(court)}
                     className="w-full sm:w-auto bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -118,17 +193,25 @@ export default function CourtsPage() {
             </div>
           ))}
         </div>
-        <AddCourtModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onAddCourt={handleAddCourt}
+        <CourtModal
+          isOpen={modalState.isOpen}
+          onClose={() => setModalState({ isOpen: false, mode: 'add', selectedCourt: null })}
+          onSubmit={handleSubmit}
+          court={modalState.selectedCourt}
+          mode={modalState.mode}
         />
-        {editingCourt && (
+        <DeleteConfirmationModal
+          isOpen={deleteModal.isOpen}
+          onClose={() => setDeleteModal({ isOpen: false, court: null })}
+          onConfirm={handleDelete}
+          courtName={deleteModal.court?.name ?? ''}
+        />
+        {modalState.mode === 'edit' && modalState.selectedCourt && (
           <EditCourtModal
-            isOpen={isEditModalOpen}
-            onClose={() => setIsEditModalOpen(false)}
-            onEditCourt={null}
-            court={editingCourt}
+            isOpen={modalState.isOpen}
+            onClose={() => setModalState({ isOpen: false, mode: 'add', selectedCourt: null })}
+            onEditCourt={handleSubmit}
+            court={modalState.selectedCourt}
           />
         )}
       </div>
