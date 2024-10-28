@@ -67,15 +67,19 @@ export default function AddNewCourtPage() {
           name: courtData.name,
           type: courtData.type,
           isCovered: courtData.isCovered,
-          court_size: courtData.court_size, // Add default value
-          hourly_rate: courtData.hourly_rate || 0,        // Add default value
+          court_size: courtData.court_size || 'standard',
+          hourly_rate: courtData.hourly_rate || 0,
           image: courtData.image ? await uploadImage(courtData.image) : '',
+          // Change availableTimeSlots to availability
+          availability: courtData.availableTimeSlots
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create court');
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create court');
+      }
       
-      // Redirect to courts page after successful creation
       window.location.href = '/courts';
     } catch (error) {
       console.error('Error creating court:', error);
