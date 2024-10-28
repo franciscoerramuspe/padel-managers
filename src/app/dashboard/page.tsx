@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaCalendarAlt, FaClock, FaUsers, FaChartBar } from 'react-icons/fa';
@@ -11,29 +11,37 @@ const quickStats = [
     title: 'Reservas Hoy', 
     value: '12', 
     icon: FaCalendarAlt, 
-    color: 'bg-blue-500',
+    color: 'bg-gradient-to-r from-blue-400 to-blue-600',
+    hover: 'hover:from-blue-500 hover:to-blue-700',
+    iconBg: 'bg-blue-400/30',
     href: '/bookings'
   },
   { 
     title: 'Usuarios Registrados', 
     value: '45', 
     icon: FaUsers, 
-    color: 'bg-orange-500',
+    color: 'bg-gradient-to-r from-purple-400 to-purple-600',
+    hover: 'hover:from-purple-500 hover:to-purple-700',
+    iconBg: 'bg-purple-400/30',
     href: '/users'
   },
   { 
     title: 'Canchas Registradas', 
     value: '8', 
     icon: GiTennisCourt, 
-    color: 'bg-purple-500',
+    color: 'bg-gradient-to-r from-orange-400 to-orange-600',
+    hover: 'hover:from-orange-500 hover:to-orange-700',
+    iconBg: 'bg-orange-400/30',
     href: '/courts'
   },
   { 
     title: 'Ingresos del Día', 
     value: '$1,250', 
     icon: FaChartBar, 
-    color: 'bg-green-500',
-    href: '/finances' // Asumiendo que existe o se creará esta ruta
+    color: 'bg-gradient-to-r from-green-400 to-green-600',
+    hover: 'hover:from-green-500 hover:to-green-700',
+    iconBg: 'bg-green-400/30',
+    href: '/finances'
   },
 ];
 
@@ -111,21 +119,46 @@ const activeUsers = [
 ];
 
 export default function Dashboard() {
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDate(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedDate = currentDate.toLocaleString('es-UY', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">¡Que tengas un bonito día!</h2>
+          <p className="text-gray-600 text-sm">{formattedDate}</p>
+        </div>
+        
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {quickStats.map((stat, index) => (
             <Link key={index} href={stat.href}>
-              <div className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow cursor-pointer transform hover:-translate-y-1 transition-transform duration-200">
+              <div className={`${stat.color} ${stat.hover} rounded-xl shadow-lg p-6 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl cursor-pointer`}>
                 <div className="flex items-center">
-                  <div className={`${stat.color} rounded-full p-3 text-white mr-4`}>
-                    <stat.icon className="w-6 h-6" />
+                  <div className={`${stat.iconBg} rounded-lg p-3 mr-4`}>
+                    <stat.icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+                    <p className="text-white/80 text-sm font-medium">{stat.title}</p>
+                    <p className="text-white text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
                 </div>
               </div>
