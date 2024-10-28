@@ -5,6 +5,7 @@ import Step1 from '@/components/AddCourtComponents/Step1';
 import Step2 from '@/components/AddCourtComponents/Step2';
 import Step3 from '@/components/AddCourtComponents/Step3';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 interface CourtData {
   name: string;
@@ -15,6 +16,26 @@ interface CourtData {
   prices: { [key: number]: number };
   subType: string;
 }
+
+const uploadImage = async (file: File) => {
+  try {
+    const { data, error } = await supabase.storage
+      .from('court-images')
+      .upload(`courts/${Date.now()}-${file.name}`, file);
+
+    if (error) throw error;
+    
+    // Get public URL for the uploaded image
+    const { data: { publicUrl } } = supabase.storage
+      .from('court-images')
+      .getPublicUrl(data.path);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return '';
+  }
+};
 
 export default function AddNewCourtPage() {
   const [step, setStep] = useState(1);
@@ -35,10 +56,30 @@ export default function AddNewCourtPage() {
     setStep(step - 1);
   };
 
-  const handleSubmit = () => {
-    // Here you would typically send the data to your backend
-    console.log('Submitting court data:', courtData);
-    // Redirect to courts page or show success message
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('/api/courts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: courtData.name,
+          type: courtData.type,
+          isCovered: courtData.isCovered,
+          court_size: courtData.court_size, // Add default value
+          hourly_rate: courtData.hourly_rate || 0,        // Add default value
+          image: courtData.image ? await uploadImage(courtData.image) : '',
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to create court');
+      
+      // Redirect to courts page after successful creation
+      window.location.href = '/courts';
+    } catch (error) {
+      console.error('Error creating court:', error);
+    }
   };
 
   return (
