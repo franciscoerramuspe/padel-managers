@@ -44,3 +44,23 @@ body::-webkit-scrollbar {
 .scroll-container::-webkit-scrollbar {
   display: none;
 }
+
+/* Add these styles to handle mobile overflow */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure content doesn't overflow on mobile */
+@media (max-width: 768px) {
+  .max-w-7xl {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Center align tabs on mobile */
+  .flex.overflow-x-auto {
+    justify-content: center;
+    padding-bottom: 0.5rem;
+  }
+}
