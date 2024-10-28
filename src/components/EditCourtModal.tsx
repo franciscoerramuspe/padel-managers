@@ -7,32 +7,38 @@ interface EditCourtModalProps {
     id: string;
     name: string;
     type: string;
-    isCovered: boolean;
     court_size: string;
     hourly_rate: number;
+    image: string;
+    availability: string;
   }) => void;
   court: {
     id: string;
     name: string;
     type: string;
-    isCovered: boolean;
     court_size: string;
     hourly_rate: number;
+    image: string;
+    availability: string;
   };
 }
 
 const EditCourtModal: React.FC<EditCourtModalProps> = ({ isOpen, onClose, onEditCourt, court }) => {
   const [courtName, setCourtName] = useState(court.name);
-  const [isCovered, setIsCovered] = useState(court.isCovered);
-  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>(court.availableTimeSlots);
   const [courtType, setCourtType] = useState(court.type);
-
-  useEffect(() => {
-    setCourtName(court.name);
-    setIsCovered(court.isCovered);
-    setSelectedTimeSlots(court.availableTimeSlots);
-    setCourtType(court.type);
-  }, [court]);
+  const [courtSize, setCourtSize] = useState(court.court_size);
+  const [hourlyRate, setHourlyRate] = useState(court.hourly_rate);
+  const [selectedTimeSlots, setSelectedTimeSlots] = useState<string[]>(() => {
+    try {
+      // Handle both string and array formats
+      return Array.isArray(court.availability) 
+        ? court.availability 
+        : (court.availability ? JSON.parse(court.availability) : []);
+    } catch (error) {
+      console.error('Error parsing availability:', error);
+      return [];
+    }
+  });
 
   const timeSlots = [
     '08:00 - 09:30', '09:30 - 11:00', '11:00 - 12:30', '12:30 - 14:00',
@@ -40,14 +46,34 @@ const EditCourtModal: React.FC<EditCourtModalProps> = ({ isOpen, onClose, onEdit
     '20:00 - 21:30', '21:30 - 23:00'
   ];
 
+  useEffect(() => {
+    setCourtName(court.name);
+    setCourtType(court.type);
+    setCourtSize(court.court_size);
+    setHourlyRate(court.hourly_rate);
+    try {
+      setSelectedTimeSlots(
+        Array.isArray(court.availability) 
+          ? court.availability 
+          : (court.availability ? JSON.parse(court.availability) : [])
+      );
+    } catch (error) {
+      console.error('Error parsing availability:', error);
+      setSelectedTimeSlots([]);
+    }
+  }, [court]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const updatedCourt = {
       id: court.id,
       name: courtName,
-      isCovered,
-      availableTimeSlots: selectedTimeSlots,
       type: courtType,
+      court_size: courtSize,
+      hourly_rate: hourlyRate,
+      image: court.image,
+      // For JSONB, we can send the array directly without stringifying
+      availability: selectedTimeSlots
     };
     onEditCourt(updatedCourt);
     onClose();
@@ -95,20 +121,6 @@ const EditCourtModal: React.FC<EditCourtModalProps> = ({ isOpen, onClose, onEdit
                 <span className="ml-2 text-gray-700">⚽ Football</span>
               </label>
             </div>
-          </div>
-          <div className="border-2 border-green-300 rounded-lg p-4">
-            <label className="flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isCovered}
-                onChange={(e) => setIsCovered(e.target.checked)}
-                className="form-checkbox h-5 w-5 text-blue-600"
-              />
-              <span className="ml-2 font-semibold text-gray-700">Covered Court</span>
-            </label>
-            <p className="text-sm text-gray-500 mt-1">
-              {isCovered ? "This court is protected from weather conditions." : "This court is open-air."}
-            </p>
           </div>
           <div className="border-2 border-yellow-300 rounded-lg p-4">
             <label className="block text-sm font-semibold text-gray-700 mb-2">Available Time Slots</label>

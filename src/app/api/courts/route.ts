@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
           court_size: courtData.court_size || 'standard',
           hourly_rate: courtData.hourly_rate || 0,
           image: courtData.image || '',
-          availability: new Date().toISOString(),
+          availability: JSON.stringify(courtData.availableTimeSlots || []),
         },
       ])
       .select()
