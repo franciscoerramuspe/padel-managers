@@ -3,9 +3,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import Sidebar from './Sidebar';
+import { usePathname } from 'next/navigation';
 
-export default function UserProvider({ children }: { children: React.ReactNode }) {
+export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  // Check if we're on the login/home page
+  const isLoginPage = pathname === '/';
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,9 +33,13 @@ export default function UserProvider({ children }: { children: React.ReactNode }
     };
   }, []);
 
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="flex">
-      <Sidebar username={username ?? ''} />
+      <Sidebar username={username || ''} />
       <main className="flex-1">{children}</main>
     </div>
   );

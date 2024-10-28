@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Sidebar from '@/components/Sidebar';
 
 // Setup the localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -42,51 +41,48 @@ export default function BookingCalendarPage() {
   };
 
   return (
-    <div className="flex bg-gray-100 min-h-screen">
-      <Sidebar username="John Doe" />
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Calendario de Reservas</h1>
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <div className="mb-4 flex justify-between items-center">
-            <div>
-              <button
-                className={`mr-2 px-4 py-2 rounded-lg ${view === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                onClick={() => handleViewChange('month')}
-              >
-                Mes
-              </button>
-              <button
-                className={`mr-2 px-4 py-2 rounded-lg ${view === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                onClick={() => handleViewChange('week')}
-              >
-                Semana
-              </button>
-              <button
-                className={`px-4 py-2 rounded-lg ${view === 'day' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                onClick={() => handleViewChange('day')}
-              >
-                Día
-              </button>
-            </div>
-            <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-              Nueva Reserva
+    <div className="flex-1 p-8">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800">Calendario de Reservas</h1>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <div className="mb-4 flex justify-between items-center">
+          <div>
+            <button
+              className={`mr-2 px-4 py-2 rounded-lg ${view === 'month' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => handleViewChange('month')}
+            >
+              Mes
+            </button>
+            <button
+              className={`mr-2 px-4 py-2 rounded-lg ${view === 'week' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => handleViewChange('week')}
+            >
+              Semana
+            </button>
+            <button
+              className={`px-4 py-2 rounded-lg ${view === 'day' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+              onClick={() => handleViewChange('day')}
+            >
+              Día
             </button>
           </div>
-          <Calendar
-            localizer={localizer}
-            events={events}
-            startAccessor="start"
-            endAccessor="end"
-            resources={resources}
-            resourceIdAccessor="id"
-            resourceTitleAccessor="title"
-            views={['month', 'week', 'day']}
-            view={view as any}
-            onView={handleViewChange as any}
-            style={{ height: 'calc(100vh - 200px)' }}
-            className="rounded-lg overflow-hidden"
-          />
+          <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+            Nueva Reserva
+          </button>
         </div>
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          resources={resources}
+          resourceIdAccessor="id"
+          resourceTitleAccessor="title"
+          views={['month', 'week', 'day']}
+          view={view as any}
+          onView={handleViewChange as any}
+          style={{ height: 'calc(100vh - 200px)' }}
+          className="rounded-lg overflow-hidden"
+        />
       </div>
     </div>
   );
