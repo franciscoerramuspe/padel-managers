@@ -185,8 +185,8 @@ export default function Dashboard() {
                   <Image
                     src={court.image}
                     alt={court.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    className="w-full h-full object-cover"
                   />
                   <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold ${
                     court.status === 'Disponible' ? 'bg-green-500 text-white' :
@@ -251,8 +251,8 @@ export default function Dashboard() {
                       <Image
                         src={user.avatar}
                         alt={user.name}
-                        layout="fill"
-                        className="rounded-full"
+                        fill
+                        className="w-full h-full rounded-full"
                       />
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                     </div>

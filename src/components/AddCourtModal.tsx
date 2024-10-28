@@ -3,7 +3,13 @@ import React, { useState } from 'react';
 interface AddCourtModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddCourt: (court: { name: string; isCovered: boolean; availableTimeSlots: string[]; type: string }) => void;
+  onAddCourt: (court: {
+    name: string;
+    type: string;
+    court_size: string;
+    hourly_rate: number;
+    image: string;
+  }) => void;
 }
 
 const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCourt }) => {
@@ -43,9 +49,11 @@ const AddCourtModal: React.FC<AddCourtModalProps> = ({ isOpen, onClose, onAddCou
 
     const newCourt = {
       name: courtName,
-      isCovered,
-      availableTimeSlots: selectedTimeSlots,
       type: courtType,
+      isCovered,
+      court_size: '',
+      hourly_rate: 0,
+      image: '',
     };
     onAddCourt(newCourt);
     onClose();
