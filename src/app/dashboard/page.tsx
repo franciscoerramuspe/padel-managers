@@ -119,35 +119,39 @@ const activeUsers = [
 ];
 
 export default function Dashboard() {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentDate(new Date());
-    }, 1000);
+    const updateDateTime = () => {
+      setFormattedDate(new Date().toLocaleString('es-UY', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZone: 'America/Montevideo'
+      }));
+    };
 
-    return () => clearInterval(timer);
+    updateDateTime();
+
+    const intervalId = setInterval(updateDateTime, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
-
-  const formattedDate = currentDate.toLocaleString('es-UY', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">¡Que tengas un bonito día!</h2>
-          <p className="text-gray-600 text-sm">{formattedDate}</p>
+          <p suppressHydrationWarning className="text-gray-600 text-sm">
+            {formattedDate}
+          </p>
         </div>
         
-        {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           {quickStats.map((stat, index) => (
             <Link key={index} href={stat.href}>
@@ -166,7 +170,6 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Featured Courts Section - More Compact */}
         <div className="bg-white rounded-xl shadow-md p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-bold text-gray-800">Canchas Destacadas</h2>
@@ -205,9 +208,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 50/50 Split Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Upcoming Reservations */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Próximas Reservas</h2>
@@ -235,7 +236,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Active Users */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Usuarios Activos</h2>
