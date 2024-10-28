@@ -20,6 +20,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const courtData = await request.json();
+    console.log('Received court data:', courtData); // Debug log
 
     const { data, error } = await supabase
       .from('courts')
@@ -30,13 +31,19 @@ export async function POST(request: NextRequest) {
           court_size: courtData.court_size || 'standard',
           hourly_rate: courtData.hourly_rate || 0,
           image: courtData.image || '',
-          availability: JSON.stringify(courtData.availableTimeSlots || []),
+          // Change to use availability instead of availableTimeSlots
+          availability: courtData.availability || [],
         },
       ])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase error:', error); // Debug log
+      throw error;
+    }
+
+    console.log('Created court data:', data); // Debug log
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error creating court:', error);

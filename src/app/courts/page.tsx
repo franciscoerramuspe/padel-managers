@@ -58,17 +58,26 @@ export default function CourtsPage() {
   const handleSubmit = async (courtData: Partial<Court>) => {
     try {
       if (modalState.mode === 'add') {
+        // Log the data being sent to verify it contains availability
+        console.log('Creating court with data:', courtData);
+        
         const response = await fetch('/api/courts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(courtData),
+          body: JSON.stringify({
+            ...courtData,
+            // Ensure availability is properly set
+            availability: courtData.availability || []
+          }),
         });
 
         if (!response.ok) throw new Error('Failed to create court');
         
         const newCourt = await response.json();
+        // Log the response to verify the availability data
+        console.log('Created court:', newCourt);
         setCourts([...courts, newCourt]);
       } else {
         const response = await fetch(`/api/courts/${modalState.selectedCourt?.id}`, {
