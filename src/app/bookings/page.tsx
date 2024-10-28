@@ -13,7 +13,7 @@ const bookingsData = [
     date: '2024-03-15', 
     time: '09:00 AM - 10:30 AM',  // Mañana
     reserveeName: 'Luis Perez',
-    category: '3ra',
+    status: 'pending',
     contactPhone: '+1 234-567-8900'
   },
   { 
@@ -22,7 +22,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '02:00 PM - 3:30 PM',  // Tarde
     reserveeName: 'Luis Lopez',
-    category: '1ra',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -31,7 +31,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '15:00 PM - 16:30 PM',  // Noche
     reserveeName: 'Enrique Lopez',
-    category: '1ra',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -40,7 +40,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '02:00 PM - 3:30 PM', 
     players: ['Alex Wilson', 'Emma Davis', 'Chris Lee', 'Olivia Taylor'],
-    category: '1ra',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -49,6 +49,7 @@ const bookingsData = [
     date: '2024-03-15', 
     time: '04:00 PM - 5:30 PM', 
     reserveeName: 'Enrique Lopez',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -57,6 +58,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '07:00 PM - 8:30 PM', 
     reserveeName: 'Enrique Lopez',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -65,6 +67,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '07:00 PM - 8:30 PM', 
     reserveeName: 'Enrique Lopez',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
   { 
@@ -73,6 +76,7 @@ const bookingsData = [
     date: '2024-03-16', 
     time: '07:00 PM - 8:30 PM', 
     reserveeName: 'Enrique Lopez',
+    status: 'pending',
     contactPhone: '+1 987-654-3210'
   },
 ];
