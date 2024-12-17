@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaCalendarAlt, FaClock, FaUsers, FaChartBar } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
+import ActiveUsers from '@/components/Dashboard/ActiveUsers';
 
 const quickStats = [
   { 
@@ -110,14 +111,6 @@ const upcomingReservations = [
   },
 ];
 
-const activeUsers = [
-  { id: 1, name: 'John Doe', role: 'Admin', lastActive: '5 min ago', avatar: '/assets/user.png' },
-  { id: 2, name: 'Jane Smith', role: 'User', lastActive: '10 min ago', avatar: '/assets/user.png' },
-  { id: 3, name: 'Mike Johnson', role: 'User', lastActive: '15 min ago', avatar: '/assets/user.png' },
-  { id: 4, name: 'Sarah Brown', role: 'Manager', lastActive: '20 min ago', avatar: '/assets/user.png' },
-  { id: 5, name: 'Alex Wilson', role: 'User', lastActive: '25 min ago', avatar: '/assets/user.png' },
-];
-
 export default function Dashboard() {
   const [formattedDate, setFormattedDate] = useState('');
 
@@ -180,6 +173,11 @@ export default function Dashboard() {
               </svg>
             </Link>
           </div>
+          <div className="flex justify-center items-center">
+            <Link href="/tournaments" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+              Torneos
+            </Link>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {courts.map((court) => (
@@ -236,38 +234,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Usuarios Activos</h2>
-              <Link href="/users" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
-                Ver todos
-              </Link>
-            </div>
-            <div className="space-y-3">
-              {activeUsers.map((user) => (
-                <div key={user.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <div className="relative w-10 h-10 mr-3">
-                      <Image
-                        src={user.avatar}
-                        alt={user.name}
-                        fill
-                        className="w-full h-full rounded-full"
-                      />
-                      <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{user.name}</p>
-                      <p className="text-sm text-gray-600">{user.role}</p>
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {user.lastActive}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ActiveUsers />
         </div>
       </div>
     </div>

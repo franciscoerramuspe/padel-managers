@@ -1,0 +1,44 @@
+meta {
+  name: CreateTournament
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/tournaments
+  body: json
+  auth: none
+}
+
+params:query {
+  : 
+}
+
+body:json {
+  {
+    "players": [
+      { "id": "123e4567-e89b-12d3-a456-426614174000", "name": "Player 1" },
+      { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Player 2" }
+    ],
+    "teams": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174002",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174000", "name": "Player 1" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Player 2" }
+      }
+    ],
+    "teams_limit": 10,
+    "category": "1st",
+    "start_date": "2024-12-20",
+    "end_date": "2024-12-22",
+    "price": 1000,
+    "sign_up_limit_date": "2024-12-19",
+    "time_constraints": [
+      {
+        "team_id": "123e4567-e89b-12d3-a456-426614174002",
+        "start_time": "2024-12-20T20:00:00Z",
+        "end_time": "2024-12-20T22:00:00Z"
+      }
+    ]
+  }
+}
