@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { supabase } from '@/lib/supabase';
-import { randomUUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 import { TournamentTimeConstraint } from '@/types/tournament';
 
 export async function GET(request: NextRequest) {
@@ -47,15 +47,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const tournamentData = await request.json();
-    console.log('Received tournament data:', tournamentData); // Debug log
+    console.log('Received tournament data:', tournamentData);
 
-    // Start a Supabase transaction
     const { data: tournament, error: tournamentError } = await supabase
       .from('tournaments')
       .insert([
         {
           name: tournamentData.name,
-          id: randomUUID(),
+          id: uuidv4(),
           players: tournamentData.players,
           teams: tournamentData.teams,
           teams_limit: parseInt(tournamentData.teams_limit),
@@ -82,7 +81,7 @@ export async function POST(request: NextRequest) {
     ) {
       const timeConstraintsData = tournamentData.time_constraints.map(
         (constraint: TournamentTimeConstraint) => ({
-          id: randomUUID(),
+          id: uuidv4(),
           tournament_id: tournament.id,
           team_id: constraint.team_id,
           start_time: constraint.start_time,

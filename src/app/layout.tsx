@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono';
 import "./globals.css";
 import './animations.css';
 import { UserProvider } from '@/components/UserProvider';
+import Providers from './providers'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -22,10 +23,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body suppressHydrationWarning={true}>
-        <UserProvider>
-          {children}
-        </UserProvider>
+      <body suppressHydrationWarning={true} className="bg-gray-200">
+        <Providers>
+          <UserProvider>
+            {children}
+          </UserProvider>
+        </Providers>
       </body>
     </html>
   );

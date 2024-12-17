@@ -1,8 +1,9 @@
-// app/tournaments/TournamentList.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Calendar, Users, DollarSign, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 interface Tournament {
   id: string;
@@ -42,16 +43,17 @@ export default function TournamentList() {
 
   if (loading) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+      <div className="flex justify-center items-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-[#6B8AFF]"></div>
       </div>
     );
   }
 
   if (tournaments.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        No hay torneos disponibles para las fechas seleccionadas
+      <div className="text-center py-12 bg-white rounded-lg border border-gray-100">
+        <h3 className="text-xl font-semibold text-gray-700">No hay torneos disponibles</h3>
+        <p className="text-gray-500 mt-2">Intenta ajustar los filtros de búsqueda</p>
       </div>
     );
   }
@@ -61,42 +63,46 @@ export default function TournamentList() {
       {tournaments.map((tournament) => (
         <div
           key={tournament.id}
-          className="bg-white rounded-lg shadow overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
         >
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-4">
+          <div className="p-6 space-y-4">
+            <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-xl font-bold">{tournament.name}</h2>
-                <span className="inline-block px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800 rounded">
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{tournament.name}</h2>
+                <span className="inline-block px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 rounded-full">
                   {tournament.category}
                 </span>
-                <p className="mt-2 text-sm text-gray-600">
-                  {new Date(tournament.start_date).toLocaleDateString()} - {new Date(tournament.end_date).toLocaleDateString()}
-                </p>
               </div>
-              <span className="text-lg font-bold text-green-600">
+              <span className="text-2xl font-bold text-green-600">
                 ${tournament.price}
               </span>
             </div>
             
-            <div className="space-y-2">
-              <p className="text-sm">
-                <span className="font-medium">Equipos:</span> {tournament.current_registrations}/{tournament.teams_limit}
+            <div className="space-y-3">
+              <p className="text-sm text-gray-600 flex items-center">
+                <Calendar className="mr-2" size={16} />
+                {new Date(tournament.start_date).toLocaleDateString()} - {new Date(tournament.end_date).toLocaleDateString()}
               </p>
-              <p className="text-sm">
-                <span className="font-medium">Fecha límite de inscripción:</span>{' '}
-                {new Date(tournament.sign_up_limit_date).toLocaleDateString()}
+              <p className="text-sm text-gray-600 flex items-center">
+                <Users className="mr-2" size={16} />
+                Equipos: {tournament.current_registrations}/{tournament.teams_limit}
+              </p>
+              <p className="text-sm text-gray-600 flex items-center">
+                <Clock className="mr-2" size={16} />
+                Inscripción hasta: {new Date(tournament.sign_up_limit_date).toLocaleDateString()}
               </p>
             </div>
             
-            <div className="mt-4">
-              <button className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
-                Ver Detalles
-              </button>
-            </div>
+            <Link 
+              href={`/tournaments/${tournament.id}`}
+              className="w-full bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300 text-center block"
+            >
+              Ver Detalles
+            </Link>
           </div>
         </div>
       ))}
     </div>
   );
 }
+
