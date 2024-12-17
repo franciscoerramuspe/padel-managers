@@ -18,6 +18,7 @@ export interface TimeConstraint {
 }
 
 export interface CreateTournamentRequest {
+  name: string;
   players: Player[];
   teams: Team[];
   teams_limit: number;

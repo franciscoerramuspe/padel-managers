@@ -54,10 +54,11 @@ export async function POST(request: NextRequest) {
       .from('tournaments')
       .insert([
         {
+          name: tournamentData.name,
           id: randomUUID(),
           players: tournamentData.players,
           teams: tournamentData.teams,
-          teams_limit: tournamentData.teams_limit,
+          teams_limit: parseInt(tournamentData.teams_limit),
           current_registrations: 0,
           category: tournamentData.category,
           start_date: tournamentData.start_date,
