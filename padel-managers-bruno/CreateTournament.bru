@@ -16,30 +16,48 @@ params:query {
 
 body:json {
   {
-    "name": "Torneo Primavera 2024",
+    "name": "Torneo de Prueba 2024",
     "players": [
-      { "id": "123e4567-e89b-12d3-a456-426614174000", "name": "Player 1" },
-      { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Player 2" }
+      { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Juan Pérez" },
+      { "id": "123e4567-e89b-12d3-a456-426614174002", "name": "Ana García" },
+      { "id": "123e4567-e89b-12d3-a456-426614174003", "name": "Carlos López" },
+      { "id": "123e4567-e89b-12d3-a456-426614174004", "name": "María Rodríguez" },
+      { "id": "123e4567-e89b-12d3-a456-426614174005", "name": "Diego Martínez" },
+      { "id": "123e4567-e89b-12d3-a456-426614174006", "name": "Laura Sánchez" },
+      { "id": "123e4567-e89b-12d3-a456-426614174007", "name": "Pablo González" },
+      { "id": "123e4567-e89b-12d3-a456-426614174008", "name": "Sofía Torres" }
     ],
     "teams": [
       {
-        "id": "123e4567-e89b-12d3-a456-426614174002",
-        "player1": { "id": "123e4567-e89b-12d3-a456-426614174000", "name": "Player 1" },
-        "player2": { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Player 2" }
+        "id": "123e4567-e89b-12d3-a456-426614174011",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Juan Pérez" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174002", "name": "Ana García" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174012",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174003", "name": "Carlos López" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174004", "name": "María Rodríguez" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174013",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174005", "name": "Diego Martínez" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174006", "name": "Laura Sánchez" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174014",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174007", "name": "Pablo González" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174008", "name": "Sofía Torres" }
       }
     ],
-    "teams_limit": 10,
+    "teams_limit": 4,
     "category": "1st",
-    "start_date": "2024-12-20",
-    "end_date": "2024-12-22",
+    "start_date": "2024-03-20",
+    "end_date": "2024-03-22",
     "price": 1000,
-    "sign_up_limit_date": "2024-12-19",
-    "time_constraints": [
-      {
-        "team_id": "123e4567-e89b-12d3-a456-426614174002",
-        "start_time": "2024-12-20T20:00:00Z",
-        "end_time": "2024-12-20T22:00:00Z"
-      }
-    ]
+    "sign_up_limit_date": "2024-03-19",
+    "location": "Club de Padel Central",
+    "format": "single_elimination",
+    "status": "open",
+    "prize_pool": 5000
   }
 }

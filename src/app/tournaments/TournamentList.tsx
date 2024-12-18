@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Calendar, Users, DollarSign, Clock } from 'lucide-react';
+import { Calendar, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
 
 interface Tournament {

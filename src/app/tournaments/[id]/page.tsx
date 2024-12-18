@@ -1,4 +1,4 @@
-// src/app/tournaments/[id]/page.tsx
+//
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -123,13 +123,21 @@ export default function TournamentDetailsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <TournamentEditButton tournament={tournament} />
-            <button 
-              className="w-full bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300"
-            >
-              Inscribirse al torneo
-            </button>
+            <div className="flex gap-4 flex-1">
+              <button 
+                className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
+                onClick={() => router.push(`/tournaments/${tournament.id}/draw`)}
+              >
+                Crear Cuadro
+              </button>
+              <button 
+                className="flex-1 bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300"
+              >
+                Inscribirse al torneo
+              </button>
+            </div>
           </div>
         </div>
       </div>

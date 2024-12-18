@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { Tournament } from '@/app/tournaments/[id]/page'
 import { X, Calendar, Users, DollarSign, Trophy, MapPin, Layout, Activity } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 
 type Props = {
   tournament: Tournament
@@ -25,7 +24,6 @@ export function TournamentEditForm({ tournament, isOpen, onClose }: Props) {
   })
 
   const queryClient = useQueryClient()
-  const router = useRouter()
 
   const mutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -108,7 +106,7 @@ export function TournamentEditForm({ tournament, isOpen, onClose }: Props) {
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Ubicación</label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900" size={18} />
                   <input
                     type="text"
                     value={formData.location}
@@ -121,7 +119,7 @@ export function TournamentEditForm({ tournament, isOpen, onClose }: Props) {
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Fecha de Inicio</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900" size={18} />
                   <input
                     type="date"
                     value={formData.startDate}
@@ -134,7 +132,7 @@ export function TournamentEditForm({ tournament, isOpen, onClose }: Props) {
               <div>
                 <label className="block text-sm font-medium text-black mb-1">Fecha de Fin</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-900" size={18} />
                   <input
                     type="date"
                     value={formData.endDate}

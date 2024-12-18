@@ -2,18 +2,6 @@
 import { NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
-interface UpdateTournamentData {
-  name: string;
-  startDate: string;
-  endDate: string;
-  maxParticipants: number;
-  entryFee: number;
-  prizePool: number;
-  location: string;
-  format: string;
-  status: string;
-}
-
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }

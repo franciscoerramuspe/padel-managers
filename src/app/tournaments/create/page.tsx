@@ -1,22 +1,27 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
-import { Calendar, Users, DollarSign, Tag, AlertCircle } from 'lucide-react';
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Calendar, Users, DollarSign, Tag, AlertCircle } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface FormData {
-  name: string;
-  teams_limit: number;
-  category: string;
-  price: number;
-  start_date: string;
-  end_date: string;
-  sign_up_limit_date: string;
+  name: string
+  teams_limit: number
+  category: string
+  price: number
+  start_date: string
+  end_date: string
+  sign_up_limit_date: string
 }
 
 export default function CreateTournamentPage() {
-  const router = useRouter();
+  const router = useRouter()
   const [formData, setFormData] = useState<FormData>({
     name: '',
     teams_limit: 2,
@@ -25,184 +30,223 @@ export default function CreateTournamentPage() {
     start_date: '',
     end_date: '',
     sign_up_limit_date: '',
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  })
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleSelectChange = (value: string, name: string) => {
+    setFormData({ ...formData, [name]: value })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+    e.preventDefault()
+    setLoading(true)
+    setError('')
 
     try {
-      //Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch('/api/tournaments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          teams_limit: parseInt(formData.teams_limit.toString()),
+          category: formData.category,
+          start_date: formData.start_date,
+          end_date: formData.end_date,
+          price: parseInt(formData.price.toString()),
+          sign_up_limit_date: formData.sign_up_limit_date,
+          teams: [], // Initially empty
+          players: [], // Initially empty
+          time_constraints: [] // Initially empty
+        }),
+      })
 
-      //Redirect to success page
-      router.push('/tournaments');
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Error creating tournament')
+      }
 
+      router.push('/tournaments')
     } catch (error: any) {
-      setError(error.message);
+      setError(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-3xl bg-white min-h-screen">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Crear Nuevo Torneo</h1>
-        <p className="text-gray-600 mt-2">Complete los detalles del torneo</p>
-      </div>
+    <div className="container max-w-3xl py-8 px-4">
+      <Card className="border-none shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-3xl">Crear Nuevo Torneo</CardTitle>
+          <CardDescription className="text-lg">
+            Complete los detalles del torneo
+          </CardDescription>
+        </CardHeader>
 
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-8 rounded-lg flex items-center">
-          <AlertCircle className="mr-3" size={24} />
-          <p>{error}</p>
-        </div>
-      )}
+        {error && (
+          <Alert variant="destructive" className="mx-6 mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 space-y-6">
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">
-              Nombre del Torneo
-            </label>
-            <input
-              type="text"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-              placeholder="Ingrese el nombre del torneo"
-            />
-          </div>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-base">
+                  Nombre del Torneo
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Ingrese el nombre del torneo"
+                  className="h-12"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-                <Users className="mr-2" size={20} />
-                Límite de Equipos
-              </label>
-              <input
-                type="number"
-                name="teams_limit"
-                required
-                min="2"
-                value={formData.teams_limit}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="teams_limit" className="text-base flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Límite de Equipos
+                  </Label>
+                  <Input
+                    id="teams_limit"
+                    name="teams_limit"
+                    type="number"
+                    required
+                    min="2"
+                    value={formData.teams_limit}
+                    onChange={handleChange}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="category" className="text-base flex items-center gap-2">
+                    <Tag className="h-5 w-5" />
+                    Categoría
+                  </Label>
+                  <Select
+                    name="category"
+                    value={formData.category}
+                    onValueChange={(value) => handleSelectChange(value, 'category')}
+                  >
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1st">Primera</SelectItem>
+                      <SelectItem value="2nd">Segunda</SelectItem>
+                      <SelectItem value="3rd">Tercera</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="price" className="text-base flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Precio
+                </Label>
+                <Input
+                  id="price"
+                  name="price"
+                  type="number"
+                  required
+                  min="0"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="h-12"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="start_date" className="text-base flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Fecha de Inicio
+                  </Label>
+                  <Input
+                    id="start_date"
+                    name="start_date"
+                    type="date"
+                    required
+                    value={formData.start_date}
+                    onChange={handleChange}
+                    className="h-12"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="end_date" className="text-base flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Fecha de Fin
+                  </Label>
+                  <Input
+                    id="end_date"
+                    name="end_date"
+                    type="date"
+                    required
+                    value={formData.end_date}
+                    onChange={handleChange}
+                    className="h-12"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label
+                  htmlFor="sign_up_limit_date"
+                  className="text-base flex items-center gap-2"
+                >
+                  <Calendar className="h-5 w-5" />
+                  Fecha Límite de Inscripción
+                </Label>
+                <Input
+                  id="sign_up_limit_date"
+                  name="sign_up_limit_date"
+                  type="date"
+                  required
+                  value={formData.sign_up_limit_date}
+                  onChange={handleChange}
+                  className="h-12"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-                <Tag className="mr-2" size={20} />
-                Categoría
-              </label>
-              <select
-                name="category"
-                required
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
+            <div className="flex gap-4 pt-4">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="flex-1 h-12 text-lg font-medium bg-[#6B8AFF] hover:bg-[#5A75E6]"
               >
-                <option value="">Seleccionar categoría</option>
-                <option value="1st">Primera</option>
-                <option value="2nd">Segunda</option>
-                <option value="3rd">Tercera</option>
-              </select>
+                {loading ? 'Creando...' : 'Crear Torneo'}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                className="h-12 text-lg font-medium"
+              >
+                Cancelar
+              </Button>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-              <DollarSign className="mr-2" size={20} />
-              Precio
-            </label>
-            <input
-              type="number"
-              name="price"
-              required
-              min="0"
-              value={formData.price}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-                <Calendar className="mr-2" size={20} />
-                Fecha de Inicio
-              </label>
-              <input
-                type="date"
-                name="start_date"
-                required
-                value={formData.start_date}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-              />
-            </div>
-
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-                <Calendar className="mr-2" size={20} />
-                Fecha de Fin
-              </label>
-              <input
-                type="date"
-                name="end_date"
-                required
-                value={formData.end_date}
-                onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2 flex items-center">
-              <Calendar className="mr-2" size={20} />
-              Fecha Límite de Inscripción
-            </label>
-            <input
-              type="date"
-              name="sign_up_limit_date"
-              required
-              value={formData.sign_up_limit_date}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#6B8AFF] focus:border-transparent transition-all duration-300"
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300 disabled:opacity-50"
-          >
-            {loading ? 'Creando...' : 'Crear Torneo'}
-          </button>
-          
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-6 py-3 border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors duration-300"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
+          </form>
+        </CardContent>
+      </Card>
     </div>
-  );
+  )
 }
 
