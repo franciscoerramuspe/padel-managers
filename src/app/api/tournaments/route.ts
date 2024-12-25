@@ -1,7 +1,11 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
-import { TournamentTimeConstraint } from '@/types/tournament';
+
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,7 +15,7 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
 
     // Start the query
-    let query = supabase.from('tournaments').select(`
+    let query = supabaseClient.from('tournaments').select(`
           *,
           tournament_time_constraints (*)
         `);
@@ -46,63 +50,48 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const tournamentData = await request.json();
-    console.log('Received tournament data:', tournamentData);
+    const body = await request.json();
 
-    const { data: tournament, error: tournamentError } = await supabase
+    // Debug logs
+    console.log('Received format:', body.format);
+
+    // Generate a UUID for the tournament
+    const tournamentId = uuidv4();
+
+    const { data: tournament, error } = await supabaseClient
       .from('tournaments')
-      .insert([
-        {
-          name: tournamentData.name,
-          id: uuidv4(),
-          players: tournamentData.players,
-          teams: tournamentData.teams,
-          teams_limit: parseInt(tournamentData.teams_limit),
-          current_registrations: 0,
-          category: tournamentData.category,
-          start_date: tournamentData.start_date,
-          end_date: tournamentData.end_date,
-          price: tournamentData.price,
-          sign_up_limit_date: tournamentData.sign_up_limit_date,
-        },
-      ])
+      .insert({
+        id: tournamentId,
+        name: body.name,
+        teams_limit: body.teams_limit,
+        category: body.category,
+        start_date: body.start_date,
+        end_date: body.end_date,
+        price: body.price,
+        sign_up_limit_date: body.sign_up_limit_date,
+        players: body.players,
+        teams: body.teams,
+        format: body.format,
+        status: body.status,
+        current_registrations: 0,
+      })
       .select()
       .single();
 
-    if (tournamentError) {
-      console.error('Supabase tournament error:', tournamentError);
-      throw tournamentError;
-    }
-
-    // If there are time constraints, insert them
-    if (
-      tournamentData.time_constraints &&
-      tournamentData.time_constraints.length > 0
-    ) {
-      const timeConstraintsData = tournamentData.time_constraints.map(
-        (constraint: TournamentTimeConstraint) => ({
-          id: uuidv4(),
-          tournament_id: tournament.id,
-          team_id: constraint.team_id,
-          start_time: constraint.start_time,
-          end_time: constraint.end_time,
-        })
+    if (error) {
+      console.error('Error creating tournament:', error);
+      return NextResponse.json(
+        { error: 'Error creating tournament', details: error.message },
+        { status: 500 }
       );
-
-      const { error: constraintsError } = await supabase
-        .from('tournament_time_constraints')
-        .insert(timeConstraintsData);
-
-      if (constraintsError) {
-        console.error('Supabase time constraints error:', constraintsError);
-        throw constraintsError;
-      }
     }
 
-    console.log('Created tournament data:', tournament);
+    // Debug log
+    console.log('Created tournament:', tournament);
+
     return NextResponse.json(tournament);
   } catch (error) {
-    console.error('Error creating tournament:', error);
+    console.error('Error:', error);
     return NextResponse.json(
       { error: 'Failed to create tournament' },
       { status: 500 }

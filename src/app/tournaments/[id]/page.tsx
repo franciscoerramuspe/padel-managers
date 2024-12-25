@@ -33,15 +33,11 @@ export default function TournamentDetailsPage() {
     const fetchTournament = async () => {
       try {
         const response = await fetch(`/api/tournaments/${params.id}`);
-        if (!response.ok) {
-          console.error('Tournament fetch failed:', await response.text());
-          throw new Error('Tournament not found');
-        }
         const data = await response.json();
         console.log('Tournament data:', data);
         setTournament(data);
       } catch (error) {
-        console.error('Error fetching tournament:', error);
+        console.error('Error:', error);
       } finally {
         setLoading(false);
       }
@@ -130,7 +126,11 @@ export default function TournamentDetailsPage() {
                 className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
                 onClick={() => router.push(`/tournaments/${tournament.id}/draw`)}
               >
-                Crear Cuadro
+                {tournament.format === 'group_stage' 
+                  ? 'Generar Grupos'
+                  : tournament.format === 'round_robin'
+                    ? 'Generar Liga'
+                    : 'Crear Cuadro'}
               </button>
               <button 
                 className="flex-1 bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300"

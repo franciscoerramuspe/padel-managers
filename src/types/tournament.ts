@@ -17,6 +17,11 @@ export interface TimeConstraint {
   end_time: Date;
 }
 
+export type TournamentFormat =
+  | 'single_elimination'
+  | 'round_robin'
+  | 'group_stage';
+
 export interface CreateTournamentRequest {
   name: string;
   players: Player[];
@@ -27,6 +32,7 @@ export interface CreateTournamentRequest {
   end_date: Date;
   price: number;
   sign_up_limit_date: Date;
+  format: TournamentFormat;
   time_constraints?: TimeConstraint[];
 }
 
@@ -36,4 +42,15 @@ export interface TournamentTimeConstraint {
   team_id: UUID;
   start_time: Date;
   end_time: Date;
+}
+
+export interface TournamentTeam extends Team {
+  group?: 'A' | 'B';
+}
+
+export interface Tournament {
+  id: string;
+  name: string;
+  teams: TournamentTeam[];
+  format: 'single_elimination' | 'round_robin' | 'group_stage';
 }

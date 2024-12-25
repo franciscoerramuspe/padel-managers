@@ -196,9 +196,8 @@ export function TournamentEditForm({ tournament, isOpen, onClose }: Props) {
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#6B8AFF] focus:border-[#6B8AFF] focus:outline-none appearance-none text-black"
                   >
                     <option value="single_elimination">Eliminación Simple</option>
-                    <option value="double_elimination">Eliminación Doble</option>
                     <option value="round_robin">Todos contra Todos</option>
-                    <option value="swiss">Sistema Suizo</option>
+                    <option value="group_stage">Fase de Grupos</option>
                   </select>
                 </div>
               </div>
