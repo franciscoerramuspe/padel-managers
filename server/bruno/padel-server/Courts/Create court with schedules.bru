@@ -1,0 +1,42 @@
+meta {
+  name: Create court with schedules
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3001/api/courts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "Test Padel Court",
+      "type": "padel",
+      "court_size": "standard",
+      "hourly_rate": 1000,
+      "schedules": [
+        {
+          "dayOfWeek": 1,
+          "startTime": "08:00",
+          "endTime": "09:30",
+          "isRecurring": true
+        },
+        {
+          "dayOfWeek": 1,
+          "startTime": "14:00",
+          "endTime": "16:00",
+          "isRecurring": true
+        },
+        {
+          "dayOfWeek": 2,
+          "startTime": "09:00",
+          "endTime": "11:00",
+          "validFrom": "2024-04-01",
+          "validUntil": "2024-06-30",
+          "isRecurring": false
+        }
+      ]
+    }
+}
