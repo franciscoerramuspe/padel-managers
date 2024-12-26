@@ -1,25 +1,25 @@
 meta {
-  name: create-tournament
+  name: create-round-robin-tournament
   type: http
-  seq: 1
+  seq: 8
 }
 
 post {
-  url: http://localhost:3001/api/tournaments
+  url: 
   body: json
   auth: none
 }
 
 body:json {
   {
-      "name": "Padel Tournament Spring 2024",
-      "teams_limit": 8,
+      "name": "Padel Round Robin Tournament",
+      "teams_limit": 4,
       "category": "Mixto A",
       "start_date": "2024-04-01",
       "end_date": "2024-04-03",
       "price": 1500,
       "sign_up_limit_date": "2024-03-30",
-      "format": "single_elimination",
+      "format": "round_robin",
       "status": "open",
       "teams": [
         {
@@ -37,23 +37,7 @@ body:json {
         {
           "id": "123e4567-e89b-12d3-a456-426614174104",
           "name": "Team Delta"
-        },
-        {
-          "id": "123e4567-e89b-12d3-a456-426614174105",
-          "name": "Team Epsilon"
-        },
-        {
-          "id": "123e4567-e89b-12d3-a456-426614174106",
-          "name": "Team Zeta"
-        },
-        {
-          "id": "123e4567-e89b-12d3-a456-426614174107",
-          "name": "Team Eta"
-        },
-        {
-          "id": "123e4567-e89b-12d3-a456-426614174108",
-          "name": "Team Theta"
         }
       ]
-  }
+  } 
 }

@@ -1,0 +1,41 @@
+meta {
+  name: update-match-score
+  type: http
+  seq: 7
+}
+
+put {
+  url: http://localhost:3001/api/tournaments/matches/a798e0ac-1bae-4807-9392-da9b514bd1a1/score
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "team1_score": {
+      "sets": [
+        {
+          "games": 6,
+          "tiebreak": null
+        },
+        {
+          "games": 6,
+          "tiebreak": 7
+        }
+      ]
+    },
+    "team2_score": {
+      "sets": [
+        {
+          "games": 4,
+          "tiebreak": null
+        },
+        {
+          "games": 7,
+          "tiebreak": 5
+        }
+      ]
+    },
+    "winner_id": "123e4567-e89b-12d3-a456-426614174101"
+  }
+}

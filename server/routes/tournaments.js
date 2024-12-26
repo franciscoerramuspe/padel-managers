@@ -62,4 +62,51 @@ router.get('/:id/draw/test', async (req, res) => {
   res.json(data);
 });
 
+router.put('/matches/:id/result', async (req, res) => {
+  const { id } = req.params;
+  const { winner_id } = req.body;
+  
+  const { data, error } = await tournamentDrawService.updateMatchResult(id, winner_id);
+  
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  
+  res.json(data);
+});
+
+router.get('/matches/:id', async (req, res) => {
+  const { id } = req.params;
+  
+  const { data, error } = await tournamentDrawService.getMatchDetails(id);
+  
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  
+  res.json(data);
+});
+
+router.post('/matches/:id/schedule', async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await tournamentDrawService.scheduleMatch(id, req.body);
+  
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  
+  res.json(data);
+});
+
+router.put('/matches/:id/score', async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await tournamentDrawService.updateMatchScore(id, req.body);
+  
+  if (error) {
+    return res.status(500).json({ error });
+  }
+  
+  res.json(data);
+});
+
 export default router; 
