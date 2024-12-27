@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar, Users, DollarSign, Tag, AlertCircle } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
-import { Input } from '../../../components/ui/input'
-import { Label } from '../../../components/ui/label'
-import { Button } from '../../../components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select'
-import { Alert, AlertDescription } from '../../../components/ui/alert'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { TournamentFormat } from '@/types/tournament'
 
 interface FormData {
   name: string
@@ -18,235 +19,169 @@ interface FormData {
   start_date: string
   end_date: string
   sign_up_limit_date: string
+  format: TournamentFormat
+  status: string
 }
 
 export default function CreateTournamentPage() {
   const router = useRouter()
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState<FormData>({
     name: '',
-    teams_limit: 2,
+    teams_limit: 0,
     category: '',
     price: 0,
     start_date: '',
     end_date: '',
     sign_up_limit_date: '',
+    format: 'single_elimination',
+    status: 'open'
   })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
-
-  const handleSelectChange = (value: string, name: string) => {
-    setFormData({ ...formData, [name]: value })
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
     setError('')
 
     try {
-      const response = await fetch('/api/tournaments', {
+      console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          teams_limit: parseInt(formData.teams_limit.toString()),
-          category: formData.category,
-          start_date: formData.start_date,
-          end_date: formData.end_date,
-          price: parseInt(formData.price.toString()),
-          sign_up_limit_date: formData.sign_up_limit_date,
-          teams: [], // Initially empty
-          players: [], // Initially empty
-          time_constraints: [] // Initially empty
-        }),
+        body: JSON.stringify(formData)
       })
+      console.log(response);
 
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || 'Error creating tournament')
+        throw new Error('Failed to create tournament')
       }
 
-      router.push('/tournaments')
-    } catch (error: any) {
-      setError(error.message)
-    } finally {
-      setLoading(false)
+      const tournament = await response.json()
+      router.push(`/tournaments/${tournament.id}`)
+    } catch (err) {
+      setError('Failed to create tournament')
+      console.error('Error:', err)
     }
   }
 
   return (
-    <div className="container max-w-3xl py-8 px-4">
-      <Card className="border-none shadow-lg">
+    <form onSubmit={handleSubmit}>
+      <Card>
         <CardHeader>
-          <CardTitle className="text-3xl">Crear Nuevo Torneo</CardTitle>
-          <CardDescription className="text-lg">
-            Complete los detalles del torneo
-          </CardDescription>
+          <CardTitle>Create Tournament</CardTitle>
+          <CardDescription>Set up a new tournament with your desired configuration.</CardDescription>
         </CardHeader>
+        <CardContent className="space-y-6">
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        {error && (
-          <Alert variant="destructive" className="mx-6 mb-6">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+          <div className="space-y-2">
+            <Label htmlFor="name">Tournament Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+          </div>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-base">
-                  Nombre del Torneo
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Ingrese el nombre del torneo"
-                  className="h-12"
-                />
-              </div>
+          <div className="space-y-2">
+            <Label htmlFor="format">Tournament Format</Label>
+            <Select
+              value={formData.format}
+              onValueChange={(value) => setFormData({ ...formData, format: value as TournamentFormat })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="single_elimination">Single Elimination</SelectItem>
+                <SelectItem value="round_robin">Round Robin</SelectItem>
+                <SelectItem value="group_stage">Group Stage</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="teams_limit" className="text-base flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    Límite de Equipos
-                  </Label>
-                  <Input
-                    id="teams_limit"
-                    name="teams_limit"
-                    type="number"
-                    required
-                    min="2"
-                    value={formData.teams_limit}
-                    onChange={handleChange}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="category" className="text-base flex items-center gap-2">
-                    <Tag className="h-5 w-5" />
-                    Categoría
-                  </Label>
-                  <Select
-                    name="category"
-                    value={formData.category}
-                    onValueChange={(value) => handleSelectChange(value, 'category')}
-                  >
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Seleccionar categoría" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1st">Primera</SelectItem>
-                      <SelectItem value="2nd">Segunda</SelectItem>
-                      <SelectItem value="3rd">Tercera</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-base flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Precio
-                </Label>
-                <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  required
-                  min="0"
-                  value={formData.price}
-                  onChange={handleChange}
-                  className="h-12"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="start_date" className="text-base flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Fecha de Inicio
-                  </Label>
-                  <Input
-                    id="start_date"
-                    name="start_date"
-                    type="date"
-                    required
-                    value={formData.start_date}
-                    onChange={handleChange}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="end_date" className="text-base flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Fecha de Fin
-                  </Label>
-                  <Input
-                    id="end_date"
-                    name="end_date"
-                    type="date"
-                    required
-                    value={formData.end_date}
-                    onChange={handleChange}
-                    className="h-12"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label
-                  htmlFor="sign_up_limit_date"
-                  className="text-base flex items-center gap-2"
-                >
-                  <Calendar className="h-5 w-5" />
-                  Fecha Límite de Inscripción
-                </Label>
-                <Input
-                  id="sign_up_limit_date"
-                  name="sign_up_limit_date"
-                  type="date"
-                  required
-                  value={formData.sign_up_limit_date}
-                  onChange={handleChange}
-                  className="h-12"
-                />
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="teams_limit">Teams Limit</Label>
+              <Input
+                id="teams_limit"
+                type="number"
+                value={formData.teams_limit}
+                onChange={(e) => setFormData({ ...formData, teams_limit: parseInt(e.target.value) })}
+                required
+              />
             </div>
 
-            <div className="flex gap-4 pt-4">
-              <Button
-                type="submit"
-                disabled={loading}
-                className="flex-1 h-12 text-lg font-medium bg-[#6B8AFF] hover:bg-[#5A75E6]"
-              >
-                {loading ? 'Creando...' : 'Crear Torneo'}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                className="h-12 text-lg font-medium"
-              >
-                Cancelar
-              </Button>
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Input
+                id="category"
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                required
+              />
             </div>
-          </form>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="start_date">Start Date</Label>
+              <Input
+                id="start_date"
+                type="date"
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="end_date">End Date</Label>
+              <Input
+                id="end_date"
+                type="date"
+                value={formData.end_date}
+                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sign_up_limit_date">Sign Up Limit Date</Label>
+              <Input
+                id="sign_up_limit_date"
+                type="date"
+                value={formData.sign_up_limit_date}
+                onChange={(e) => setFormData({ ...formData, sign_up_limit_date: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price">Price</Label>
+            <Input
+              id="price"
+              type="number"
+              value={formData.price}
+              onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
+              required
+            />
+          </div>
+
+          <Button type="submit" className="w-full">
+            Create Tournament
+          </Button>
         </CardContent>
       </Card>
-    </div>
+    </form>
   )
 }
 

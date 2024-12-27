@@ -1,163 +1,169 @@
-export function shuffleArray<T>(array: T[]): T[] {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-export function generateInitialMatches(teams: any[], tournamentId: string) {
+export const generateInitialMatches = (teams: any[], tournamentId: string) => {
   const matches = [];
   const numTeams = teams.length;
   const numRounds = Math.ceil(Math.log2(numTeams));
 
-  // Generate first round matches
-  for (let i = 0; i < numTeams; i += 2) {
+  // First round matches
+  for (let i = 0; i < Math.floor(numTeams / 2); i++) {
     matches.push({
+      id: crypto.randomUUID(),
       tournament_id: tournamentId,
       round: 1,
-      position: Math.floor(i / 2),
-      team1_id: teams[i]?.id || null,
-      team2_id: teams[i + 1]?.id || null,
-      next_match_id: null,
+      position: i + 1,
+      team1_id: teams[i * 2].id,
+      team2_id: teams[i * 2 + 1]?.id || null,
     });
   }
 
-  // Generate subsequent rounds (empty matches)
-  let currentRoundMatches = Math.floor(numTeams / 2);
+  // Create subsequent rounds
   for (let round = 2; round <= numRounds; round++) {
-    for (let i = 0; i < currentRoundMatches / 2; i++) {
+    const matchesInRound = Math.pow(2, numRounds - round);
+    for (let i = 0; i < matchesInRound; i++) {
       matches.push({
+        id: crypto.randomUUID(),
         tournament_id: tournamentId,
         round: round,
-        position: i,
+        position: i + 1,
         team1_id: null,
         team2_id: null,
-        next_match_id: null,
       });
     }
-    currentRoundMatches = Math.floor(currentRoundMatches / 2);
   }
 
   return matches;
-}
+};
 
-export function generateRoundRobinMatches(teams: any[], tournamentId: string) {
+export const generateRoundRobinMatches = (
+  teams: any[],
+  tournamentId: string
+) => {
   const matches = [];
-  const numTeams = teams.length;
+  const n = teams.length;
+  const rounds = n - 1;
+  const matchesPerRound = Math.floor(n / 2);
 
-  // For round-robin, each team plays against every other team once
-  for (let round = 0; round < numTeams - 1; round++) {
-    for (let i = 0; i < numTeams / 2; i++) {
-      const team1Index = i;
-      const team2Index = numTeams - 1 - i;
+  let teamIndices = teams.map((_, index) => index);
+  const firstTeam = teamIndices.shift();
 
-      // Rotate teams for each round (except team at position 0)
-      const actualTeam1Index =
-        team1Index === 0 ? 0 : (team1Index + round) % (numTeams - 1);
-      const actualTeam2Index =
-        team2Index === numTeams - 1
-          ? numTeams - 1
-          : (team2Index + round) % (numTeams - 1);
+  for (let round = 1; round <= rounds; round++) {
+    for (let match = 0; match < matchesPerRound; match++) {
+      const team1Index = match === 0 ? firstTeam : teamIndices[match - 1];
+      const team2Index = teamIndices[teamIndices.length - match];
 
       matches.push({
+        id: crypto.randomUUID(),
         tournament_id: tournamentId,
-        round: round + 1,
-        position: i,
-        team1_id: teams[actualTeam1Index]?.id || null,
-        team2_id: teams[actualTeam2Index]?.id || null,
-        next_match_id: null,
-        points_team1: 0,
-        points_team2: 0,
+        round: round,
+        position: match + 1,
+        team1_id: teams[team1Index!].id,
+        team2_id: teams[team2Index!].id,
       });
     }
+    teamIndices.push(teamIndices.shift()!);
   }
 
   return matches;
-}
+};
 
-export function assignGroups(teams: Team[]): TournamentTeam[] {
-  const shuffledTeams = shuffleArray([...teams]);
+export const assignGroups = (teams: any[]) => {
+  const shuffledTeams = [...teams].sort(() => Math.random() - 0.5);
+  const halfLength = Math.ceil(teams.length / 2);
+
   return shuffledTeams.map((team, index) => ({
     ...team,
-    group: index < teams.length / 2 ? 'A' : 'B',
+    group: index < halfLength ? 'A' : 'B',
   }));
-}
+};
 
-export function generateGroupStageMatches(
-  teams: TournamentTeam[],
+export const generateGroupStageMatches = (
+  teams: any[],
   tournamentId: string
-) {
-  const matches = [];
-  const groupA = teams.filter((t) => t.group === 'A');
-  const groupB = teams.filter((t) => t.group === 'B');
+) => {
+  const matches: any[] = [];
+  const groupATeams = teams.filter((t) => t.group === 'A');
+  const groupBTeams = teams.filter((t) => t.group === 'B');
 
-  // Generate matches for Group A
-  for (let i = 0; i < groupA.length; i++) {
-    for (let j = i + 1; j < groupA.length; j++) {
-      matches.push({
-        tournament_id: tournamentId,
-        round: 1, // Group stage is round 1
-        position: matches.length,
-        team1_id: groupA[i].id,
-        team2_id: groupA[j].id,
-        group: 'A',
-        next_match_id: null,
-        points_team1: 0,
-        points_team2: 0,
-      });
-    }
-  }
+  // Generate matches for each group
+  const groupAMatches = generateRoundRobinForGroup(
+    groupATeams,
+    tournamentId,
+    'A'
+  );
+  const groupBMatches = generateRoundRobinForGroup(
+    groupBTeams,
+    tournamentId,
+    'B'
+  );
 
-  // Generate matches for Group B
-  for (let i = 0; i < groupB.length; i++) {
-    for (let j = i + 1; j < groupB.length; j++) {
-      matches.push({
-        tournament_id: tournamentId,
-        round: 1,
-        position: matches.length,
-        team1_id: groupB[i].id,
-        team2_id: groupB[j].id,
-        group: 'B',
-        next_match_id: null,
-        points_team1: 0,
-        points_team2: 0,
-      });
-    }
-  }
+  // Add all group matches (round 1)
+  matches.push(...groupAMatches, ...groupBMatches);
 
-  // Generate semifinal matches (1st of A vs 2nd of B, 1st of B vs 2nd of A)
+  // Add semifinals (round 2)
   matches.push(
     {
-      tournament_id: tournamentId,
-      round: 2,
-      position: 0,
-      team1_id: null, // Will be filled after group stage
-      team2_id: null,
-      group: 'SF1',
-      next_match_id: null,
-    },
-    {
+      id: crypto.randomUUID(),
       tournament_id: tournamentId,
       round: 2,
       position: 1,
-      team1_id: null,
-      team2_id: null,
-      group: 'SF2',
-      next_match_id: null,
+      team1_id: null, // Will be winner of Group A
+      team2_id: null, // Will be runner-up of Group B
+      group: null,
+    },
+    {
+      id: crypto.randomUUID(),
+      tournament_id: tournamentId,
+      round: 2,
+      position: 2,
+      team1_id: null, // Will be winner of Group B
+      team2_id: null, // Will be runner-up of Group A
+      group: null,
     }
   );
 
-  // Generate final match
+  // Add final (round 3)
   matches.push({
+    id: crypto.randomUUID(),
     tournament_id: tournamentId,
     round: 3,
-    position: 0,
+    position: 1,
     team1_id: null,
     team2_id: null,
-    group: 'F',
-    next_match_id: null,
+    group: null,
   });
 
   return matches;
-}
+};
+
+const generateRoundRobinForGroup = (
+  teams: any[],
+  tournamentId: string,
+  group: string
+) => {
+  const matches = [];
+  const n = teams.length;
+  const rounds = n - 1;
+  const matchesPerRound = Math.floor(n / 2);
+
+  let teamIndices = teams.map((_, index) => index);
+  const firstTeam = teamIndices.shift();
+
+  for (let round = 1; round <= rounds; round++) {
+    for (let match = 0; match < matchesPerRound; match++) {
+      const team1Index = match === 0 ? firstTeam : teamIndices[match - 1];
+      const team2Index = teamIndices[teamIndices.length - match];
+
+      matches.push({
+        id: crypto.randomUUID(),
+        tournament_id: tournamentId,
+        round: 1,
+        position: matches.length + 1,
+        team1_id: teams[team1Index!].id,
+        team2_id: teams[team2Index!].id,
+        group: group,
+      });
+    }
+    teamIndices.push(teamIndices.shift()!);
+  }
+
+  return matches;
+};

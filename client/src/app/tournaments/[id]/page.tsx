@@ -5,6 +5,10 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Calendar, Users, Clock } from 'lucide-react';
 import { TournamentEditButton } from '../../../components/TournamentEditButton'
+import dotenv from 'dotenv';
+import { ScheduleMatchModal } from '@/components/tournaments/ScheduleMatchModal';
+
+dotenv.config();
 
 export interface Tournament {
   id: string;
@@ -28,11 +32,14 @@ export default function TournamentDetailsPage() {
   const router = useRouter();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchTournament = async () => {
       try {
-        const response = await fetch(`/api/tournaments/${params.id}`);
+        console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}`);
         const data = await response.json();
         console.log('Tournament data:', data);
         setTournament(data);
@@ -41,10 +48,36 @@ export default function TournamentDetailsPage() {
       } finally {
         setLoading(false);
       }
+      console.log("tournament", tournament);
     };
 
     fetchTournament();
   }, [params.id]);
+
+  const handleScheduleClick = (matchId: string) => {
+    setSelectedMatch(matchId);
+    setIsModalOpen(true);
+  };
+
+  const handleScheduleMatch = async (matchId: string, scheduleData: ScheduleData) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/tournaments/matches/${matchId}/schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scheduleData),
+      });
+
+      if (!response.ok) throw new Error('Failed to schedule match');
+
+      // Refresh tournament data after scheduling
+      fetchTournamentData();
+      setIsModalOpen(false);
+      setSelectedMatch(null);
+      
+    } catch (error) {
+      console.error('Error scheduling match:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -60,7 +93,7 @@ export default function TournamentDetailsPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Torneo no encontrado</h1>
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push('/tournaments')}
             className="text-blue-600 hover:text-blue-700 font-semibold"
           >
             ← Volver a torneos
@@ -74,7 +107,7 @@ export default function TournamentDetailsPage() {
     <div className="min-h-screen bg-white p-8">
       <div className="max-w-3xl mx-auto">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/tournaments')}
           className="text-blue-600 hover:text-blue-700 font-semibold mb-8 flex items-center"
         >
           ← Volver a torneos
@@ -126,6 +159,7 @@ export default function TournamentDetailsPage() {
                 className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
                 onClick={() => router.push(`/tournaments/${tournament.id}/draw`)}
               >
+
                 {tournament.format === 'group_stage' 
                   ? 'Generar Grupos'
                   : tournament.format === 'round_robin'
@@ -141,6 +175,12 @@ export default function TournamentDetailsPage() {
           </div>
         </div>
       </div>
+      <ScheduleMatchModal
+        isOpen={isModalOpen}
+        matchId={selectedMatch}
+        onClose={() => setIsModalOpen(false)}
+        onSchedule={handleScheduleMatch}
+      />
     </div>
   );
 }

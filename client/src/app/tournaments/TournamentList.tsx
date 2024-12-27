@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Calendar, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 interface Tournament {
   id: string;
@@ -27,7 +30,7 @@ export default function TournamentList() {
     const fetchTournaments = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/tournaments?${searchParams.toString()}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments?${searchParams.toString()}`);
         if (!response.ok) throw new Error('Failed to fetch tournaments');
         const data = await response.json();
         setTournaments(data);

@@ -1,4 +1,4 @@
-import db from '../config/database.js';
+import db from '../../config/database.js';
 import { randomUUID } from 'crypto';
 
 // Valid tournament formats based on the database constraint
@@ -103,6 +103,76 @@ export const tournamentService = {
     } catch (error) {
       console.error('Error in createTournament:', error);
       return { error: 'Failed to create tournament' };
+    }
+  },
+
+  async getTournamentById(id) {
+    try {
+      const { data: tournament, error } = await db
+        .from('tournaments')
+        .select(`
+          *,
+          tournament_teams (
+            team:team_id (
+              id,
+              name
+            )
+          )
+        `)
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Database error:', error);
+        if (error.code === 'PGRST116') {
+          return { error: 'Tournament not found' };
+        }
+        throw error;
+      }
+
+      return { data: tournament };
+    } catch (error) {
+      console.error('Error fetching tournament:', error);
+      return { error: 'Failed to fetch tournament' };
+    }
+  },
+
+  async updateTournament(id, updates) {
+    try {
+      console.log('Updating tournament with data:', updates);
+
+      const { data: tournament, error } = await db
+        .from('tournaments')
+        .update({
+          name: updates.name,
+          start_date: updates.start_date,
+          end_date: updates.end_date,
+          teams_limit: updates.teams_limit,
+          price: updates.price,
+          location: updates.location,
+          format: updates.format,
+          status: updates.status,
+          prize_pool: updates.prize_pool,
+          category: updates.category,
+          sign_up_limit_date: updates.sign_up_limit_date,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Database error:', error);
+        if (error.code === 'PGRST116') {
+          return { error: 'Tournament not found' };
+        }
+        throw error;
+      }
+
+      console.log('Tournament updated successfully:', tournament);
+      return { data: tournament };
+    } catch (error) {
+      console.error('Error updating tournament:', error);
+      return { error: 'Failed to update tournament' };
     }
   }
 };

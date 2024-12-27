@@ -1,0 +1,18 @@
+meta {
+  name: Register teams
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:3001/api/tournaments/5ccf2cd8-c13e-4966-9947-c3937c0f5fb7/teams/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "player1Name": "Juan García",
+      "player2Name": "Ana Martínez"
+    }
+}

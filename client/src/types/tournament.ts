@@ -54,3 +54,40 @@ export interface Tournament {
   teams: TournamentTeam[];
   format: 'single_elimination' | 'round_robin' | 'group_stage';
 }
+
+interface Set {
+  games: number;
+  tiebreak: number | null;
+}
+
+interface Score {
+  sets: Set[];
+}
+
+interface Match {
+  id: string;
+  team1: {
+    id: string;
+    name: string;
+  } | null;
+  team2: {
+    id: string;
+    name: string;
+  } | null;
+  status: 'pending' | 'completed';
+  team1_score: Score | null;
+  team2_score: Score | null;
+  winner_id: string | null;
+  scheduled_start?: string;
+  scheduled_end?: string;
+  court?: {
+    id: string;
+    name: string;
+  };
+  round: number;
+  position: number;
+}
+
+interface TournamentDraw {
+  matches: Match[];
+}

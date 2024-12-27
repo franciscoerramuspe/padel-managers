@@ -5,7 +5,7 @@ import "./globals.css";
 import './animations.css';
 import { UserProvider } from '../components/UserProvider';
 import Providers from './providers'
-
+import { Toaster } from "@/components/ui/toaster"
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000'
@@ -27,6 +27,7 @@ export default function RootLayout({
         <Providers>
           <UserProvider>
             {children}
+            <Toaster />
           </UserProvider>
         </Providers>
       </body>

@@ -5,7 +5,7 @@ import {
   generateRoundRobinMatches,
   assignGroups,
   generateGroupStageMatches,
-} from '../../../../../../utils/tournament-utils';
+} from '@/utils/tournament-utils';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
