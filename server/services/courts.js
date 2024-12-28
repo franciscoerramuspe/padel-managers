@@ -89,5 +89,38 @@ export const courtService = {
       console.error('Error in getAvailableSlots:', error);
       return { error: 'Failed to fetch available slots' };
     }
+  },
+
+  async bookCourt(matchId, { court_id, start_time, end_time }) {
+    try {
+      // Get today's date to combine with the time
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Ensure we have proper timestamp format
+      const startTime = start_time.includes('T') 
+        ? start_time 
+        : `${today}T${start_time}`;
+      
+      const endTime = end_time.includes('T') 
+        ? end_time 
+        : `${today}T${end_time}`;
+
+      const { data, error } = await db
+        .from('tournament_matches')
+        .update({
+          court_id,
+          scheduled_start: startTime,
+          scheduled_end: endTime
+        })
+        .eq('id', matchId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { data };
+    } catch (error) {
+      console.error('Error in bookCourt:', error);
+      return { error: error.message || 'Failed to book court' };
+    }
   }
 }; 

@@ -1,0 +1,47 @@
+meta {
+  name: Create-draw-round-robin
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://localhost:3001/api/tournaments/af6c3687-51df-4bab-a00f-f926a55ffc34/groups
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+      "name": "Padel Group Stage Tournament",
+      "teams_limit": 8,
+      "category": "Mixto A",
+      "start_date": "2024-04-01",
+      "end_date": "2024-04-03",
+      "price": 1500,
+      "sign_up_limit_date": "2024-03-30",
+      "format": "round_robin",
+      "status": "open",
+      "teams": [
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174001",
+          "name": "Djokovic/Sinner",
+          "seed": 1
+        },
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174002",
+          "name": "Alcaraz/Medvedev",
+          "seed": 2
+        },
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174003",
+          "name": "Tsitsipas/Rublev",
+          "seed": 3
+        },
+        {
+          "id": "123e4567-e89b-12d3-a456-426614174004",
+          "name": "Rune/Zverev",
+          "seed": 4
+        }
+      ]
+  }
+}

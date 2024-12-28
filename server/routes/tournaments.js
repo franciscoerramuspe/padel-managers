@@ -2,6 +2,7 @@ import express from 'express';
 import { tournamentService } from '../services/tournament/tournaments.js';
 import { tournamentDrawService } from '../services/tournament/tournament-draw.js';
 import { TournamentTeamsService } from '../services/tournament-teams.js';
+import { courtService } from '../services/courts.js';
 import db from '../config/database.js';
 
 const router = express.Router();
@@ -106,7 +107,7 @@ router.get('/matches/:id', async (req, res) => {
 
 router.post('/matches/:id/schedule', async (req, res) => {
   const { id } = req.params;
-  const { data, error } = await tournamentDrawService.scheduleMatch(id, req.body);
+  const { data, error } = await courtService.bookCourt(id, req.body);
   
   if (error) {
     return res.status(500).json({ error });
@@ -376,6 +377,29 @@ router.get('/:id/matches', async (req, res) => {
   } catch (error) {
     console.error('Error fetching matches:', error);
     res.status(500).json({ error: 'Failed to fetch matches' });
+  }
+});
+
+router.post('/:id/groups', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { numberOfGroups = 2 } = req.body;
+
+    console.log('Generating groups for tournament:', id);
+    console.log('Number of groups:', numberOfGroups);
+
+    const groups = await tournamentDrawService.generateGroupStageGroups(id, numberOfGroups);
+    
+    console.log('Generated groups:', groups);
+
+    if (!groups) {
+      return res.status(400).json({ error: 'Failed to generate groups' });
+    }
+
+    res.json({ groups });
+  } catch (error) {
+    console.error('Group generation error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
