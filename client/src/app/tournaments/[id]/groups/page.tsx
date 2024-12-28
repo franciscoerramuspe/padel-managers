@@ -24,6 +24,7 @@ export default function TournamentGroupsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalTeams, setTotalTeams] = useState(0);
+  const [groupsAreGenerated, setGroupsAreGenerated] = useState(false);
   useEffect(() => {
     const fetchTournament = async () => {
       try {
@@ -41,6 +42,7 @@ export default function TournamentGroupsPage() {
       }
     };
 
+    
     fetchTournament();
   }, [params.id]);
 
@@ -81,9 +83,8 @@ export default function TournamentGroupsPage() {
             ← Volver al torneo
           </Link>
         </div>
-
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">
             {tournament.format === 'round_robin' 
               ? 'Cuadros Round Robin'
               : 'Grupos del Torneo'}

@@ -34,6 +34,7 @@ export default function TournamentDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [groupsAreGenerated, setGroupsAreGenerated] = useState(false);
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -51,6 +52,14 @@ export default function TournamentDetailsPage() {
       console.log("tournament", tournament);
     };
 
+    const fetchGroups = async () => {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}/groups`);
+      const data = await response.json();
+      console.log('Data:', Object.keys(data.groups).length > 0);
+      setGroupsAreGenerated(Object.keys(data.groups).length > 0);
+    }
+
+    fetchGroups();
     fetchTournament();
   }, [params.id]);
 
@@ -159,11 +168,7 @@ export default function TournamentDetailsPage() {
                 className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
                 onClick={() => router.push(`/tournaments/${tournament.id}/groups`)}
               >
-                {tournament.format === 'round_robin' 
-                  ? 'Crear Cuadros Round Robin'
-                  : tournament.format === 'group_stage'
-                    ? 'Generar Grupos'
-                    : 'Crear Cuadro'}
+                {groupsAreGenerated ? 'Ver Grupos' : 'Generar Grupos'}
               </button>
               <button 
                 className="flex-1 bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300"
