@@ -125,6 +125,7 @@ export default function TournamentDrawPage() {
 
   const handleScheduleMatch = async (matchId: string, scheduleData: ScheduleData) => {
     try {
+      console.log('Scheduling match:', matchId);
       const response = await fetch(`http://localhost:3001/api/tournaments/matches/${matchId}/schedule`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

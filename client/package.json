@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@g-loot/react-tournament-brackets": "^1.0.31-rc",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@nivo/bar": "^0.87.0",

@@ -51,6 +51,7 @@ export function ScheduleMatchModal({ isOpen, matchId, onClose, onSchedule }: Sch
   useEffect(() => {
     if (selectedCourt && selectedDate) {
       setIsLoading(true);
+      console.log(`http://localhost:3001/api/courts/${selectedCourt}/availability?date=${selectedDate}`);
       fetch(`http://localhost:3001/api/courts/${selectedCourt}/availability?date=${selectedDate}`)
         .then(res => res.json())
         .then(data => {
@@ -81,19 +82,23 @@ export function ScheduleMatchModal({ isOpen, matchId, onClose, onSchedule }: Sch
 
     setIsLoading(true);
     try {
-      // Format the times properly
-      const startHour = selectedSlot.start.split(':')[0].padStart(2, '0');
-      const endHour = selectedSlot.end.split(':')[0].padStart(2, '0');
+      console.log('Selected slot:', selectedSlot); // Debug log
+      console.log('Selected date:', selectedDate); // Debug log
 
-      const startTime = `${selectedDate}T${startHour}:00:00`;
-      const endTime = `${selectedDate}T${endHour}:00:00`;
+      // Make sure we have the time in HH:mm format
+      const startTime = selectedSlot.start.padStart(5, '0'); // Ensures "HH:mm" format
+      const endTime = selectedSlot.end.padStart(5, '0');     // Ensures "HH:mm" format
 
-      console.log('Submitting times:', { startTime, endTime }); // Debug log
+      const startDateTime = `${selectedDate}T${startTime}:00Z`;
+      const endDateTime = `${selectedDate}T${endTime}:00Z`;
+
+      console.log('Start DateTime:', startDateTime); // Debug log
+      console.log('End DateTime:', endDateTime);     // Debug log
 
       await onSchedule(matchId, {
         court_id: selectedCourt,
-        start_time: startTime,
-        end_time: endTime
+        start_time: startDateTime,
+        end_time: endDateTime
       });
 
       toast({

@@ -157,13 +157,12 @@ export default function TournamentDetailsPage() {
             <div className="flex gap-4 flex-1">
               <button 
                 className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-300"
-                onClick={() => router.push(`/tournaments/${tournament.id}/draw`)}
+                onClick={() => router.push(`/tournaments/${tournament.id}/groups`)}
               >
-
-                {tournament.format === 'group_stage' 
-                  ? 'Generar Grupos'
-                  : tournament.format === 'round_robin'
-                    ? 'Generar Liga'
+                {tournament.format === 'round_robin' 
+                  ? 'Crear Cuadros Round Robin'
+                  : tournament.format === 'group_stage'
+                    ? 'Generar Grupos'
                     : 'Crear Cuadro'}
               </button>
               <button 
