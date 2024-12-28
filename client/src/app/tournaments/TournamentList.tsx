@@ -88,7 +88,7 @@ export default function TournamentList() {
               </p>
               <p className="text-sm text-gray-600 flex items-center">
                 <Users className="mr-2" size={16} />
-                Equipos: {tournament.current_registrations}/{tournament.teams_limit}
+                Equipos: {tournament.teams.length}/{tournament.teams_limit}
               </p>
               <p className="text-sm text-gray-600 flex items-center">
                 <Clock className="mr-2" size={16} />

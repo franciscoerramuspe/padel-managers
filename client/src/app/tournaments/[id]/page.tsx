@@ -13,7 +13,7 @@ dotenv.config();
 export interface Tournament {
   id: string;
   name: string;
-  teams: any[];
+  tournament_teams: any[];
   teams_limit: number;
   current_registrations: number;
   category: string;
@@ -78,8 +78,6 @@ export default function TournamentDetailsPage() {
 
       if (!response.ok) throw new Error('Failed to schedule match');
 
-      // Refresh tournament data after scheduling
-      fetchTournamentData();
       setIsModalOpen(false);
       setSelectedMatch(null);
       
@@ -148,7 +146,7 @@ export default function TournamentDetailsPage() {
               <Users className="mr-3" size={20} />
               <div>
                 <p className="font-semibold">Equipos registrados</p>
-                <p>{tournament.current_registrations} de {tournament.teams_limit} equipos</p>
+                <p>{tournament.tournament_teams.length} de {tournament.teams_limit} equipos</p>
               </div>
             </div>
 
