@@ -803,13 +803,12 @@ export class TournamentDrawService {
 
       const standings = {};
 
-      // First pass: Calculate all stats
       matches.forEach(match => {
+        if (!match.group) return;
         if (!standings[match.group]) {
           standings[match.group] = new Map();
         }
 
-        // Initialize teams if needed
         [match.team1_id, match.team2_id].forEach(teamId => {
           if (!standings[match.group].has(teamId)) {
             standings[match.group].set(teamId, {
@@ -828,59 +827,71 @@ export class TournamentDrawService {
           }
         });
 
-        // Parse score and update stats
-        const [set1, set2] = match.score ? match.score.split(', ') : ['0-0', '0-0'];
-        const [games1Won, games1Lost] = set1.split('-').map(Number);
-        const [games2Won, games2Lost] = set2.split('-').map(Number);
+        const team1 = standings[match.group].get(match.team1_id);
+        const team2 = standings[match.group].get(match.team2_id);
+        
+        // Process each set
+        let team1SetsWon = 0;
+        let team1GamesWon = 0;
+        let team2SetsWon = 0;
+        let team2GamesWon = 0;
 
-        const winner = standings[match.group].get(match.winner_id);
-        const loser = standings[match.group].get(
-          match.winner_id === match.team1_id ? match.team2_id : match.team1_id
-        );
+        match.team1_score.sets.forEach((set, index) => {
+          const team2Set = match.team2_score.sets[index];
+          
+          team1GamesWon += set.games;
+          team2GamesWon += team2Set.games;
+
+          if (set.games > team2Set.games || 
+              (set.games === 6 && set.tiebreak > team2Set.tiebreak)) {
+            team1SetsWon++;
+          } else {
+            team2SetsWon++;
+          }
+        });
 
         // Update match stats
-        winner.matchesPlayed++;
-        winner.wins++;
-        winner.points += 2;
-        // Count sets won/lost
-        winner.setsWon += (games1Won > games1Lost ? 1 : 0) + (games2Won > games2Lost ? 1 : 0);
-        winner.setsLost += (games1Won < games1Lost ? 1 : 0) + (games2Won < games2Lost ? 1 : 0);
-        // Count games
-        winner.gamesWon += games1Won + games2Won;
-        winner.gamesLost += games1Lost + games2Lost;
+        team1.matchesPlayed++;
+        team2.matchesPlayed++;
 
-        loser.matchesPlayed++;
-        loser.losses++;
-        loser.points += 1;
-        // Count sets won/lost for loser
-        loser.setsWon += (games1Won < games1Lost ? 1 : 0) + (games2Won < games2Lost ? 1 : 0);
-        loser.setsLost += (games1Won > games1Lost ? 1 : 0) + (games2Won > games2Lost ? 1 : 0);
-        // Count games for loser
-        loser.gamesWon += games1Lost + games2Lost;
-        loser.gamesLost += games1Won + games2Won;
+        // Update wins, losses and points based on winner
+        if (match.winner_id === match.team1_id) {
+          team1.wins++;
+          team1.points += 2;  // Winner gets 2 points
+          team2.losses++;
+          team2.points += 1;  // Loser gets 1 point
+        } else {
+          team2.wins++;
+          team2.points += 2;  // Winner gets 2 points
+          team1.losses++;
+          team1.points += 1;  // Loser gets 1 point
+        }
+
+        // Update set and game stats
+        team1.setsWon += team1SetsWon;
+        team1.setsLost += team2SetsWon;
+        team1.gamesWon += team1GamesWon;
+        team1.gamesLost += team2GamesWon;
+
+        team2.setsWon += team2SetsWon;
+        team2.setsLost += team1SetsWon;
+        team2.gamesWon += team2GamesWon;
+        team2.gamesLost += team1GamesWon;
       });
 
       // Calculate differences and sort
       const result = {};
       for (const [group, groupStandings] of Object.entries(standings)) {
-        // Calculate set and game differences
         for (const team of groupStandings.values()) {
           team.setsDiff = team.setsWon - team.setsLost;
           team.gamesDiff = team.gamesWon - team.gamesLost;
         }
 
-        // Sort teams according to the hierarchy
         result[group] = Array.from(groupStandings.values())
           .sort((a, b) => {
-            // 1. Points
             if (b.points !== a.points) return b.points - a.points;
-            
-            // 2. Set difference (only if points are tied)
             if (b.setsDiff !== a.setsDiff) return b.setsDiff - a.setsDiff;
-            
-            // 3. Game difference (only if sets are tied)
             if (b.gamesDiff !== a.gamesDiff) return b.gamesDiff - a.gamesDiff;
-            
             return 0;
           });
       }
