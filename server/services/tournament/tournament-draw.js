@@ -372,78 +372,524 @@ export class TournamentDrawService {
     }
   }
 
+  async getGroupStageGroups(tournamentId) {
+    try {
+      const { data: groups, error } = await this.db
+        .from('tournament_groups')
+        .select('*')
+        .eq('tournament_id', tournamentId);
+
+      if (error) throw error;
+      return { groups };
+    } catch (error) {
+      console.error('Error getting groups:', error);
+      return { error: 'Failed to get tournament groups' };
+    }
+  }
+
   async generateGroupStageGroups(tournamentId, numberOfGroups = 2) {
-    console.log('Iniciando generación de grupos para torneo:', tournamentId);
-    
-    const { data: tournament, error: tournamentError } = await this.db
-      .from('tournaments')
-      .select(`
-        *,
-        tournament_teams (
-          team:team_id (
-            id,
-            name
+    try {
+      console.log('Iniciando generación de grupos para torneo:', tournamentId);
+      
+      const { data: tournament, error: tournamentError } = await this.db
+        .from('tournaments')
+        .select(`
+          *,
+          tournament_teams (
+            team:team_id (
+              id,
+              name
+            )
           )
-        )
-      `)
-      .eq('id', tournamentId)
-      .single();
+        `)
+        .eq('id', tournamentId)
+        .single();
 
-    if (tournamentError) throw tournamentError;
+      if (tournamentError) throw tournamentError;
 
-    if (!tournament.tournament_teams || tournament.tournament_teams.length === 0) {
-      throw new Error('No hay equipos en el torneo');
-    }
+      if (!tournament.tournament_teams || tournament.tournament_teams.length === 0) {
+        throw new Error('No hay equipos en el torneo');
+      }
 
-    const teams = tournament.tournament_teams
-      .map((tt, index) => ({
-        ...tt.team,
-        seed: index + 1
-      }));
+      const teams = tournament.tournament_teams
+        .map((tt, index) => ({
+          ...tt.team,
+          seed: index + 1
+        }));
 
-    if (teams.length < numberOfGroups * 2) {
-      throw new Error(`No hay suficientes equipos (${teams.length}) para el número de grupos solicitado (${numberOfGroups})`);
-    }
+      if (teams.length < numberOfGroups * 2) {
+        throw new Error(`No hay suficientes equipos (${teams.length}) para el número de grupos solicitado (${numberOfGroups})`);
+      }
 
-    const groups = {};
-    const groupNames = Array(numberOfGroups)
-      .fill()
-      .map((_, i) => String.fromCharCode(65 + i));
+      const groups = {};
+      const groupNames = Array(numberOfGroups)
+        .fill()
+        .map((_, i) => String.fromCharCode(65 + i));
 
-    groupNames.forEach(letter => {
-      groups[`grupo${letter}`] = {
-        name: `GRUPO ${letter}`,
-        teams: []
-      };
-    });
-
-    let forward = true;
-    let currentGroupIndex = 0;
-
-    teams.forEach((team) => {
-      const groupLetter = groupNames[currentGroupIndex];
-      groups[`grupo${groupLetter}`].teams.push({
-        name: team.name,
-        id: team.id,
-        seed: team.seed
+      groupNames.forEach(letter => {
+        groups[`grupo${letter}`] = {
+          name: `GRUPO ${letter}`,
+          teams: []
+        };
       });
 
-      if (forward) {
-        currentGroupIndex++;
-        if (currentGroupIndex >= numberOfGroups) {
-          currentGroupIndex = numberOfGroups - 1;
-          forward = false;
+      let forward = true;
+      let currentGroupIndex = 0;
+
+      teams.forEach((team) => {
+        const groupLetter = groupNames[currentGroupIndex];
+        groups[`grupo${groupLetter}`].teams.push({
+          name: team.name,
+          id: team.id,
+          seed: team.seed
+        });
+
+        if (forward) {
+          currentGroupIndex++;
+          if (currentGroupIndex >= numberOfGroups) {
+            currentGroupIndex = numberOfGroups - 1;
+            forward = false;
+          }
+        } else {
+          currentGroupIndex--;
+          if (currentGroupIndex < 0) {
+            currentGroupIndex = 0;
+            forward = true;
+          }
         }
-      } else {
-        currentGroupIndex--;
-        if (currentGroupIndex < 0) {
-          currentGroupIndex = 0;
-          forward = true;
+      });
+
+      // Before saving, check if groups exist and delete old matches
+      await this.db
+        .from('tournament_matches')
+        .delete()
+        .eq('tournament_id', tournamentId)
+        .eq('round', 1); // Delete only group stage matches
+
+      // Use upsert instead of insert for groups
+      const { error } = await this.db
+        .from('tournament_groups')
+        .upsert({
+          tournament_id: tournamentId,
+          groups: groups,
+          created_at: new Date().toISOString()
+        }, {
+          onConflict: 'tournament_id'
+        });
+
+      if (error) throw error;
+      return groups;
+    } catch (error) {
+      console.error('Error generating groups:', error);
+      throw error;
+    }
+  }
+
+  async calculateGroupStandings(tournamentId, groupId) {
+    try {
+      const { data: matches, error } = await this.db
+        .from('tournament_matches')
+        .select(`
+          *,
+          team1:team1_id(id, name),
+          team2:team2_id(id, name)
+        `)
+        .eq('tournament_id', tournamentId)
+        .eq('group', groupId)
+        .eq('round', 1); // Group stage matches are in round 1
+
+      if (error) throw error;
+
+      const standings = {};
+      
+      // Initialize standings for all teams
+      matches.forEach(match => {
+        if (!standings[match.team1_id]) {
+          standings[match.team1_id] = {
+            teamId: match.team1_id,
+            teamName: match.team1.name,
+            played: 0,
+            won: 0,
+            lost: 0,
+            points: 0
+          };
+        }
+        if (!standings[match.team2_id]) {
+          standings[match.team2_id] = {
+            teamId: match.team2_id,
+            teamName: match.team2.name,
+            played: 0,
+            won: 0,
+            lost: 0,
+            points: 0
+          };
+        }
+      });
+
+      // Calculate standings
+      matches.forEach(match => {
+        if (!match.winner_id) return;
+
+        standings[match.team1_id].played++;
+        standings[match.team2_id].played++;
+
+        if (match.winner_id === match.team1_id) {
+          standings[match.team1_id].won++;
+          standings[match.team1_id].points += 3;
+          standings[match.team2_id].lost++;
+        } else {
+          standings[match.team2_id].won++;
+          standings[match.team2_id].points += 3;
+          standings[match.team1_id].lost++;
+        }
+      });
+
+      return Object.values(standings).sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.won !== a.won) return b.won - a.won;
+        return b.played - a.played;
+      });
+    } catch (error) {
+      console.error('Error calculating group standings:', error);
+      throw error;
+    }
+  }
+
+  async generateKnockoutPhase(tournamentId, teamsPerGroup) {
+    try {
+      // Get group standings
+      const standings = await this.getGroupStandings(tournamentId);
+      
+      // Get qualified teams based on admin's selection
+      const qualifiedTeams = [];
+      for (const [group, groupStandings] of Object.entries(standings)) {
+        const advancingTeams = groupStandings.slice(0, teamsPerGroup).map((team, index) => ({
+          ...team,
+          groupPosition: index + 1,
+          group
+        }));
+        qualifiedTeams.push(...advancingTeams);
+      }
+
+      // Calculate the number of rounds needed
+      // For example: 5-8 teams need 3 rounds, 9-16 teams need 4 rounds
+      const totalTeams = qualifiedTeams.length;
+      const rounds = Math.ceil(Math.log2(totalTeams));
+      const totalMatches = Math.pow(2, rounds) - 1;
+      const firstRoundMatches = Math.pow(2, rounds - 1);
+      const byes = Math.pow(2, rounds) - totalTeams; // Number of teams that get a "bye"
+
+      // Create all knockout matches
+      const knockoutMatches = [];
+      let position = 1;
+      let currentRound = 1;
+      let matchesInRound = firstRoundMatches;
+
+      while (currentRound <= rounds) {
+        for (let i = 0; i < matchesInRound; i++) {
+          const match = {
+            id: crypto.randomUUID(),
+            tournament_id: tournamentId,
+            round: currentRound,
+            position: position++,
+            team1_id: null,
+            team2_id: null,
+            status: 'pending',
+            created_at: new Date().toISOString()
+          };
+
+          // For first round matches, assign teams if we have them
+          if (currentRound === 1) {
+            const team1Index = i * 2;
+            const team2Index = i * 2 + 1;
+
+            if (team1Index < qualifiedTeams.length) {
+              match.team1_id = qualifiedTeams[team1Index].teamId;
+            }
+            if (team2Index < qualifiedTeams.length) {
+              match.team2_id = qualifiedTeams[team2Index].teamId;
+            }
+          }
+
+          knockoutMatches.push(match);
+        }
+
+        matchesInRound = matchesInRound / 2;
+        currentRound++;
+      }
+
+      // Insert knockout matches into database
+      const { error } = await this.db
+        .from('tournament_matches')
+        .insert(knockoutMatches);
+
+      if (error) throw error;
+
+      return {
+        message: 'Knockout phase generated successfully',
+        matches: knockoutMatches,
+        qualifiedTeams,
+        totalRounds: rounds
+      };
+    } catch (error) {
+      console.error('Error generating knockout phase:', error);
+      throw error;
+    }
+  }
+
+  async isGroupStageComplete(tournamentId) {
+    try {
+      const { data: matches, error } = await this.db
+        .from('tournament_matches')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('round', 1); // Group stage matches
+
+      if (error) throw error;
+
+      // Check if all matches have a winner
+      return matches.every(match => match.winner_id !== null);
+    } catch (error) {
+      console.error('Error checking group stage completion:', error);
+      throw error;
+    }
+  }
+
+  async generateGroupMatches(tournamentId, groups) {
+    try {
+      const matches = [];
+      let position = 1;
+      
+      // For each group, generate round robin matches
+      for (const [groupId, group] of Object.entries(groups)) {
+        const teams = group.teams;
+        
+        // Generate round-robin matches for this group
+        for (let i = 0; i < teams.length; i++) {
+          for (let j = i + 1; j < teams.length; j++) {
+            matches.push({
+              id: randomUUID(),
+              tournament_id: tournamentId,
+              round: 1,
+              position: position++,
+              team1_id: teams[i].id,
+              team2_id: teams[j].id,
+              group: groupId,
+              status: 'pending',
+              created_at: new Date().toISOString()
+            });
+          }
         }
       }
-    });
 
-    return groups;
+      // Insert all matches into the database
+      const { error } = await this.db
+        .from('tournament_matches')
+        .insert(matches);
+
+      if (error) throw error;
+      
+      return matches;
+    } catch (error) {
+      console.error('Error generating group matches:', error);
+      throw error;
+    }
+  }
+
+  async updateMatch(matchId, { teams, winner_id }) {
+    try {
+      const { data: match, error: matchError } = await this.db
+        .from('tournament_matches')
+        .select('*')
+        .eq('id', matchId)
+        .single();
+
+      if (matchError) throw matchError;
+      if (!match) throw new Error('Match not found');
+
+      // Debug logs
+      console.log('Match:', match);
+      console.log('Incoming winner_id:', winner_id);
+      console.log('team1_id:', match.team1_id);
+      console.log('team2_id:', match.team2_id);
+      console.log('Comparison:', {
+        isTeam1: winner_id === match.team1_id,
+        isTeam2: winner_id === match.team2_id
+      });
+
+      // Validate that winner_id is one of the teams
+      if (winner_id !== match.team1_id && winner_id !== match.team2_id) {
+        throw new Error('Winner must be one of the teams in the match');
+      }
+
+      // Find team scores from request
+      const team1 = teams.find(t => t.id === match.team1_id);
+      const team2 = teams.find(t => t.id === match.team2_id);
+
+      if (!team1 || !team2) {
+        throw new Error('Scores must be provided for both teams');
+      }
+
+      // Validate score format
+      if (!this.isValidScore(team1.score) || !this.isValidScore(team2.score)) {
+        throw new Error('Invalid score format');
+      }
+
+      // Validate that the winner actually won based on sets
+      const team1SetsWon = team1.score.sets.filter(set => 
+        set.games > (team2.score.sets[team1.score.sets.indexOf(set)].games) ||
+        (set.games === 6 && set.tiebreak > team2.score.sets[team1.score.sets.indexOf(set)].tiebreak)
+      ).length;
+
+      const team2SetsWon = team2.score.sets.filter(set =>
+        set.games > (team1.score.sets[team2.score.sets.indexOf(set)].games) ||
+        (set.games === 6 && set.tiebreak > team1.score.sets[team2.score.sets.indexOf(set)].tiebreak)
+      ).length;
+
+      if ((team1SetsWon > team2SetsWon && winner_id !== match.team1_id) ||
+          (team2SetsWon > team1SetsWon && winner_id !== match.team2_id)) {
+        throw new Error('Winner ID does not match the score');
+      }
+
+      const { error } = await this.db
+        .from('tournament_matches')
+        .update({
+          winner_id,
+          team1_score: team1.score,
+          team2_score: team2.score,
+          status: 'completed'
+        })
+        .eq('id', matchId);
+
+      if (error) throw error;
+
+      return { message: 'Match updated successfully' };
+    } catch (error) {
+      console.error('Error updating match:', error);
+      throw error;
+    }
+  }
+
+  // Helper method to validate score format
+  isValidScore(score) {
+    if (!score || !Array.isArray(score.sets)) return false;
+    
+    return score.sets.every(set => {
+      // Games must be numbers between 0 and 7
+      if (typeof set.games !== 'number' || set.games < 0 || set.games > 7) return false;
+      
+      // Tiebreak must be null or a number >= 0
+      if (set.tiebreak !== null && (typeof set.tiebreak !== 'number' || set.tiebreak < 0)) return false;
+      
+      // If games is 7, previous set must exist and be 6-6
+      if (set.games === 7) {
+        const setIndex = score.sets.indexOf(set);
+        if (setIndex === 0) return false;
+      }
+      
+      return true;
+    });
+  }
+
+  async getGroupStandings(tournamentId) {
+    try {
+      const { data: matches, error: matchError } = await this.db
+        .from('tournament_matches')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('status', 'completed');
+
+      if (matchError) throw matchError;
+
+      const standings = {};
+
+      // First pass: Calculate all stats
+      matches.forEach(match => {
+        if (!standings[match.group]) {
+          standings[match.group] = new Map();
+        }
+
+        // Initialize teams if needed
+        [match.team1_id, match.team2_id].forEach(teamId => {
+          if (!standings[match.group].has(teamId)) {
+            standings[match.group].set(teamId, {
+              teamId,
+              matchesPlayed: 0,
+              wins: 0,
+              losses: 0,
+              points: 0,
+              setsWon: 0,
+              setsLost: 0,
+              setsDiff: 0,
+              gamesWon: 0,
+              gamesLost: 0,
+              gamesDiff: 0
+            });
+          }
+        });
+
+        // Parse score and update stats
+        const [set1, set2] = match.score ? match.score.split(', ') : ['0-0', '0-0'];
+        const [games1Won, games1Lost] = set1.split('-').map(Number);
+        const [games2Won, games2Lost] = set2.split('-').map(Number);
+
+        const winner = standings[match.group].get(match.winner_id);
+        const loser = standings[match.group].get(
+          match.winner_id === match.team1_id ? match.team2_id : match.team1_id
+        );
+
+        // Update match stats
+        winner.matchesPlayed++;
+        winner.wins++;
+        winner.points += 2;
+        // Count sets won/lost
+        winner.setsWon += (games1Won > games1Lost ? 1 : 0) + (games2Won > games2Lost ? 1 : 0);
+        winner.setsLost += (games1Won < games1Lost ? 1 : 0) + (games2Won < games2Lost ? 1 : 0);
+        // Count games
+        winner.gamesWon += games1Won + games2Won;
+        winner.gamesLost += games1Lost + games2Lost;
+
+        loser.matchesPlayed++;
+        loser.losses++;
+        loser.points += 1;
+        // Count sets won/lost for loser
+        loser.setsWon += (games1Won < games1Lost ? 1 : 0) + (games2Won < games2Lost ? 1 : 0);
+        loser.setsLost += (games1Won > games1Lost ? 1 : 0) + (games2Won > games2Lost ? 1 : 0);
+        // Count games for loser
+        loser.gamesWon += games1Lost + games2Lost;
+        loser.gamesLost += games1Won + games2Won;
+      });
+
+      // Calculate differences and sort
+      const result = {};
+      for (const [group, groupStandings] of Object.entries(standings)) {
+        // Calculate set and game differences
+        for (const team of groupStandings.values()) {
+          team.setsDiff = team.setsWon - team.setsLost;
+          team.gamesDiff = team.gamesWon - team.gamesLost;
+        }
+
+        // Sort teams according to the hierarchy
+        result[group] = Array.from(groupStandings.values())
+          .sort((a, b) => {
+            // 1. Points
+            if (b.points !== a.points) return b.points - a.points;
+            
+            // 2. Set difference (only if points are tied)
+            if (b.setsDiff !== a.setsDiff) return b.setsDiff - a.setsDiff;
+            
+            // 3. Game difference (only if sets are tied)
+            if (b.gamesDiff !== a.gamesDiff) return b.gamesDiff - a.gamesDiff;
+            
+            return 0;
+          });
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error getting group standings:', error);
+      throw error;
+    }
   }
 }
 

@@ -1,0 +1,49 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:3001/api/tournaments/matches/5382bbda-5005-4f94-ae6f-a83ee3daad98/update
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "teams": [
+      {
+        "id": "dad4b525-a39f-45a6-aaf7-481534f3f48b",
+        "score": {
+          "sets": [
+            {
+              "games": 6,
+              "tiebreak": null
+            },
+            {
+              "games": 7,
+              "tiebreak": 7
+            }
+          ]
+        }
+      },
+      {
+        "id": "79615391-292c-4d99-8244-9ab79cb1813c",
+        "score": {
+          "sets": [
+            {
+              "games": 4,
+              "tiebreak": null
+            },
+            {
+              "games": 6,
+              "tiebreak": 5
+            }
+          ]
+        }
+      }
+    ],
+    "winner_id": "dad4b525-a39f-45a6-aaf7-481534f3f48b"
+  }
+}

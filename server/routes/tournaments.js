@@ -380,25 +380,89 @@ router.get('/:id/matches', async (req, res) => {
   }
 });
 
+router.get('/:id/groups', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const groups = await tournamentDrawService.getGroupStageGroups(id);
+    
+    if (groups.error) {
+      return res.status(400).json({ error: groups.error });
+    }
+
+    // If groups exist, return them, otherwise return empty object
+    res.json({ groups: groups.groups?.[0]?.groups || {} });
+  } catch (error) {
+    console.error('Error fetching groups:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post('/:id/groups', async (req, res) => {
   try {
     const { id } = req.params;
     const { numberOfGroups = 2 } = req.body;
 
-    console.log('Generating groups for tournament:', id);
-    console.log('Number of groups:', numberOfGroups);
-
+    // First generate the groups
     const groups = await tournamentDrawService.generateGroupStageGroups(id, numberOfGroups);
     
-    console.log('Generated groups:', groups);
+    // Then generate the matches for these groups
+    const matches = await tournamentDrawService.generateGroupMatches(id, groups);
 
-    if (!groups) {
-      return res.status(400).json({ error: 'Failed to generate groups' });
+    res.json({ 
+      groups,
+      matches 
+    });
+  } catch (error) {
+    console.error('Error generating groups and matches:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/:id/knockout', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { teamsPerGroup } = req.body;
+
+    if (!teamsPerGroup) {
+      return res.status(400).json({ error: 'teamsPerGroup is required' });
     }
 
-    res.json({ groups });
+    const result = await tournamentDrawService.generateKnockoutPhase(id, teamsPerGroup);
+    res.json(result);
   } catch (error) {
-    console.error('Group generation error:', error);
+    console.error('Error generating knockout phase:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// We should also modify the match update endpoint to check if group stage is complete
+router.post('/matches/:matchId/update', async (req, res) => {
+  try {
+    const { matchId } = req.params;
+    const { teams, winner_id } = req.body;
+    
+    if (!teams || !winner_id) {
+      return res.status(400).json({ 
+        error: 'teams and winner_id are required',
+        received: { teams: !!teams, winner_id: !!winner_id }
+      });
+    }
+
+    const result = await tournamentDrawService.updateMatch(matchId, { teams, winner_id });
+    res.json(result);
+  } catch (error) {
+    console.error('Error updating match:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:id/standings', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const standings = await tournamentDrawService.getGroupStandings(id);
+    res.json(standings);
+  } catch (error) {
+    console.error('Error getting standings:', error);
     res.status(500).json({ error: error.message });
   }
 });
