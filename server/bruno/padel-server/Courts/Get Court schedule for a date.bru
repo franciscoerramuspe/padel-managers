@@ -1,0 +1,15 @@
+meta {
+  name: Get Court schedule for a date
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:3001/api/courts/31e60a86-02d4-486b-a919-5b9ba25f687e/availability?date=2024-03-21
+  body: none
+  auth: none
+}
+
+params:query {
+  date: 2024-03-21
+}

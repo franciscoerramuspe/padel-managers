@@ -1,0 +1,19 @@
+meta {
+  name: schedule-tournament-match
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:3001/api/tournaments/matches/a798e0ac-1bae-4807-9392-da9b514bd1a1/schedule
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "court_id": "fe452bea-1b68-47db-9a16-e01891cc386e",
+    "start_time": "2024-04-01T10:00:00Z",
+    "end_time": "2024-04-01T11:00:00Z"
+  }
+}

@@ -1,0 +1,39 @@
+.tournament-bracket {
+  display: flex;
+  gap: 40px;
+  padding: 20px;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.match {
+  width: 200px;
+  margin: 10px;
+}
+
+.team {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.team.winner {
+  background-color: #f6ffed;
+  font-weight: bold;
+}
+
+.round-robin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.round-robin .round {
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 8px;
+}

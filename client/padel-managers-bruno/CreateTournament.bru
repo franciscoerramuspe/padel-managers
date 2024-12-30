@@ -1,0 +1,75 @@
+meta {
+  name: CreateTournament
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:3000/api/tournaments
+  body: json
+  auth: none
+}
+
+params:query {
+  : 
+}
+
+body:json {
+  {
+    "name": "round robin testt",
+    "teams_limit": 6,
+    "category": "Mixto B",
+    "start_date": "2024-03-24",
+    "end_date": "2024-03-26",
+    "price": 1000,
+    "sign_up_limit_date": "2024-03-23",
+    "format": "group_stage",
+    "status": "open",
+    "players": [
+      { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Juan" },
+      { "id": "123e4567-e89b-12d3-a456-426614174002", "name": "Ana" },
+      { "id": "123e4567-e89b-12d3-a456-426614174003", "name": "Carlos" },
+      { "id": "123e4567-e89b-12d3-a456-426614174004", "name": "María" },
+      { "id": "123e4567-e89b-12d3-a456-426614174005", "name": "Diego" },
+      { "id": "123e4567-e89b-12d3-a456-426614174006", "name": "Laura" },
+      { "id": "123e4567-e89b-12d3-a456-426614174007", "name": "Pablo" },
+      { "id": "123e4567-e89b-12d3-a456-426614174008", "name": "Sofia" },
+      { "id": "123e4567-e89b-12d3-a456-426614174009", "name": "Luis" },
+      { "id": "123e4567-e89b-12d3-a456-426614174010", "name": "Carmen" },
+      { "id": "123e4567-e89b-12d3-a456-426614174011", "name": "Roberto" },
+      { "id": "123e4567-e89b-12d3-a456-426614174012", "name": "Elena" }
+    ],
+    "teams": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174101",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174001", "name": "Juan" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174002", "name": "Ana" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174102",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174003", "name": "Carlos" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174004", "name": "María" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174103",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174005", "name": "Diego" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174006", "name": "Laura" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174104",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174007", "name": "Pablo" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174008", "name": "Sofia" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174105",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174009", "name": "Luis" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174010", "name": "Carmen" }
+      },
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174106",
+        "player1": { "id": "123e4567-e89b-12d3-a456-426614174011", "name": "Roberto" },
+        "player2": { "id": "123e4567-e89b-12d3-a456-426614174012", "name": "Elena" }
+      }
+    ]
+  }
+}

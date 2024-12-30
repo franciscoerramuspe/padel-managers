@@ -1,0 +1,15 @@
+meta {
+  name: Get Tournaments
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:3001/api/tournaments
+  body: none
+}
+
+query {
+  startDate: 2024-01-01
+  endDate: 2024-12-31
+} 
