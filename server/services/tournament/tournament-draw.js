@@ -817,11 +817,12 @@ export class TournamentDrawService {
     }
   }
 
-  // Helper method to validate score format
   isValidScore(score) {
+    console.log('score', score);
     if (!score || !Array.isArray(score.sets)) return false;
     
     return score.sets.every(set => {
+      console.log('set', set);
       // Games must be numbers between 0 and 7
       if (typeof set.games !== 'number' || set.games < 0 || set.games > 7) return false;
       
@@ -971,6 +972,19 @@ export class TournamentDrawService {
       })));
 
       const totalMatches = matches.length;
+      const completedMatches = matches.filter(m => m.winner_id).length;
+      const isComplete = totalMatches > 0 && completedMatches === totalMatches;
+
+      return {
+        totalMatches,
+        completedMatches,
+        isComplete
+      };
+    } catch (error) {
+      console.error('Error getting group status:', error);
+      throw error;
+    }
+  }
 }
 
 // Create and export the instance
