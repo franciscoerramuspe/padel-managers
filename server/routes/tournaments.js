@@ -116,15 +116,70 @@ router.post('/matches/:id/schedule', async (req, res) => {
   res.json(data);
 });
 
-router.put('/matches/:id/score', async (req, res) => {
-  const { id } = req.params;
-  const { data, error } = await tournamentDrawService.updateMatchScore(id, req.body);
-  
-  if (error) {
-    return res.status(500).json({ error });
+router.put('/matches/:matchId/score', async (req, res) => {
+  try {
+    const { matchId } = req.params;
+    const { team1_score, team2_score, winner_id } = req.body;
+    
+    console.log('Received score update:', {
+      matchId,
+      team1_score,
+      team2_score,
+      winner_id
+    });
+
+    // Validate score format
+    if (!isValidScoreFormat(team1_score) || !isValidScoreFormat(team2_score)) {
+      return res.status(400).json({ 
+        error: 'Invalid score format',
+        received: {
+          team1_score,
+          team2_score
+        },
+        expected: {
+          format: "{ sets: [{ games: number, tiebreak: number | null }] }"
+        }
+      });
+    }
+
+    // First update the match
+    const { error: updateError } = await db
+      .from('tournament_matches')
+      .update({
+        team1_score,
+        team2_score,
+        winner_id,
+        status: 'completed'
+      })
+      .eq('id', matchId);
+
+    if (updateError) throw updateError;
+
+    // Then fetch the updated match with team details
+    const { data: match, error: fetchError } = await db
+      .from('tournament_matches')
+      .select(`
+        *,
+        team1:team1_id (
+          id,
+          name
+        ),
+        team2:team2_id (
+          id,
+          name
+        )
+      `)
+      .eq('id', matchId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    // Return just the match data without wrapping it
+    res.json(match);
+  } catch (error) {
+    console.error('Error updating match score:', error);
+    res.status(500).json({ error: 'Failed to update match score' });
   }
-  
-  res.json(data);
 });
 
 router.post('/:id/teams', async (req, res) => {
@@ -273,38 +328,6 @@ router.post('/:tournamentId/matches/schedule', async (req, res) => {
   }
 });
 
-router.put('/matches/:matchId/score', async (req, res) => {
-  try {
-    const { matchId } = req.params;
-    const { team1_score, team2_score, winner_id } = req.body;
-
-    // Validate score format
-    if (!isValidScoreFormat(team1_score) || !isValidScoreFormat(team2_score)) {
-      return res.status(400).json({ error: 'Invalid score format' });
-    }
-
-    const { data, error } = await tournamentDrawService.updateMatchScore(
-      matchId,
-      {
-        team1_score,
-        team2_score,
-        winner_id,
-        status: 'completed'
-      }
-    );
-
-    if (error) {
-      return res.status(400).json({ error });
-    }
-
-    // Return just the match data without wrapping it
-    res.json(data);
-  } catch (error) {
-    console.error('Error updating match score:', error);
-    res.status(500).json({ error: 'Failed to update match score' });
-  }
-});
-
 // Helper function to validate score format
 function isValidScoreFormat(score) {
   if (!score?.sets || !Array.isArray(score.sets)) return false;
@@ -365,6 +388,14 @@ router.get('/:id/matches', async (req, res) => {
       .from('tournament_matches')
       .select(`
         *,
+        team1:team1_id (
+          id,
+          name
+        ),
+        team2:team2_id (
+          id,
+          name
+        ),
         court:court_id (
           id,
           name
@@ -464,6 +495,49 @@ router.get('/:id/standings', async (req, res) => {
   } catch (error) {
     console.error('Error getting standings:', error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:id/group-status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const status = await tournamentDrawService.getGroupStatus(id);
+    res.json(status);
+  } catch (error) {
+    console.error('Error getting group status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:tournamentId/scores', async (req, res) => {
+  try {
+    const { tournamentId } = req.params;
+    
+    const { data, error } = await db
+      .from('tournament_matches')
+      .select(`
+        id,
+        team1_id,
+        team2_id,
+        winner_id,
+        team1_score,
+        team2_score,
+        status,
+        round,
+        position,
+        group,
+        team1:team1_id(id, name),
+        team2:team2_id(id, name)
+      `)
+      .eq('tournament_id', tournamentId)
+      .not('team1_score', 'is', null);
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (error) {
+    console.error('Error fetching tournament scores:', error);
+    res.status(500).json({ error: 'Failed to fetch tournament scores' });
   }
 });
 

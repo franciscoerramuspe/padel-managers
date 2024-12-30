@@ -657,17 +657,28 @@ export class TournamentDrawService {
 
   async generateGroupMatches(tournamentId, groups) {
     try {
+      // First delete all existing group matches
+      await this.db
+        .from('tournament_matches')
+        .delete()
+        .eq('tournament_id', tournamentId)
+        .eq('round', 1);  // Delete only group stage matches
+      
       const matches = [];
       let position = 1;
+      
+      // Debug log
+      console.log('Groups received:', groups);
       
       // For each group, generate round robin matches
       for (const [groupId, group] of Object.entries(groups)) {
         const teams = group.teams;
+        console.log(`Generating matches for ${groupId} with teams:`, teams);
         
         // Generate round-robin matches for this group
         for (let i = 0; i < teams.length; i++) {
           for (let j = i + 1; j < teams.length; j++) {
-            matches.push({
+            const match = {
               id: randomUUID(),
               tournament_id: tournamentId,
               round: 1,
@@ -677,10 +688,14 @@ export class TournamentDrawService {
               group: groupId,
               status: 'pending',
               created_at: new Date().toISOString()
-            });
+            };
+            console.log('Creating match:', match);
+            matches.push(match);
           }
         }
       }
+
+      console.log('Total matches to create:', matches.length);
 
       // Insert all matches into the database
       const { error } = await this.db
@@ -735,6 +750,38 @@ export class TournamentDrawService {
         throw new Error('Invalid score format');
       }
 
+      // Validate 7-5 and 7-6 scenarios
+      team1.score.sets.forEach((set, index) => {
+        const team2Set = team2.score.sets[index];
+        if (set.games === 7) {
+          if (team2Set.games !== 5 && team2Set.games !== 6) {
+            throw new Error('When games is 7, opponent must have 5 or 6 games');
+          }
+          if (team2Set.games === 6 && set.tiebreak === null) {
+            throw new Error('Tiebreak score required for 7-6 set');
+          }
+          if (team2Set.games === 5 && set.tiebreak !== null) {
+            throw new Error('No tiebreak allowed for 7-5 set');
+          }
+        }
+      });
+
+      // Do the same check for team2's sets
+      team2.score.sets.forEach((set, index) => {
+        const team1Set = team1.score.sets[index];
+        if (set.games === 7) {
+          if (team1Set.games !== 5 && team1Set.games !== 6) {
+            throw new Error('When games is 7, opponent must have 5 or 6 games');
+          }
+          if (team1Set.games === 6 && set.tiebreak === null) {
+            throw new Error('Tiebreak score required for 7-6 set');
+          }
+          if (team1Set.games === 5 && set.tiebreak !== null) {
+            throw new Error('No tiebreak allowed for 7-5 set');
+          }
+        }
+      });
+
       // Validate that the winner actually won based on sets
       const team1SetsWon = team1.score.sets.filter(set => 
         set.games > (team2.score.sets[team1.score.sets.indexOf(set)].games) ||
@@ -781,12 +828,6 @@ export class TournamentDrawService {
       // Tiebreak must be null or a number >= 0
       if (set.tiebreak !== null && (typeof set.tiebreak !== 'number' || set.tiebreak < 0)) return false;
       
-      // If games is 7, previous set must exist and be 6-6
-      if (set.games === 7) {
-        const setIndex = score.sets.indexOf(set);
-        if (setIndex === 0) return false;
-      }
-      
       return true;
     });
   }
@@ -795,7 +836,11 @@ export class TournamentDrawService {
     try {
       const { data: matches, error: matchError } = await this.db
         .from('tournament_matches')
-        .select('*')
+        .select(`
+          *,
+          team1:team1_id(id, name),
+          team2:team2_id(id, name)
+        `)
         .eq('tournament_id', tournamentId)
         .eq('status', 'completed');
 
@@ -809,10 +854,12 @@ export class TournamentDrawService {
           standings[match.group] = new Map();
         }
 
-        [match.team1_id, match.team2_id].forEach(teamId => {
-          if (!standings[match.group].has(teamId)) {
-            standings[match.group].set(teamId, {
-              teamId,
+        [match.team1, match.team2].forEach(team => {
+          if (!team) return; // Skip if team is null
+          if (!standings[match.group].has(team.id)) {
+            standings[match.group].set(team.id, {
+              teamId: team.id,
+              teamName: team.name,
               matchesPlayed: 0,
               wins: 0,
               losses: 0,
@@ -827,22 +874,26 @@ export class TournamentDrawService {
           }
         });
 
-        const team1 = standings[match.group].get(match.team1_id);
-        const team2 = standings[match.group].get(match.team2_id);
+        // Skip match stats calculation if scores aren't set
+        if (!match.team1_score?.sets || !match.team2_score?.sets) return;
+
+        const team1 = standings[match.group].get(match.team1.id);
+        const team2 = standings[match.group].get(match.team2.id);
         
-        // Process each set
         let team1SetsWon = 0;
         let team1GamesWon = 0;
         let team2SetsWon = 0;
         let team2GamesWon = 0;
 
         match.team1_score.sets.forEach((set, index) => {
+          if (!set || !match.team2_score.sets[index]) return; // Skip invalid sets
+          
           const team2Set = match.team2_score.sets[index];
           
-          team1GamesWon += set.games;
-          team2GamesWon += team2Set.games;
+          team1GamesWon += set.games || 0;
+          team2GamesWon += team2Set.games || 0;
 
-          if (set.games > team2Set.games || 
+          if ((set.games > team2Set.games) || 
               (set.games === 6 && set.tiebreak > team2Set.tiebreak)) {
             team1SetsWon++;
           } else {
@@ -854,20 +905,18 @@ export class TournamentDrawService {
         team1.matchesPlayed++;
         team2.matchesPlayed++;
 
-        // Update wins, losses and points based on winner
-        if (match.winner_id === match.team1_id) {
+        if (match.winner_id === match.team1.id) {
           team1.wins++;
-          team1.points += 2;  // Winner gets 2 points
+          team1.points += 2;
           team2.losses++;
-          team2.points += 1;  // Loser gets 1 point
-        } else {
+          team2.points += 1;
+        } else if (match.winner_id === match.team2.id) {
           team2.wins++;
-          team2.points += 2;  // Winner gets 2 points
+          team2.points += 2;
           team1.losses++;
-          team1.points += 1;  // Loser gets 1 point
+          team1.points += 1;
         }
 
-        // Update set and game stats
         team1.setsWon += team1SetsWon;
         team1.setsLost += team2SetsWon;
         team1.gamesWon += team1GamesWon;
@@ -902,6 +951,26 @@ export class TournamentDrawService {
       throw error;
     }
   }
+  async getGroupStatus(tournamentId) {
+    try {
+      // Get all group matches (round 1 AND has a group assigned)
+      const { data: matches, error } = await this.db
+        .from('tournament_matches')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .eq('round', 1)
+        .not('group', 'is', null);  // Only matches that have a group assigned
+
+      if (error) throw error;
+
+      console.log('Found matches:', matches.map(m => ({
+        id: m.id,
+        group: m.group,
+        team1_id: m.team1_id,
+        team2_id: m.team2_id
+      })));
+
+      const totalMatches = matches.length;
 }
 
 // Create and export the instance

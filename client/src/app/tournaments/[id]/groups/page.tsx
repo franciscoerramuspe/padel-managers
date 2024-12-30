@@ -17,34 +17,78 @@ interface Tournament {
   format: string;
 }
 
+interface Match {
+  id: string;
+  tournament_id: string;
+  round: number;
+  position: number;
+  team1_id: string;
+  team2_id: string;
+  winner_id: string | null;
+  team1_score: {
+    sets: { games: number; tiebreak: number | null }[];
+  } | null;
+  team2_score: {
+    sets: { games: number; tiebreak: number | null }[];
+  } | null;
+  status: 'pending' | 'completed';
+  group: string;
+  team1: Team;
+  team2: Team;
+}
+
 export default function TournamentGroupsPage() {
   const params = useParams();
   const router = useRouter();
   const [tournament, setTournament] = useState<Tournament | null>(null);
+  const [matches, setMatches] = useState<Match[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [totalTeams, setTotalTeams] = useState(0);
-  const [groupsAreGenerated, setGroupsAreGenerated] = useState(false);
+
   useEffect(() => {
-    const fetchTournament = async () => {
+    const fetchTournamentAndMatches = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}`);
-        if (!response.ok) throw new Error('Error al cargar el torneo');
-        const data = await response.json();
-        console.log('Data:', data);
-        setTournament(data);
-        setTotalTeams(data.tournament_teams.length);
+        const [tournamentResponse, matchesResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}`),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}/matches`)
+        ]);
+
+        if (!tournamentResponse.ok) throw new Error('Error al cargar el torneo');
+        if (!matchesResponse.ok) throw new Error('Error al cargar los partidos');
+
+        const tournamentData = await tournamentResponse.json();
+        const matchesData = await matchesResponse.json();
+
+        console.log('Tournament Data:', tournamentData);
+        console.log('Matches Data:', matchesData);
+
+        setTournament(tournamentData);
+        setMatches(matchesData);
+        setTotalTeams(tournamentData.tournament_teams.length);
       } catch (error) {
-        setError('No se pudo cargar el torneo');
+        setError('No se pudo cargar el torneo o los partidos');
         console.error('Error:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    
-    fetchTournament();
+    fetchTournamentAndMatches();
   }, [params.id]);
+
+  const refreshMatches = async () => {
+    try {
+      const matchesResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${params.id}/matches`
+      );
+      if (!matchesResponse.ok) throw new Error('Error al cargar los partidos');
+      const matchesData = await matchesResponse.json();
+      setMatches(matchesData);
+    } catch (error) {
+      console.error('Error refreshing matches:', error);
+    }
+  };
 
   if (loading) {
     return (
@@ -83,8 +127,8 @@ export default function TournamentGroupsPage() {
             ← Volver al torneo
           </Link>
         </div>
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-6">
             {tournament.format === 'round_robin' 
               ? 'Cuadros Round Robin'
               : 'Grupos del Torneo'}
@@ -92,7 +136,9 @@ export default function TournamentGroupsPage() {
 
           <GroupGenerator 
             tournamentId={tournament.id} 
-            totalTeams={totalTeams} 
+            totalTeams={totalTeams}
+            matches={matches}
+            onMatchesUpdate={refreshMatches}
           />
         </div>
       </div>
