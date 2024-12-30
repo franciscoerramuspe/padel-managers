@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { GroupGenerator } from '@/components/GroupGenerator';
+import { GroupGenerator } from '@/components/tournaments/groups/GroupGenerator';
 
 interface Team {
   id: string;

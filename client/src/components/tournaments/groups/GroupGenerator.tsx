@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { GroupMatches } from './GroupMatches';
-import { MatchResultModal } from './MatchResultModal';
+import { MatchResultModal } from '../matches/MatchResultModal';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { GroupStatusBar } from './GroupStatusBar';
 
 interface Team {
   id: string;
@@ -57,12 +58,23 @@ export function GroupGenerator({
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<Record<string, Group>>({});
   const [groupStatus, setGroupStatus] = useState<{
-    totalMatches: number;
-    completedMatches: number;
+    total: number;
+    completed: number;
     isComplete: boolean;
-  }>({ totalMatches: 0, completedMatches: 0, isComplete: false });
+  }>({ total: 0, completed: 0, isComplete: false });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const groupMatches = matches.filter(match => match.round === 1);
+  const completedMatches = groupMatches.filter(match => 
+    match.status === 'completed' && 
+    match.team1_score && 
+    match.team2_score && 
+    match.winner_id
+  );
+
+  const isGroupPhaseComplete = groupMatches.length > 0 && 
+    completedMatches.length === groupMatches.length;
 
   useEffect(() => {
     fetchExistingGroups();
@@ -122,21 +134,39 @@ export function GroupGenerator({
   };
 
   const generateKnockoutPhase = async () => {
+    if (!groupStatus.isComplete) {
+      setError('Todos los partidos de grupo deben estar completados');
+      return;
+    }
+
     try {
-      setIsLoading(true);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/knockout`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ teamsPerGroup: 2 })
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            teamsPerGroup: 2 // Top 2 teams from each group advance
+          })
         }
       );
-      if (!response.ok) throw new Error('Failed to generate knockout phase');
-    } catch (err) {
-      setError('Could not generate knockout phase');
-    } finally {
-      setIsLoading(false);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Knockout generation error:', errorData);
+        throw new Error(errorData.message || 'Error al generar la fase eliminatoria');
+      }
+
+      const data = await response.json();
+      console.log('Knockout phase generated:', data);
+
+      // Redirect directly to the draw page to show the knockout bracket
+      window.location.href = `/tournaments/${tournamentId}/draw`;
+    } catch (error) {
+      console.error('Error generating knockout phase:', error);
+      setError(error instanceof Error ? error.message : 'No se pudo generar la fase eliminatoria');
     }
   };
 
@@ -178,7 +208,7 @@ export function GroupGenerator({
   if (isLoading) {
     return <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500" />;
   }
-
+  console.log(groupStatus)
   return (
     <div className="space-y-4">
       {Object.keys(groups).length === 0 ? (
@@ -234,20 +264,35 @@ export function GroupGenerator({
             }}
           />
           
-          {groupStatus.isComplete && (
-            <Button
-              onClick={generateKnockoutPhase}
-              className="mt-4"
-              variant="secondary"
-            >
-              Generate Knockout Phase
-            </Button>
-          )}
+          <GroupStatusBar 
+            total={groupMatches.length}
+            completed={completedMatches.length}
+          />
+
+          <div className="flex justify-end">
+            {isGroupPhaseComplete ? (
+              <Button
+                onClick={generateKnockoutPhase}
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
+                Generar Fase Eliminatoria
+              </Button>
+            ) : (
+              <Button
+                disabled
+                className="bg-gray-300 text-gray-500 cursor-not-allowed"
+              >
+                Complete todos los partidos de grupo
+              </Button>
+            )}
+          </div>
         </>
       )}
 
       {error && (
-        <p className="text-red-500 text-sm">{error}</p>
+        <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
+          {error}
+        </div>
       )}
 
       {selectedMatch && (

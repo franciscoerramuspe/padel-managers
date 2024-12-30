@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Calendar, Users, DollarSign, Tag, AlertCircle } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -54,13 +54,13 @@ export default function CreateTournamentPage() {
       console.log(response);
 
       if (!response.ok) {
-        throw new Error('Failed to create tournament')
+        throw new Error('Error al crear el torneo')
       }
 
       const tournament = await response.json()
       router.push(`/tournaments/${tournament.id}`)
     } catch (err) {
-      setError('Failed to create tournament')
+      setError('Error al crear el torneo')
       console.error('Error:', err)
     }
   }
@@ -69,8 +69,8 @@ export default function CreateTournamentPage() {
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader>
-          <CardTitle>Create Tournament</CardTitle>
-          <CardDescription>Set up a new tournament with your desired configuration.</CardDescription>
+          <CardTitle>Crear Torneo</CardTitle>
+          <CardDescription>Configura un nuevo torneo con tus preferencias.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {error && (
@@ -81,7 +81,7 @@ export default function CreateTournamentPage() {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="name">Tournament Name</Label>
+            <Label htmlFor="name">Nombre del Torneo</Label>
             <Input
               id="name"
               value={formData.name}
@@ -91,25 +91,24 @@ export default function CreateTournamentPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="format">Tournament Format</Label>
+            <Label htmlFor="format">Formato del Torneo</Label>
             <Select
               value={formData.format}
               onValueChange={(value) => setFormData({ ...formData, format: value as TournamentFormat })}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select format" />
+                <SelectValue placeholder="Seleccionar formato" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="single_elimination">Single Elimination</SelectItem>
-                <SelectItem value="round_robin">Round Robin</SelectItem>
-                <SelectItem value="group_stage">Group Stage</SelectItem>
+                <SelectItem value="single_elimination">Eliminación Directa</SelectItem>
+                <SelectItem value="round_robin">Fase de Grupos</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="teams_limit">Teams Limit</Label>
+              <Label htmlFor="teams_limit">Límite de Equipos</Label>
               <Input
                 id="teams_limit"
                 type="number"
@@ -120,7 +119,7 @@ export default function CreateTournamentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Categoría</Label>
               <Input
                 id="category"
                 value={formData.category}
@@ -132,7 +131,7 @@ export default function CreateTournamentPage() {
 
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="start_date">Start Date</Label>
+              <Label htmlFor="start_date">Fecha de Inicio</Label>
               <Input
                 id="start_date"
                 type="date"
@@ -143,7 +142,7 @@ export default function CreateTournamentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="end_date">End Date</Label>
+              <Label htmlFor="end_date">Fecha de Finalización</Label>
               <Input
                 id="end_date"
                 type="date"
@@ -154,7 +153,7 @@ export default function CreateTournamentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sign_up_limit_date">Sign Up Limit Date</Label>
+              <Label htmlFor="sign_up_limit_date">Fecha de Cierre de Inscripción</Label>
               <Input
                 id="sign_up_limit_date"
                 type="date"
@@ -166,7 +165,7 @@ export default function CreateTournamentPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
+            <Label htmlFor="price">Precio Por Equipo</Label>
             <Input
               id="price"
               type="number"
@@ -177,7 +176,7 @@ export default function CreateTournamentPage() {
           </div>
 
           <Button type="submit" className="w-full">
-            Create Tournament
+            Crear Torneo
           </Button>
         </CardContent>
       </Card>
