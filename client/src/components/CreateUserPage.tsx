@@ -1,37 +1,45 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from '@supabase/supabase-js';
-import GoogleButton from "./GoogleButton";
-// import Logo from "@/components/Logo";
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 export default function CreateUserPage() {
   const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        router.push("/dashboard");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        console.error('Login error:', data.message);
+        return;
       }
-    });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.push("/dashboard");
+      // Store admin token if user is admin
+      if (data.user?.user_metadata?.role === 'admin') {
+        localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('adminToken', data.session.access_token);
       }
-    });
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, [router]);
+      router.push("/dashboard");
+      
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
@@ -40,9 +48,30 @@ export default function CreateUserPage() {
           Padel Managers
         </h1>
       </div>
-      <div className="flex flex-col items-center space-y-3">
-        <GoogleButton className="px-6 py-3 text-base w-64 bg-black text-white rounded-md hover:bg-gray-800 transition-colors duration-300 shadow-lg" />
-      </div>
+      <form onSubmit={handleSubmit} className="w-64">
+        <input 
+          type="email" 
+          placeholder="Email" 
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          className="w-full px-4 py-2 mb-4 border rounded"
+          required
+        />
+        <input 
+          type="password" 
+          placeholder="Password" 
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="w-full px-4 py-2 mb-4 border rounded"
+          required
+        />
+        <button 
+          type="submit"
+          className="w-full px-6 py-3 text-base bg-black text-white rounded-md hover:bg-gray-800 transition-colors duration-300 shadow-lg"
+        >
+          Login
+        </button>
+      </form>
     </div>
   );
 }

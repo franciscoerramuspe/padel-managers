@@ -3,37 +3,29 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { supabase } from '../../lib/supabase';
-import { DashboardUser } from '../../types/user';
+
+interface Player {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  profile_photo: string | null;
+  role: string;
+}
+
 export default function ActiveUsers() {
-  const [users, setUsers] = useState<DashboardUser[]>([]);
+  const [users, setUsers] = useState<Player[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        // Fetch users from auth.users
-        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-        if (authError) throw authError;
-
-        // Fetch user roles
-        const { data: userRoles, error: rolesError } = await supabase
-          .from('user_roles')
-          .select('user_id, role');
-        if (rolesError) throw rolesError;
-
-        // Combine user data with roles
-        const combinedUsers = authUsers.users.map(user => {
-          const userRole = userRoles.find(role => role.user_id === user.id);
-          return {
-            id: user.id,
-            name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Usuario',
-            role: userRole?.role || 'user',
-            avatar: user.user_metadata?.avatar_url || '/assets/user.png'
-          };
-        });
-
-        setUsers(combinedUsers.slice(0, 5)); // Only show first 5 users
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/players`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        setUsers(data.slice(0, 5)); // Only show first 5 users
       } catch (error) {
         console.error('Error fetching users:', error);
       } finally {
@@ -62,14 +54,14 @@ export default function ActiveUsers() {
             <div className="flex items-center">
               <div className="relative w-10 h-10 mr-3">
                 <Image
-                  src={user.avatar}
-                  alt={user.name}
+                  src={user.profile_photo || '/assets/user.png'}
+                  alt={`${user.first_name} ${user.last_name}`}
                   fill
                   className="rounded-full object-cover"
                 />
               </div>
               <div>
-                <p className="font-semibold text-gray-800">{user.name}</p>
+                <p className="font-semibold text-gray-800">{`${user.first_name} ${user.last_name}`}</p>
                 <p className="text-sm text-gray-600">{user.role}</p>
               </div>
             </div>

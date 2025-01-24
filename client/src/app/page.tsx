@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
-import GoogleButton from "../components/GoogleButton";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -14,6 +13,22 @@ export default function Home() {
     email: '',
     password: ''
   });
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    if (response.ok) {
+      console.log('Login successful', response.json());
+      router.push("/dashboard");
+    } else {
+      console.error('Error signing in:', response.statusText);
+    }
+  };
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
@@ -106,6 +121,7 @@ export default function Home() {
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                onClick={handleLoginSubmit}
               >
                 Iniciar sesión
               </button>
@@ -120,7 +136,6 @@ export default function Home() {
               </div>
             </div>
 
-            <GoogleButton className="w-full py-3 text-base bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 transition-colors duration-300 shadow-sm rounded-lg" />
 
             <p className="text-center text-sm md:text-gray-800 text-white mt-8">
               ¿Tienes alguna consulta?

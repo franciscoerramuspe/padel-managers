@@ -1,186 +1,186 @@
-'use client'
+"use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { AlertCircle } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { TournamentFormat } from '@/types/tournament'
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { AlertCircle, Calendar, Trophy, Users } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+
+interface Category {
+  id: string
+  name: string
+}
 
 interface FormData {
   name: string
-  teams_limit: number
-  category: string
-  price: number
+  category_id: string
   start_date: string
   end_date: string
-  sign_up_limit_date: string
-  format: TournamentFormat
-  status: string
+  status: "upcoming" | "in_progress" | "completed"
 }
 
 export default function CreateTournamentPage() {
   const router = useRouter()
-  const [error, setError] = useState('')
+  const [error, setError] = useState("")
+  const [categories, setCategories] = useState<Category[]>([])
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    teams_limit: 0,
-    category: '',
-    price: 0,
-    start_date: '',
-    end_date: '',
-    sign_up_limit_date: '',
-    format: 'single_elimination',
-    status: 'open'
+    name: "",
+    category_id: "",
+    start_date: "",
+    end_date: "",
+    status: "upcoming",
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`)
+        if (!response.ok) throw new Error("Failed to fetch categories")
+        const data = await response.json()
+        setCategories(data)
+      } catch (err) {
+        console.error("Error fetching categories:", err)
+        setError("Error loading categories")
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  const handleTournamentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    setError("")
 
     try {
-      console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments`);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments`, {
-        method: 'POST',
+      const token = localStorage.getItem("adminToken") // Assuming you store the token after login
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       })
-      console.log(response);
 
       if (!response.ok) {
-        throw new Error('Error al crear el torneo')
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Error creating tournament")
       }
 
-      const tournament = await response.json()
-      router.push(`/tournaments/${tournament.id}`)
-    } catch (err) {
-      setError('Error al crear el torneo')
-      console.error('Error:', err)
+      const data = await response.json()
+      router.push(`/tournaments/${data.tournament.id}`)
+    } catch (err: any) {
+      setError(err.message || "Error creating tournament")
+      console.error("Error:", err)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Crear Torneo</CardTitle>
-          <CardDescription>Configura un nuevo torneo con tus preferencias.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+    <div className="max-w-2xl mx-auto py-8">
+      <form onSubmit={handleTournamentSubmit}>
+        <Card className="shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-lg">
+            <CardTitle className="text-2xl flex items-center gap-2">
+              <Trophy className="h-6 w-6" />
+              Crear Torneo
+            </CardTitle>
+            <CardDescription className="text-blue-100">Configure un nuevo torneo con sus preferencias.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6 pt-6">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-          <div className="space-y-2">
-            <Label htmlFor="name">Nombre del Torneo</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-lg font-semibold">
+                Nombre del Torneo
+              </Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                className="border-2 border-gray-300 focus:border-blue-500 transition-colors"
+                placeholder="Ingrese el nombre del torneo"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="format">Formato del Torneo</Label>
-            <Select
-              value={formData.format}
-              onValueChange={(value) => setFormData({ ...formData, format: value as TournamentFormat })}
+            <div className="space-y-2">
+              <Label htmlFor="category" className="text-lg font-semibold">
+                Categoría
+              </Label>
+              <Select
+                value={formData.category_id}
+                onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+              >
+                <SelectTrigger className="border-2 border-gray-300 focus:border-blue-500 transition-colors">
+                  <SelectValue placeholder="Seleccionar categoría" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="start_date" className="text-lg font-semibold">
+                  Fecha de Inicio
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="start_date"
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                    required
+                    className="border-2 border-gray-300 focus:border-blue-500 transition-colors pl-10"
+                  />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="end_date" className="text-lg font-semibold">
+                  Fecha de Finalización
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="end_date"
+                    type="date"
+                    value={formData.end_date}
+                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                    required
+                    className="border-2 border-gray-300 focus:border-blue-500 transition-colors pl-10"
+                  />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors"
+              onClick={handleTournamentSubmit}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar formato" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="single_elimination">Eliminación Directa</SelectItem>
-                <SelectItem value="round_robin">Fase de Grupos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="teams_limit">Límite de Equipos</Label>
-              <Input
-                id="teams_limit"
-                type="number"
-                value={formData.teams_limit}
-                onChange={(e) => setFormData({ ...formData, teams_limit: parseInt(e.target.value) })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoría</Label>
-              <Input
-                id="category"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="start_date">Fecha de Inicio</Label>
-              <Input
-                id="start_date"
-                type="date"
-                value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="end_date">Fecha de Finalización</Label>
-              <Input
-                id="end_date"
-                type="date"
-                value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="sign_up_limit_date">Fecha de Cierre de Inscripción</Label>
-              <Input
-                id="sign_up_limit_date"
-                type="date"
-                value={formData.sign_up_limit_date}
-                onChange={(e) => setFormData({ ...formData, sign_up_limit_date: e.target.value })}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="price">Precio Por Equipo</Label>
-            <Input
-              id="price"
-              type="number"
-              value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full">
-            Crear Torneo
-          </Button>
-        </CardContent>
-      </Card>
-    </form>
+              Crear Torneo
+            </Button>
+          </CardContent>
+        </Card>
+      </form>
+    </div>
   )
 }
 
