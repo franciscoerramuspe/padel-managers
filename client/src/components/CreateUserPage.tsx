@@ -30,6 +30,7 @@ export default function CreateUserPage() {
 
       // Store admin token if user is admin
       if (data.user?.user_metadata?.role === 'admin') {
+        console.log('Storing admin token:', data.session.access_token);
         localStorage.setItem('isAdmin', 'true');
         localStorage.setItem('adminToken', data.session.access_token);
       }

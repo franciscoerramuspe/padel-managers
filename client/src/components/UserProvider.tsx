@@ -39,6 +39,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }
 
         const data = await response.json();
+        console.log('Raw API Response:', data);
         
         if (data.user) {
           setUsername(data.profile.nombre || data.user.email || '');

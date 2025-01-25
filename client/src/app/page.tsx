@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabase";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -13,6 +12,7 @@ export default function Home() {
     email: '',
     password: ''
   });
+
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -23,7 +23,15 @@ export default function Home() {
       body: JSON.stringify(formData)
     });
     if (response.ok) {
-      console.log('Login successful', response.json());
+      const data = await response.json();
+      console.log('Login successful', data);
+      
+      // Store tokens if admin
+      if (data.user?.user_metadata?.role === 'admin') {
+        localStorage.setItem('isAdmin', 'true');
+        localStorage.setItem('adminToken', data.session.access_token);
+      }
+      
       router.push("/dashboard");
     } else {
       console.error('Error signing in:', response.statusText);
@@ -31,21 +39,27 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") {
-        router.push("/dashboard");
-      }
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.push("/dashboard");
-      }
-    });
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    // Check if we have a valid token
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      // Verify token validity with backend
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }).then(response => {
+        if (response.ok) {
+          router.push("/dashboard");
+        } else {
+          // If token is invalid, clear it
+          localStorage.removeItem('adminToken');
+          localStorage.removeItem('isAdmin');
+        }
+      }).catch(() => {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('isAdmin');
+      });
+    }
   }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
