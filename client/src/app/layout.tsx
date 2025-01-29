@@ -6,8 +6,6 @@ import './animations.css';
 import { UserProvider } from '../components/UserProvider';
 import Providers from './providers'
 import { Toaster } from "@/components/ui/toaster"
-import AppLayout from './app-layout';
-
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : 'http://localhost:3000'
@@ -28,9 +26,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true} className="bg-gray-200">
         <Providers>
           <UserProvider>
-            <AppLayout>
-              {children}
-            </AppLayout>
+            {children}
             <Toaster />
           </UserProvider>
         </Providers>

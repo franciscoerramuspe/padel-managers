@@ -76,14 +76,14 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
       {/* Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
       {/* Sidebar Content */}
       <div
-        className={`fixed md:sticky top-0 left-0 z-30 w-[85%] md:w-64 h-screen bg-white transform transition-transform duration-300 ease-in-out ${
+        className={`fixed md:static inset-y-0 left-0 z-40 w-[85%] md:w-64 bg-white min-h-screen transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
