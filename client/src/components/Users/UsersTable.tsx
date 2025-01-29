@@ -13,6 +13,7 @@ interface User {
   lastLogin: string;
   avatar: string;
   isInvited?: boolean;
+  phone?: string;
 }
 
 interface UsersTableProps {
@@ -57,25 +58,31 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
   }
 
   return (
-    <div>
+    <div className="bg-white shadow rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs text-black font-medium  uppercase tracking-wider">
-                Nombre del usuario
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Usuario
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
-                Rol asignado
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Email
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Teléfono
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Rol
+              </th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Estado
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Último acceso
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider">
-                Acciones
+              <th scope="col" className="relative px-6 py-3">
+                <span className="sr-only">Acciones</span>
               </th>
             </tr>
           </thead>
@@ -84,20 +91,24 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
               <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
-                    <div className="h-10 w-10 flex-shrink-0">
+                    <div className="flex-shrink-0 h-10 w-10 relative">
                       <Image
-                        className="h-10 w-10 rounded-full"
                         src={user.avatar}
-                        alt="/assets/user.png"
-                        width={40}
-                        height={40}
+                        alt={user.name}
+                        fill
+                        className="rounded-full object-cover"
                       />
                     </div>
                     <div className="ml-4">
                       <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                      <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.email}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {user.phone}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">

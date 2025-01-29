@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import UsersTable from '../../components/Users/UsersTable';
 import UserFilters from '../../components/Users/UserFilter';
 import UserFilterSidebar from '../../components/Users/UserFilterSidebar';
@@ -10,12 +10,14 @@ import EditUserModal from '../../components/Users/EditUserModal';
 
 interface User {
   id: string;
-  name: string;
   email: string;
+  first_name: string;
+  last_name: string;
+  profile_photo: string | null;
   role: string;
-  status: 'active' | 'inactive';
-  lastLogin: string;
-  avatar: string;
+  status?: 'active' | 'inactive';
+  lastLogin?: string;
+  phone?: string;
 }
 
 export default function UsersPage() {
@@ -26,75 +28,37 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  
-  const [users] = useState<User[]>([
-    {
-      id: 'USR123458',
-      name: 'Juan Pérez',
-      email: 'juan@example.com',
-      role: 'admin',
-      status: 'active',
-      lastLogin: '2024-03-15',
-      avatar: '/assets/user.png'
-    },
-    {
-        id: 'USR123456',
-        name: 'Richard Ramirez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      {
-        id: 'USR123457',
-        name: 'Luis Pérez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      {
-        id: 'USR123451',
-        name: 'Marcos Pérez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      {
-        id: 'USR123453',
-        name: 'Brian Pérez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      {
-        id: 'USR123443',
-        name: 'Facundo Pérez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      {
-        id: 'USR123243',
-        name: 'Mateo Pérez',
-        email: 'john@example.com',
-        role: 'admin',
-        status: 'active',
-        lastLogin: '2024-03-15',
-        avatar: '/assets/user.png'
-      },
-      
-    // Add more mock users...
-  ]);
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/players`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        const transformedUsers = data.map((user: any) => ({
+          id: user.id,
+          email: user.email,
+          name: `${user.first_name} ${user.last_name}`,
+          role: user.role || 'user',
+          status: 'active', 
+          lastLogin: new Date().toISOString().split('T')[0], 
+          avatar: user.profile_photo || '/assets/user.png',
+          phone: user.phone || 'No disponible'
+        }));
+        setUsers(transformedUsers);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -109,6 +73,16 @@ export default function UsersPage() {
     setSelectedUser(user);
     setIsEditModalOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="animate-pulse bg-gray-100 h-64 rounded-xl"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -153,6 +127,8 @@ export default function UsersPage() {
         <UserFilterSidebar 
           isOpen={isFilterOpen}
           onClose={() => setIsFilterOpen(false)}
+          onApplyFilters={() => {
+          }}
         />
       </div>
     </div>
