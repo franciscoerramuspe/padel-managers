@@ -26,7 +26,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true} className="bg-gray-200">
         <Providers>
           <UserProvider>
-            {children}
+              {children}
             <Toaster />
           </UserProvider>
         </Providers>

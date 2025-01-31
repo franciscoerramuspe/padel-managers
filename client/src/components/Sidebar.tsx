@@ -63,6 +63,8 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
     }
   ];
 
+  const userName = localStorage.getItem('userName');
+
   return (
     <ClientSideWrapper>
       {/* Hamburger Menu Button */}
@@ -96,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
               </div>
               <div>
                 <p className="font-bold text-sm text-gray-700">
-                  Bienvenido, {username?.split(' ')[0] || 'Usuario'}
+                  Bienvenido, {userName?.split(' ')[0] || 'Usuario'}
                 </p>
               </div>
             </div>

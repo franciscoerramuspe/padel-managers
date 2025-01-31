@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { UserContext } from '../contexts/UserContext';
+import Sidebar from './Sidebar';
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
@@ -41,8 +41,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         const data = await response.json();
         console.log('Raw API Response:', data);
         
-        if (data.user) {
-          setUsername(data.profile.nombre || data.user.email || '');
+        if (data.first_name) {
+          setUsername(data.first_name || data.user.email || '');
+          console.log('Username:', username);
           const userRole = data.user.user_metadata?.role;
           setUserRole(userRole);
 
@@ -75,9 +76,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <UserContext.Provider value={{ username, userRole }}>
-      {children}
-    </UserContext.Provider>
-  );
+  // If logged in, render the sidebar layout
+  if (username) {
+    return (
+      <div className="flex min-h-screen">
+        <Sidebar username={username} />
+        <main className="flex-1 ml-0 md:ml-64 transition-margin duration-300 ease-in-out">
+          {children}
+        </main>
+      </div>
+    );
+  }
+
+  // If not logged in, just render children (login page)
+  return children;
 }

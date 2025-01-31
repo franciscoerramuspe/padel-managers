@@ -30,6 +30,7 @@ export default function Home() {
       if (data.user?.user_metadata?.role === 'admin') {
         localStorage.setItem('isAdmin', 'true');
         localStorage.setItem('adminToken', data.session.access_token);
+        localStorage.setItem('userName', data.user.user_metadata.first_name);
       }
       
       router.push("/dashboard");
