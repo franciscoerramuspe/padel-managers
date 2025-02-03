@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { supabase } from '@/lib/supabase'
 
 interface Category {
   id: string
@@ -34,6 +35,7 @@ interface TournamentInfo {
   first_place_prize: string
   second_place_prize?: string
   third_place_prize?: string
+  tournament_thumbnail?: File
 }
 
 export default function CreateTournamentPage() {
@@ -59,7 +61,9 @@ export default function CreateTournamentPage() {
     first_place_prize: "",
     second_place_prize: "",
     third_place_prize: "",
+    tournament_thumbnail: undefined
   })
+  const [fileInputKey, setFileInputKey] = useState(0)
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -96,6 +100,26 @@ export default function CreateTournamentPage() {
     setStep(2)
   }
 
+  const uploadThumbnail = async (file: File) => {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}_${file.name}`
+    
+    const { error: uploadError, data } = await supabase.storage
+      .from('tournament-thumbnails')
+      .upload(fileName, file)
+
+    if (uploadError) {
+      console.error('Error uploading thumbnail:', uploadError)
+      return null
+    }
+
+    // Construir la URL usando la URL base correcta de Supabase
+    const baseUrl = 'https://goipmracccjxjmhpizib.supabase.co'
+    const publicUrl = `${baseUrl}/storage/v1/object/public/tournament-thumbnails/${fileName}`
+
+    return publicUrl
+  }
+
   const handleTournamentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -126,23 +150,62 @@ export default function CreateTournamentPage() {
       const tournamentData = await tournamentResponse.json()
       const tournamentId = tournamentData.torneo.id
 
-      // Luego creamos la información adicional del torneo
-      const infoResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/required-info`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(tournamentInfo),
-      })
-
-      if (!infoResponse.ok) {
-        const errorData = await infoResponse.json()
-        throw new Error(errorData.message || "Error creating tournament info")
+      // Si hay una imagen, la subimos primero
+      let thumbnailUrl = null
+      if (tournamentInfo.tournament_thumbnail) {
+        try {
+          const file = tournamentInfo.tournament_thumbnail
+          const url = await uploadThumbnail(file)
+          if (url) {
+            thumbnailUrl = url
+          }
+        } catch (error) {
+          console.error('Error al subir la imagen:', error)
+          setError('Error al subir la imagen. Por favor, intente nuevamente.')
+          return
+        }
       }
 
-      // Redirigir a la página de torneos en lugar de la página del torneo específico
-      router.push('/tournaments')
+      // Luego creamos la información adicional del torneo
+      try {
+        const infoData = {
+          description: tournamentInfo.description,
+          rules: tournamentInfo.rules,
+          tournament_location: tournamentInfo.tournament_location,
+          tournament_address: tournamentInfo.tournament_address,
+          tournament_club_name: tournamentInfo.tournament_club_name,
+          signup_limit_date: tournamentInfo.signup_limit_date,
+          inscription_cost: tournamentInfo.inscription_cost,
+          first_place_prize: tournamentInfo.first_place_prize,
+          second_place_prize: tournamentInfo.second_place_prize,
+          third_place_prize: tournamentInfo.third_place_prize,
+          tournament_thumbnail: thumbnailUrl
+        }
+
+        console.log('Enviando datos al servidor:', infoData)
+
+        const infoResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/required-info`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(infoData)
+          }
+        )
+
+        if (!infoResponse.ok) {
+          const errorData = await infoResponse.json()
+          throw new Error(errorData.message || "Error creating tournament info")
+        }
+
+        router.push('/tournaments')
+      } catch (err) {
+        console.error("Error completo:", err)
+        setError(err instanceof Error ? err.message : "Error al crear el torneo")
+      }
     } catch (err: any) {
       console.error("Error completo:", err)
       setError(err.message || "Error al crear el torneo")
@@ -170,6 +233,31 @@ export default function CreateTournamentPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="tournament_thumbnail">Imagen del Torneo</Label>
+                <Input
+                  key={fileInputKey}
+                  id="tournament_thumbnail"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      if (file.size > 5 * 1024 * 1024) {
+                        setError("La imagen no debe superar los 5MB")
+                        setFileInputKey(prev => prev + 1)
+                        return
+                      }
+                      setTournamentInfo(prev => ({
+                        ...prev,
+                        tournament_thumbnail: file
+                      }))
+                    }
+                  }}
+                  className="cursor-pointer"
+                />
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="description">Descripción</Label>
