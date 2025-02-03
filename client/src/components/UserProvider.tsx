@@ -8,56 +8,60 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const hasFetchedUser = useRef(false);
   const pathname = usePathname();
   const isLoginPage = pathname === '/';
 
+  // Verificar el estado de autenticación
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid token');
+      }
+
+      const data = await response.json();
+      if (data.first_name) {
+        setUsername(data.first_name);
+      } else {
+        throw new Error('Invalid user data');
+      }
+    } catch (error) {
+      // Si hay cualquier error, limpiamos todo
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('isAdmin');
+      localStorage.removeItem('userName');
+      setUsername('');
+      
+      if (!isLoginPage) {
+        router.push('/');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (hasFetchedUser.current) return;
-    hasFetchedUser.current = true;
-
-    const fetchUserAndRole = async () => {
-      try {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-          setIsLoading(false);
-          if (!isLoginPage) {
-            router.push('/');
-          }
-          return;
-        }
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
-        if (data.first_name) {
-          setUsername(data.first_name);
-        } else {
-          if (!isLoginPage) {
-            router.push('/');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('isAdmin');
-        if (!isLoginPage) {
-          router.push('/');
-        }
-      } finally {
-        setIsLoading(false);
+    checkAuth();
+    
+    // Agregar listener para eventos de storage para manejar logout en múltiples pestañas
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'adminToken' && !e.newValue) {
+        router.push('/');
       }
     };
 
-    fetchUserAndRole();
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [router, isLoginPage]);
 
   if (isLoading) {
@@ -80,11 +84,5 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  // Si no hay usuario y no es la página de login, redirigimos
-  if (!isLoginPage) {
-    router.push('/');
-  }
-
   return children;
 }
