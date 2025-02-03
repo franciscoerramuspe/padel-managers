@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FaCalendarAlt, FaClock, FaUsers, FaChartBar } from 'react-icons/fa';
 import { GiTennisCourt } from 'react-icons/gi';
 import ActiveUsers from '../../components/Dashboard/ActiveUsers';
+import { useUsers } from '../../hooks/useUsers';
 
 const quickStats = [
   { 
@@ -112,6 +113,7 @@ const upcomingReservations = [
 ];
 
 export default function Dashboard() {
+  const { users, isLoading } = useUsers();
   const [formattedDate, setFormattedDate] = useState('');
 
   useEffect(() => {
@@ -134,6 +136,45 @@ export default function Dashboard() {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  const quickStats = [
+    { 
+      title: 'Reservas Hoy', 
+      value: '12', 
+      icon: FaCalendarAlt, 
+      color: 'bg-gradient-to-r from-blue-400 to-blue-600',
+      hover: 'hover:from-blue-500 hover:to-blue-700',
+      iconBg: 'bg-blue-400/30',
+      href: '/bookings'
+    },
+    { 
+      title: 'Usuarios Registrados', 
+      value: isLoading ? '...' : users.length.toString(), 
+      icon: FaUsers, 
+      color: 'bg-gradient-to-r from-purple-400 to-purple-600',
+      hover: 'hover:from-purple-500 hover:to-purple-700',
+      iconBg: 'bg-purple-400/30',
+      href: '/users'
+    },
+    { 
+      title: 'Canchas Registradas', 
+      value: '8', 
+      icon: GiTennisCourt, 
+      color: 'bg-gradient-to-r from-orange-400 to-orange-600',
+      hover: 'hover:from-orange-500 hover:to-orange-700',
+      iconBg: 'bg-orange-400/30',
+      href: '/courts'
+    },
+    { 
+      title: 'Ingresos del Día', 
+      value: '$1,250', 
+      icon: FaChartBar, 
+      color: 'bg-gradient-to-r from-green-400 to-green-600',
+      hover: 'hover:from-green-500 hover:to-green-700',
+      iconBg: 'bg-green-400/30',
+      href: '/finances'
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -173,11 +214,7 @@ export default function Dashboard() {
               </svg>
             </Link>
           </div>
-          <div className="flex justify-center items-center">
-            <Link href="/tournaments" className="text-blue-600 hover:text-blue-700 font-semibold text-sm">
-              Torneos
-            </Link>
-          </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {courts.map((court) => (
