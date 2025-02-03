@@ -6,7 +6,6 @@ import Sidebar from './Sidebar';
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const hasFetchedUser = useRef(false);
@@ -39,19 +38,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         }
 
         const data = await response.json();
-        console.log('Raw API Response:', data);
-        
         if (data.first_name) {
-          setUsername(data.first_name || data.user.email || '');
-          console.log('Username:', username);
-          const userRole = data.user.user_metadata?.role;
-          setUserRole(userRole);
-
-          if (userRole !== 'admin' && userRole !== 'owner' && !isLoginPage) {
-            setIsLoading(false);
-            router.push('/unauthorized');
-            return;
-          }
+          setUsername(data.first_name);
         } else {
           if (!isLoginPage) {
             router.push('/');
@@ -76,7 +64,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     return <div>Loading...</div>;
   }
 
-  // If logged in, render the sidebar layout
+  // Si es la página de login, no mostramos el sidebar
+  if (isLoginPage) {
+    return children;
+  }
+
+  // Si el usuario está autenticado, mostramos el layout con sidebar
   if (username) {
     return (
       <div className="flex min-h-screen">
@@ -88,6 +81,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If not logged in, just render children (login page)
+  // Si no hay usuario y no es la página de login, redirigimos
+  if (!isLoginPage) {
+    router.push('/');
+  }
+
   return children;
 }
