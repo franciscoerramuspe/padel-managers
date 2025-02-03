@@ -1,48 +1,61 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Calendar, Users, Clock } from 'lucide-react';
-import Link from 'next/link';
-import dotenv from 'dotenv';
+import { useEffect, useState, useCallback } from 'react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-dotenv.config();
+interface TournamentTeam {
+  team_id: string;
+  teams: {
+    id: string;
+    player1_id: string;
+    player2_id: string;
+  };
+}
+
+interface TournamentInfo {
+  id: string;
+  description: string;
+  inscription_cost: number;
+  tournament_location: string;
+  tournament_club_name: string;
+  tournament_thumbnail?: string;
+}
 
 interface Tournament {
   id: string;
   name: string;
-  teams: any[];
-  teams_limit: number;
-  current_registrations: number;
-  category: string;
+  status: string;
   start_date: string;
   end_date: string;
-  price: number;
-  sign_up_limit_date: string;
+  tournament_teams: TournamentTeam[];
+  tournament_info: TournamentInfo[];
 }
 
 export default function TournamentList() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
   const [loading, setLoading] = useState(true);
-  const searchParams = useSearchParams();
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTournaments = useCallback(async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments`);
+      if (!response.ok) {
+        throw new Error('Error al cargar los torneos');
+      }
+      const data = await response.json();
+      setTournaments(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+      console.error('Error fetching tournaments:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchTournaments = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments?${searchParams.toString()}`);
-        if (!response.ok) throw new Error('Failed to fetch tournaments');
-        const data = await response.json();
-        setTournaments(data);
-      } catch (error) {
-        console.error('Error fetching tournaments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTournaments();
-  }, [searchParams]);
+  }, [fetchTournaments]);
 
   if (loading) {
     return (
@@ -52,56 +65,63 @@ export default function TournamentList() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="text-center py-12 bg-white rounded-lg border border-gray-100">
+        <h3 className="text-xl font-semibold text-red-600">Error al cargar los torneos</h3>
+        <p className="text-gray-500 mt-2">{error}</p>
+      </div>
+    );
+  }
+
   if (tournaments.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-lg border border-gray-100">
         <h3 className="text-xl font-semibold text-gray-700">No hay torneos disponibles</h3>
-        <p className="text-gray-500 mt-2">Intenta ajustar los filtros de búsqueda</p>
+        <p className="text-gray-500 mt-2">Intenta más tarde</p>
       </div>
     );
   }
+
+  const formatDate = (date: string) => {
+    return format(new Date(date), 'dd MMM yyyy', { locale: es });
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {tournaments.map((tournament) => (
         <div
           key={tournament.id}
-          className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300"
+          className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200"
         >
-          <div className="p-6 space-y-4">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{tournament.name}</h2>
-                <span className="inline-block px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 rounded-full">
-                  {tournament.category}
+          {tournament.tournament_info[0]?.tournament_thumbnail && (
+            <img
+              src={tournament.tournament_info[0].tournament_thumbnail}
+              alt={tournament.name}
+              className="w-full h-48 object-cover rounded-t-lg mb-4"
+            />
+          )}
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{tournament.name}</h2>
+          <div className="flex flex-col space-y-3">
+            <span className="inline-block px-3 py-1 text-sm font-semibold bg-blue-100 text-blue-800 rounded-full w-fit">
+              {tournament.status}
+            </span>
+            <span className="text-sm text-gray-600">
+              {formatDate(tournament.start_date)} - {formatDate(tournament.end_date)}
+            </span>
+            {tournament.tournament_info[0] && (
+              <>
+                <span className="text-sm text-gray-600">
+                  {tournament.tournament_info[0].tournament_club_name}
                 </span>
-              </div>
-              <span className="text-2xl font-bold text-green-600">
-                ${tournament.price}
-              </span>
-            </div>
-            
-            <div className="space-y-3">
-              <p className="text-sm text-gray-600 flex items-center">
-                <Calendar className="mr-2" size={16} />
-                {new Date(tournament.start_date).toLocaleDateString()} - {new Date(tournament.end_date).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-gray-600 flex items-center">
-                <Users className="mr-2" size={16} />
-                Equipos: {tournament.teams.length}/{tournament.teams_limit}
-              </p>
-              <p className="text-sm text-gray-600 flex items-center">
-                <Clock className="mr-2" size={16} />
-                Inscripción hasta: {new Date(tournament.sign_up_limit_date).toLocaleDateString()}
-              </p>
-            </div>
-            
-            <Link 
-              href={`/tournaments/${tournament.id}`}
-              className="w-full bg-[#6B8AFF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300 text-center block"
-            >
-              Ver Detalles
-            </Link>
+                <span className="text-sm font-semibold text-green-600">
+                  Inscripción: ${tournament.tournament_info[0].inscription_cost}
+                </span>
+              </>
+            )}
+            <span className="text-sm text-gray-600">
+              {tournament.tournament_teams.length} equipos inscritos
+            </span>
           </div>
         </div>
       ))}
