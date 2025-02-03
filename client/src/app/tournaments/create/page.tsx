@@ -74,7 +74,7 @@ export default function CreateTournamentPage() {
         setCategories(data)
       } catch (err) {
         console.error("Error fetching categories:", err)
-        setError("Error loading categories")
+        setError("Error al cargar las categorías")
       }
     }
 
@@ -159,7 +159,6 @@ export default function CreateTournamentPage() {
             thumbnailUrl = url
           }
         } catch (error) {
-          console.error('Error al subir la imagen:', error)
           setError('Error al subir la imagen. Por favor, intente nuevamente.')
           return
         }
@@ -180,9 +179,6 @@ export default function CreateTournamentPage() {
           third_place_prize: tournamentInfo.third_place_prize,
           tournament_thumbnail: thumbnailUrl
         }
-
-        console.log('Enviando datos al servidor:', infoData)
-
         const infoResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/required-info`,
           {

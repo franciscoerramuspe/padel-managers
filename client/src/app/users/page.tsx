@@ -43,7 +43,7 @@ export default function UsersPage() {
           id: user.id,
           email: user.email,
           name: `${user.first_name} ${user.last_name}`,
-          role: user.role || 'user',
+          role: user.role === 'user' ? 'Jugador' : user.role,
           status: 'active', 
           lastLogin: new Date().toISOString().split('T')[0], 
           avatar: user.profile_photo || '/assets/user.png',
@@ -87,15 +87,8 @@ export default function UsersPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Usuarios</h1>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 text-sm py-2 rounded-lg flex items-center gap-2 transition-colors"
-          >
-            <FaPlus />
-            Añadir usuario
-          </button>
         </div>
 
         <UserFilters
@@ -111,10 +104,6 @@ export default function UsersPage() {
         <div className="mt-8">
           <UsersTable users={filteredUsers} onEditUser={handleEditUser} />
         </div>
-
-        {isAddModalOpen && (
-          <AddUserModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
-        )}
 
         {isEditModalOpen && selectedUser && (
           <EditUserModal 
