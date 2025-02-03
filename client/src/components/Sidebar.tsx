@@ -33,8 +33,40 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
+    try {
+      // 1. Primero hacemos el signOut en Supabase
+      await supabase.auth.signOut();
+      
+      // 2. Limpiamos todo el localStorage
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('isAdmin');
+      localStorage.removeItem('userName');
+      
+      // 3. Llamada al backend para invalidar la sesión
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          }
+        });
+      } catch (error) {
+        console.error('Error al cerrar sesión en el backend:', error);
+      }
+
+      // 4. Limpiamos cualquier estado global si existe
+
+      // 5. Redirigimos al login
+      router.push('/');
+      
+      // 6. Forzamos un reload para limpiar cualquier estado residual
+      window.location.reload();
+    } catch (error) {
+      console.error('Error durante el cierre de sesión:', error);
+      // Aún si hay error, intentamos limpiar todo
+      localStorage.clear();
+      router.push('/');
+    }
   };
 
   const menuItems = [

@@ -6,77 +6,74 @@ import Sidebar from './Sidebar';
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const hasFetchedUser = useRef(false);
   const pathname = usePathname();
   const isLoginPage = pathname === '/';
 
+  // Verificar el estado de autenticación
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Invalid token');
+      }
+
+      const data = await response.json();
+      if (data.first_name) {
+        setUsername(data.first_name);
+      } else {
+        throw new Error('Invalid user data');
+      }
+    } catch (error) {
+      // Si hay cualquier error, limpiamos todo
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('isAdmin');
+      localStorage.removeItem('userName');
+      setUsername('');
+      
+      if (!isLoginPage) {
+        router.push('/');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (hasFetchedUser.current) return;
-    hasFetchedUser.current = true;
-
-    const fetchUserAndRole = async () => {
-      try {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-          setIsLoading(false);
-          if (!isLoginPage) {
-            router.push('/');
-          }
-          return;
-        }
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-
-        const data = await response.json();
-        console.log('Raw API Response:', data);
-        
-        if (data.first_name) {
-          setUsername(data.first_name || data.user.email || '');
-          console.log('Username:', username);
-          const userRole = data.user.user_metadata?.role;
-          setUserRole(userRole);
-
-          if (userRole !== 'admin' && userRole !== 'owner' && !isLoginPage) {
-            setIsLoading(false);
-            router.push('/unauthorized');
-            return;
-          }
-        } else {
-          if (!isLoginPage) {
-            router.push('/');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        localStorage.removeItem('adminToken');
-        localStorage.removeItem('isAdmin');
-        if (!isLoginPage) {
-          router.push('/');
-        }
-      } finally {
-        setIsLoading(false);
+    checkAuth();
+    
+    // Agregar listener para eventos de storage para manejar logout en múltiples pestañas
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'adminToken' && !e.newValue) {
+        router.push('/');
       }
     };
 
-    fetchUserAndRole();
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, [router, isLoginPage]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  // If logged in, render the sidebar layout
+  // Si es la página de login, no mostramos el sidebar
+  if (isLoginPage) {
+    return children;
+  }
+
+  // Si el usuario está autenticado, mostramos el layout con sidebar
   if (username) {
     return (
       <div className="flex min-h-screen">
@@ -87,7 +84,5 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  // If not logged in, just render children (login page)
   return children;
 }
