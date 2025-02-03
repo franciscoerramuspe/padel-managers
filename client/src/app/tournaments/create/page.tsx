@@ -81,9 +81,14 @@ export default function CreateTournamentPage() {
   const handleFirstStep = (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validar campos básicos
     if (!formData.name || !formData.category_id || !formData.start_date || !formData.end_date) {
       setError("Todos los campos son requeridos")
+      return
+    }
+
+    // Validar que la fecha de inicio sea anterior a la fecha de fin
+    if (new Date(formData.start_date) >= new Date(formData.end_date)) {
+      setError("La fecha de inicio debe ser anterior a la fecha de fin")
       return
     }
 
@@ -103,35 +108,41 @@ export default function CreateTournamentPage() {
         return
       }
 
-      // Validar campos del segundo paso
-      if (!tournamentInfo.description || !tournamentInfo.rules || 
-          !tournamentInfo.tournament_location || !tournamentInfo.tournament_address || 
-          !tournamentInfo.tournament_club_name || !tournamentInfo.signup_limit_date || 
-          !tournamentInfo.first_place_prize) {
-        setError("Todos los campos son requeridos")
-        return
-      }
-
-      // Crear el torneo con toda la información
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/create/${formData.category_id}`, {
+      // Primero creamos el torneo básico
+      const tournamentResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({
-          ...formData,
-          tournament_info: tournamentInfo
-        }),
+        body: JSON.stringify(formData),
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
+      if (!tournamentResponse.ok) {
+        const errorData = await tournamentResponse.json()
         throw new Error(errorData.message || "Error creating tournament")
       }
 
-      const data = await response.json()
-      router.push(`/tournaments/${data.torneo.id}`)
+      const tournamentData = await tournamentResponse.json()
+      const tournamentId = tournamentData.torneo.id
+
+      // Luego creamos la información adicional del torneo
+      const infoResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/required-info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(tournamentInfo),
+      })
+
+      if (!infoResponse.ok) {
+        const errorData = await infoResponse.json()
+        throw new Error(errorData.message || "Error creating tournament info")
+      }
+
+      // Redirigir a la página de torneos en lugar de la página del torneo específico
+      router.push('/tournaments')
     } catch (err: any) {
       console.error("Error completo:", err)
       setError(err.message || "Error al crear el torneo")
