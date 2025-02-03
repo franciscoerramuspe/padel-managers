@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
+import LoadingScreen from './LoadingScreen';
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
@@ -65,7 +66,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [router, isLoginPage]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen message="Verificando sesión..." />;
   }
 
   // Si es la página de login, no mostramos el sidebar

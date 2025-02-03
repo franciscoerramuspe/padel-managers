@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function Home() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,27 +17,36 @@ export default function Home() {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Login successful', data);
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
       
-      // Store tokens if admin
-      if (data.user?.user_metadata?.role === 'admin') {
-        localStorage.setItem('isAdmin', 'true');
-        localStorage.setItem('adminToken', data.session.access_token);
-        localStorage.setItem('userName', data.user.user_metadata.first_name);
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.user?.user_metadata?.role === 'admin') {
+          localStorage.setItem('isAdmin', 'true');
+          localStorage.setItem('adminToken', data.session.access_token);
+          localStorage.setItem('userName', data.user.user_metadata.first_name);
+        }
+        
+        // Agregamos un pequeño delay para mostrar la animación
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        router.push("/dashboard");
+      } else {
+        console.error('Error signing in:', response.statusText);
+        setIsLoading(false);
       }
-      
-      router.push("/dashboard");
-    } else {
-      console.error('Error signing in:', response.statusText);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsLoading(false);
     }
   };
 
@@ -71,6 +82,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative">
+      {isLoading && <LoadingScreen />}
       <div className="absolute inset-0 w-full h-full">
         <video
           autoPlay

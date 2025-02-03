@@ -8,6 +8,7 @@ import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
 import { ClientSideWrapper } from './ClientSideWrapper';
+import LoadingScreen from './LoadingScreen';
 
 interface SidebarProps {
   username?: string;
@@ -18,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,6 +36,8 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
+      
       // 1. Primero hacemos el signOut en Supabase
       await supabase.auth.signOut();
       
@@ -54,8 +58,9 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
         console.error('Error al cerrar sesión en el backend:', error);
       }
 
-      // 4. Limpiamos cualquier estado global si existe
-
+      // 4. Agregamos un pequeño delay para mostrar la animación
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       // 5. Redirigimos al login
       router.push('/');
       
@@ -99,6 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
 
   return (
     <ClientSideWrapper>
+      {isLoggingOut && <LoadingScreen message="Cerrando sesión..." />}
       {/* Hamburger Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
