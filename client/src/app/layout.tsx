@@ -6,7 +6,7 @@ import { UserProvider } from '@/components/UserProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Tercer Tiempo',
+  title: 'Recrea Padel Club',
   description: 'Gestión de club deportivo',
 };
 

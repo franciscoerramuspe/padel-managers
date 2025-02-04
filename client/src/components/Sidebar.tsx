@@ -105,6 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   return (
     <ClientSideWrapper>
       {isLoggingOut && <LoadingScreen message="Cerrando sesión..." />}
+      
       {/* Hamburger Menu Button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -128,8 +129,8 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
         }`}
       >
         <div className="flex flex-col h-full">
-          {/* Header Section */}
-          <div className="p-4 bg-blue-50 rounded-b-2xl">
+          {/* Header Section with Logo */}
+          <div className="p-4 bg-gradient-to-br from-blue-50 to-white rounded-b-3xl shadow-sm">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-blue-500 rounded-full mr-3 flex items-center justify-center">
                 <FaUser className="text-white text-xl" />
@@ -141,17 +142,30 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
               </div>
             </div>
             
-            <div className="bg-blue-400 rounded-xl overflow-hidden shadow-sm">
-              <Image
-                src="/assets/tercer-tiempo.png"
-                alt="Tercer Tiempo"
-                width={180}
-                height={105}
-                className="object-fill"
-              />
-              <div className="p-3">
-                <h3 className="text-sm font-semibold text-gray-700">Club:</h3>
-                <p className="text-sm font-medium text-gray-700">Tercer Tiempo</p>
+            {/* Logo Card */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300 hover:shadow-xl">
+              <div className="relative w-full h-36 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-[url('/assets/pattern.png')] opacity-10"></div>
+                <div className="relative w-28 h-28 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/50 transform transition-transform duration-300 hover:scale-105">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full animate-pulse-slow"></div>
+                  <Image
+                    src="/assets/recrealogo.jpeg"
+                    alt="Recrea Padel Club"
+                    fill
+                    className="object-contain p-2 rounded-full relative z-10"
+                    style={{ 
+                      objectFit: 'contain',
+                      background: 'white',
+                    }}
+                  />
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur opacity-30 group-hover:opacity-40 animate-tilt"></div>
+                </div>
+              </div>
+              <div className="p-5 bg-white">
+                <h3 className="text-sm font-semibold text-gray-700 mb-1">Club:</h3>
+                <p className="text-base font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+                  Recrea Padel Club
+                </p>
               </div>
             </div>
           </div>

@@ -178,17 +178,24 @@ export default function Home() {
         <div className="hidden md:flex md:w-1/2 relative items-center justify-center">
           <div className="relative z-10 flex flex-col justify-center items-center p-8 w-full">
             <div className="text-center text-white max-w-lg mx-auto">
-             
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl">
-                <Image
-                  src="/assets/logo_padel_manager.png"
-                  alt="Tercer Tiempo"
-                  width={300}
-                  height={300}
-                  className="mx-auto mb-12"
-                />
-                 <h1 className="text-3xl font-bold mb-6">Gestiona tu club de pádel</h1>
-                <p className="text-lg mb-4">
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-xl">
+                <div className="relative w-32 h-32 mx-auto mb-8 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/30">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full"></div>
+                  <Image
+                    src="/assets/recrealogo.jpeg"
+                    alt="Recrea Padel Club"
+                    fill
+                    className="object-contain p-2 rounded-full relative z-10"
+                    style={{ 
+                      objectFit: 'contain',
+                      background: 'white',
+                    }}
+                  />
+                </div>
+                <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                  Gestiona tu club de pádel
+                </h1>
+                <p className="text-lg mb-4 text-white/90">
                   Sistema integral para la gestión de canchas, reservas, usuarios y creación de torneos para tu club deportivo.
                 </p>
               </div>
