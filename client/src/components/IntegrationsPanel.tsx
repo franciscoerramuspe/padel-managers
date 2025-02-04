@@ -1,7 +1,8 @@
 import Image from 'next/image';
-import { useState } from 'react';
-import { FaWhatsapp, FaEdit, FaCheck, FaTimes } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaWhatsapp, FaEdit } from 'react-icons/fa';
 import WhatsAppConfigModal from './modals/WhatsAppConfigModal';
+import { toast } from "@/components/ui/use-toast";
 
 interface Integration {
   id: string;
@@ -48,6 +49,21 @@ export default function IntegrationsPanel() {
     isWhatsAppModalOpen: false
   });
 
+  useEffect(() => {
+    const fetchWhatsAppNumber = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/whatsapp`);
+        const data = await response.json();
+        if (data.whatsappNumber) {
+          setState(prev => ({ ...prev, whatsappNumber: data.whatsappNumber }));
+        }
+      } catch (error) {
+      }
+    };
+
+    fetchWhatsAppNumber();
+  }, []);
+
   const handleOpenWhatsAppModal = () => {
     setState(prev => ({ ...prev, isWhatsAppModalOpen: true }));
   };
@@ -58,14 +74,47 @@ export default function IntegrationsPanel() {
 
   const handleSaveWhatsApp = async (phoneNumber: string) => {
     try {
-      // Aquí iría la llamada al backend cuando esté listo
+      const token = localStorage.getItem('adminToken');
+
+      if (!token) {
+        throw new Error('No hay token de autenticación');
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings/whatsapp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ whatsappNumber: phoneNumber })
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Error al guardar el número');
+      }
+
       setState(prev => ({ 
         ...prev, 
         whatsappNumber: phoneNumber,
         isWhatsAppModalOpen: false 
       }));
+
+      toast({
+        title: "✅ WhatsApp configurado",
+        description: "El número de WhatsApp Business se ha actualizado correctamente.",
+        variant: "default",
+        className: "border-l-4 border-l-green-500"
+      });
+
     } catch (error) {
-      console.error('Error saving WhatsApp number:', error);
+      toast({
+        title: "❌ Error",
+        description: error instanceof Error ? error.message : 'Error al guardar el número de WhatsApp',
+        variant: "destructive",
+        className: "border-l-4 border-l-red-500"
+      });
     }
   };
 

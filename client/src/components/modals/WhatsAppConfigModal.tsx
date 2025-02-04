@@ -15,8 +15,18 @@ export default function WhatsAppConfigModal({ isOpen, onClose, onSave, initialPh
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(phoneNumber);
+    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    
+    // Eliminar cualquier caracter que no sea número
+    const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
+    
+    // Validar que el número tenga 8 o 9 dígitos
+    if (cleanNumber.length < 8 || cleanNumber.length > 9) {
+      alert('El número debe tener 8 o 9 dígitos');
+      return;
+    }
+    
+    onSave(cleanNumber);
   };
 
   return (
