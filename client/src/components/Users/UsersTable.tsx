@@ -1,33 +1,25 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
-import UserActionMenu from './UserActionMenu';
 
 interface User {
   id: string;
-  name: string;
   email: string;
+  name: string;
   role: string;
-  status: 'active' | 'inactive';
+  status: string;
   lastLogin: string;
   avatar: string;
-  isInvited?: boolean;
-  phone?: string;
+  phone: string;
 }
 
 interface UsersTableProps {
   users: User[];
-  onEditUser: (user: User) => void;
-  onDeleteUser: (user: User) => void;
-  onInviteUser: (user: User) => void;
 }
 
-const USERS_PER_PAGE = 6;
+const USERS_PER_PAGE = 10; // Aumentamos a 10 usuarios por página
 
-export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUser }: UsersTableProps) {
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+export default function UsersTable({ users }: UsersTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
   
@@ -35,11 +27,6 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
     (currentPage - 1) * USERS_PER_PAGE,
     currentPage * USERS_PER_PAGE
   );
-
-  const handleDeleteClick = (user: User) => {
-    setUserToDelete(user);
-    setIsDeleteModalOpen(true);
-  };
 
   const handlePreviousPage = () => {
     setCurrentPage(prev => Math.max(prev - 1, 1));
@@ -63,26 +50,23 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Usuario
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Email
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Teléfono
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Rol
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Estado
               </th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Último acceso
-              </th>
-              <th scope="col" className="relative px-6 py-3">
-                <span className="sr-only">Acciones</span>
               </th>
             </tr>
           </thead>
@@ -111,29 +95,21 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
                   {user.phone}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.role === 'admin' 
+                      ? 'bg-purple-100 text-purple-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
                     {user.role}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.status === 'active' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
-                  }`}>
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                     {user.status}
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                   {user.lastLogin}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <UserActionMenu
-                    onEdit={() => onEditUser(user)}
-                    onDelete={() => handleDeleteClick(user)}
-                    onInvite={() => onInviteUser(user)}
-                    isInvited={user.isInvited}
-                  />
                 </td>
               </tr>
             ))}
@@ -177,18 +153,6 @@ export default function UsersTable({ users, onEditUser, onDeleteUser, onInviteUs
           </div>
         </div>
       </div>
-
-      {isDeleteModalOpen && userToDelete && (
-        <DeleteConfirmationModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onConfirm={() => {
-            onDeleteUser(userToDelete);
-            setIsDeleteModalOpen(false);
-          }}
-          userName={userToDelete.name}
-        />
-      )}
     </div>
   );
 }
