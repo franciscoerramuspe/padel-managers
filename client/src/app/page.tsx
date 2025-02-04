@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function Home() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,27 +17,36 @@ export default function Home() {
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Login successful', data);
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
       
-      // Store tokens if admin
-      if (data.user?.user_metadata?.role === 'admin') {
-        localStorage.setItem('isAdmin', 'true');
-        localStorage.setItem('adminToken', data.session.access_token);
-        localStorage.setItem('userName', data.user.user_metadata.first_name);
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.user?.user_metadata?.role === 'admin') {
+          localStorage.setItem('isAdmin', 'true');
+          localStorage.setItem('adminToken', data.session.access_token);
+          localStorage.setItem('userName', data.user.user_metadata.first_name);
+        }
+        
+        // Agregamos un pequeño delay para mostrar la animación
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        router.push("/dashboard");
+      } else {
+        console.error('Error signing in:', response.statusText);
+        setIsLoading(false);
       }
-      
-      router.push("/dashboard");
-    } else {
-      console.error('Error signing in:', response.statusText);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsLoading(false);
     }
   };
 
@@ -71,6 +82,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative">
+      {isLoading && <LoadingScreen />}
       <div className="absolute inset-0 w-full h-full">
         <video
           autoPlay
@@ -166,17 +178,24 @@ export default function Home() {
         <div className="hidden md:flex md:w-1/2 relative items-center justify-center">
           <div className="relative z-10 flex flex-col justify-center items-center p-8 w-full">
             <div className="text-center text-white max-w-lg mx-auto">
-             
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl">
-                <Image
-                  src="/assets/logo_padel_manager.png"
-                  alt="Tercer Tiempo"
-                  width={300}
-                  height={300}
-                  className="mx-auto mb-12"
-                />
-                 <h1 className="text-3xl font-bold mb-6">Gestiona tu club de pádel</h1>
-                <p className="text-lg mb-4">
+              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-xl">
+                <div className="relative w-32 h-32 mx-auto mb-8 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/30">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full"></div>
+                  <Image
+                    src="/assets/recrealogo.jpeg"
+                    alt="Recrea Padel Club"
+                    fill
+                    className="object-contain p-2 rounded-full relative z-10"
+                    style={{ 
+                      objectFit: 'contain',
+                      background: 'white',
+                    }}
+                  />
+                </div>
+                <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                  Gestiona tu club de pádel
+                </h1>
+                <p className="text-lg mb-4 text-white/90">
                   Sistema integral para la gestión de canchas, reservas, usuarios y creación de torneos para tu club deportivo.
                 </p>
               </div>

@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Sidebar from './Sidebar';
+import LoadingScreen from './LoadingScreen';
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string>('');
@@ -65,7 +66,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [router, isLoginPage]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingScreen message="Verificando sesión..." />;
   }
 
   // Si es la página de login, no mostramos el sidebar
@@ -76,9 +77,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   // Si el usuario está autenticado, mostramos el layout con sidebar
   if (username) {
     return (
-      <div className="flex min-h-screen">
+      <div className="flex min-h-screen bg-gray-50">
         <Sidebar username={username} />
-        <main className="flex-1 ml-0 md:ml-64 transition-margin duration-300 ease-in-out">
+        <main className="flex-1 transition-all duration-300 ease-in-out">
           {children}
         </main>
       </div>
