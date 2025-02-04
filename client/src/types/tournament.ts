@@ -45,14 +45,48 @@ export interface TournamentTimeConstraint {
 }
 
 export interface TournamentTeam extends Team {
+  team_id: string;
   group?: 'A' | 'B';
+  teams?: {
+    id: string;
+    player1_id: string;
+    player2_id: string;
+  };
+}
+
+export interface TournamentInfo {
+  id: string;
+  description: string;
+  inscription_cost: number;
+  tournament_location: string;
+  tournament_club_name: string;
+  tournament_thumbnail?: string;
+  rules?: string;
+  tournament_address?: string;
+  signup_limit_date?: string;
+  first_place_prize?: string;
+  second_place_prize?: string;
+  third_place_prize?: string;
 }
 
 export interface Tournament {
   id: string;
   name: string;
-  teams: TournamentTeam[];
-  format: 'single_elimination' | 'round_robin' | 'group_stage';
+  status: 'upcoming' | 'in_progress' | 'completed';
+  start_date: string;
+  end_date: string;
+  category_id: string;
+  teams_limit: number;
+  price?: number;
+  prize_pool?: number;
+  format: TournamentFormat;
+  tournament_teams: TournamentTeam[];
+  tournament_info: TournamentInfo[];
+}
+
+export interface Category {
+  id: string;
+  name: string;
 }
 
 interface Set {
