@@ -5,8 +5,8 @@ import Header from '@/components/Header';
 
 export default async function TournamentsPage() {
   return (
-    <div className="p-8">
-      <div className="max-w-[1500px] mx-auto">
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto">
         <Header 
           title="Torneos"
           icon={<TrophyIcon className="w-6 h-6" />}
