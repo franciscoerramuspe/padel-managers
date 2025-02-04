@@ -3,7 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaHome, FaCalendarAlt, FaUsers, FaCog, FaSignOutAlt, FaUser, FaChartLine, FaBars, FaTimes, FaWhatsapp, FaTrophy } from 'react-icons/fa';
+import { 
+  HomeIcon,
+  CalendarIcon,
+  UsersIcon,
+  Cog6ToothIcon as CogIcon,
+  TrophyIcon,
+  ArrowRightOnRectangleIcon as LogoutIcon,
+  Bars3Icon,
+  XMarkIcon,
+  UserIcon
+} from '@heroicons/react/24/outline';
 import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
@@ -12,7 +22,16 @@ import LoadingScreen from './LoadingScreen';
 
 interface SidebarProps {
   username?: string;
+  
 }
+
+const menuItems = [
+  { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
+  { name: 'Reservas', href: '/bookings', icon: CalendarIcon },
+  { name: 'Usuarios', href: '/users', icon: UsersIcon },
+  { name: 'Configuraciones', href: '/settings', icon: CogIcon },
+  { name: 'Torneos', href: '/tournaments', icon: TrophyIcon },
+];
 
 const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const router = useRouter();
@@ -74,32 +93,6 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
     }
   };
 
-  const menuItems = [
-    { icon: FaHome, text: 'Inicio', href: '/dashboard' },
-    { icon: GiTennisCourt, text: 'Canchas', href: '/courts' },
-    { icon: FaCalendarAlt, text: 'Reservas', href: '/bookings', badge: '10 Reservas' },
-    { icon: FaChartLine, text: 'Ingresos', href: '/incomes' },
-    { icon: FaUsers, text: 'Usuarios', href: '/users' },
-    { icon: FaCog, text: 'Configuraciones', href: '/settings' },
-    { icon: FaTrophy, text: 'Torneos', href: '/tournaments' },
-    {
-      icon: FaSignOutAlt,
-      text: 'Cerrar sesión',
-      href: '#',
-      isAction: true,
-      onClick: handleLogout,
-      className: 'bg-orange-400 text-white hover:bg-orange-500'
-    },
-    {
-      icon: FaWhatsapp,
-      text: 'Soporte',
-      href: 'https://wa.me/59892033831',
-      isAction: true,
-      isExternal: true,
-      className: 'bg-green-500 text-white hover:bg-green-600'
-    }
-  ];
-
   const userName = localStorage.getItem('userName');
 
   return (
@@ -111,7 +104,10 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-xl bg-white shadow-lg text-blue-500 hover:bg-blue-50 transition-colors"
       >
-        {isMobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+        {isMobileMenuOpen ? 
+          <XMarkIcon className="w-6 h-6" /> : 
+          <Bars3Icon className="w-6 h-6" />
+        }
       </button>
 
       {/* Overlay */}
@@ -133,7 +129,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
           <div className="p-4 bg-gradient-to-br from-blue-50 to-white rounded-b-3xl shadow-sm">
             <div className="flex items-center mb-4">
               <div className="w-10 h-10 bg-blue-500 rounded-full mr-3 flex items-center justify-center">
-                <FaUser className="text-white text-xl" />
+                <UserIcon className="text-white text-xl" />
               </div>
               <div>
                 <p className="font-bold text-sm text-gray-700">
@@ -175,51 +171,35 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
             <ul className="space-y-2">
               {menuItems.map((item, index) => (
                 <li key={index}>
-                  {item.isAction ? (
-                    <button
-                      onClick={item.onClick}
-                      className={`flex items-center w-full p-3 rounded-xl transition-all duration-300 ${item.className}`}
+                  <Link href={item.href}>
+                    <div
+                      className={`flex items-center p-3 rounded-xl text-gray-800 transition-all duration-300 ease-in-out ${
+                        hoveredItem === item.name
+                          ? 'bg-blue-500 text-white'
+                          : 'hover:bg-gray-100'
+                      }`}
+                      onMouseEnter={() => setHoveredItem(item.name)}
+                      onMouseLeave={() => setHoveredItem(null)}
                     >
-                      <item.icon className="mr-3" />
-                      <span className="text-sm font-medium">{item.text}</span>
-                    </button>
-                  ) : item.isExternal ? (
-                    <a
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center w-full p-3 rounded-xl transition-all duration-300 ${item.className}`}
-                    >
-                      <item.icon className="mr-3" />
-                      <span className="text-sm font-medium">{item.text}</span>
-                    </a>
-                  ) : (
-                    <Link href={item.href}>
-                      <div
-                        className={`flex items-center p-3 rounded-xl text-gray-800 transition-all duration-300 ease-in-out ${
-                          hoveredItem === item.text
-                            ? 'bg-blue-500 text-white'
-                            : 'hover:bg-gray-100'
+                      <item.icon
+                        className={`w-5 h-5 mr-3 ${
+                          hoveredItem === item.name ? 'text-white' : 'text-gray-500'
                         }`}
-                        onMouseEnter={() => setHoveredItem(item.text)}
-                        onMouseLeave={() => setHoveredItem(null)}
-                      >
-                        <item.icon
-                          className={`mr-3 text-xl ${
-                            hoveredItem === item.text ? 'text-white' : 'text-gray-500'
-                          }`}
-                        />
-                        <span className="text-sm font-medium">{item.text}</span>
-                        {item.badge && (
-                          <span className="ml-auto bg-blue-100 text-blue-500 text-xs font-semibold px-2 py-1 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  )}
+                      />
+                      <span className="text-sm font-medium">{item.name}</span>
+                    </div>
+                  </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <LogoutIcon className="w-5 h-5 mr-3" />
+                  <span className="text-sm">Cerrar sesión</span>
+                </button>
+              </li>
             </ul>
           </nav>
         </div>
