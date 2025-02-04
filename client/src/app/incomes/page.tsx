@@ -1,260 +1,79 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ResponsiveLine } from '@nivo/line';
-import { ResponsivePie } from '@nivo/pie';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import '@/styles/income-calendar.css';
-import { FaMoneyBillWave, FaChartBar, FaCalendarAlt, FaArrowUp, FaArrowDown, FaFilter, FaTimes } from 'react-icons/fa';
-import Link from 'next/link';
-import IncomeFilterSidebar from '../../components/Incomes/IncomeFilterSidebar';
-
-// Datos de ejemplo
-const monthlyData = [
-  {
-    id: "ingresos",
-    data: [
-      { x: "Ene", y: 4000 },
-      { x: "Feb", y: 3000 },
-      { x: "Mar", y: 2000 },
-      { x: "Abr", y: 2780 },
-      { x: "May", y: 1890 },
-      { x: "Jun", y: 2390 },
-    ]
-  }
-];
-
-const courtIncomeData = [
-  { id: "Cancha Gatorade", value: 4000, color: "hsl(207, 70%, 50%)" },
-  { id: "Cancha Powerade", value: 3000, color: "hsl(91, 70%, 50%)" },
-  { id: "Cancha Red Bull", value: 2000, color: "hsl(176, 70%, 50%)" },
-];
+import { FaChartBar } from 'react-icons/fa';
+import { useTournaments } from '@/hooks/useTournaments';
+import TournamentList from '@/components/Incomes/TournamentList';
+import { ResponsiveBar } from '@nivo/bar';
+import Header from '@/components/Header';
+import { ChartBarIcon } from '@heroicons/react/24/outline';
 
 export default function IncomesPage() {
+  const { tournaments, loading, error } = useTournaments();
   const [date, setDate] = useState(new Date());
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<IncomeFilters | null>(null);
 
-  const quickStats = [
-    {
-      title: 'Ingresos Totales',
-      value: '$15,890',
-      change: '+12.5%',
-      isPositive: true,
-      icon: FaMoneyBillWave,
-      color: 'bg-green-500'
-    },
-    {
-      title: 'Ingresos Padel',
-      value: '$8,450',
-      change: '+8.2%',
-      isPositive: true,
-      icon: FaChartBar,
-      color: 'bg-blue-500'
-    },
-    {
-      title: 'Ingresos Fútbol',
-      value: '$7,440',
-      change: '-3.1%',
-      isPositive: false,
-      icon: FaChartBar,
-      color: 'bg-purple-500'
-    },
-  ];
+  if (loading) return <div>Cargando...</div>;
+  if (error) return <div>Error al cargar los torneos</div>;
 
-  const handleApplyFilters = (filters: IncomeFilters) => {
-    setAppliedFilters(filters);
-    // Aquí implementarías la lógica para filtrar los datos
-  };
+  const estimatedIncomeData = tournaments.map(tournament => {
+    const startDate = new Date(tournament.start_date);
+    const endDate = new Date(tournament.end_date);
+    const days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) + 1;
+    const income = tournament.tournament_info[0]?.inscription_cost * days;
+
+    return {
+      tournamentName: tournament.name,
+      estimatedIncome: income,
+    };
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Ingresos</h1>
-          <button
-            onClick={() => setIsFilterOpen(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
-          >
-            <FaFilter />
-            Filtros
-          </button>
-        </div>
-
-        {appliedFilters && (
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 rounded-lg">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-blue-800">Filtros aplicados:</h3>
-              <button
-                onClick={() => setAppliedFilters(null)}
-                className="text-red-600 hover:text-red-700 flex items-center gap-1"
-              >
-                <FaTimes /> Limpiar filtros
-              </button>
-            </div>
-            <div className="mt-2 grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-              {appliedFilters.dateRange.start && (
-                <div>
-                  <span className="font-medium">Fecha inicio:</span> {appliedFilters.dateRange.start}
-                </div>
-              )}
-              {appliedFilters.dateRange.end && (
-                <div>
-                  <span className="font-medium">Fecha fin:</span> {appliedFilters.dateRange.end}
-                </div>
-              )}
-              {appliedFilters.courtType !== 'all' && (
-                <div>
-                  <span className="font-medium">Tipo de cancha:</span> {appliedFilters.courtType}
-                </div>
-              )}
-              {/* Añade más filtros aplicados según necesites */}
-            </div>
-          </div>
-        )}
-
-        <IncomeFilterSidebar
-          isOpen={isFilterOpen}
-          onClose={() => setIsFilterOpen(false)}
-          onApplyFilters={handleApplyFilters}
+        <Header 
+          title="Estadísticas"
+          description="Visualiza los ingresos estimados y la lista de torneos."
+          icon={<ChartBarIcon className="w-6 h-6" />}
         />
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {quickStats.map((stat, index) => (
-            <div key={index} className="bg-white rounded-lg shadow-md p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600">{stat.title}</p>
-                  <p className="text-2xl font-bold text-gray-800 mt-1">{stat.value}</p>
-                  <div className={`flex items-center mt-2 ${stat.isPositive ? 'text-green-500' : 'text-red-500'}`}>
-                    {stat.isPositive ? <FaArrowUp className="mr-1" /> : <FaArrowDown className="mr-1" />}
-                    <span className="text-sm">{stat.change} vs mes anterior</span>
-                  </div>
-                </div>
-                <div className={`${stat.color} p-4 rounded-full text-white`}>
-                  <stat.icon className="w-6 h-6" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-black font-semibold">Ingresos Mensuales</h2>
-              <Link 
-                href="/incomes/monthly" 
-                className="text-blue-600 hover:text-blue-700 font-semibold flex items-center"
-              >
-                Ver todos
-                <svg 
-                  className="w-4 h-4 ml-1" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M9 5l7 7-7 7" 
-                  />
-                </svg>
-              </Link>
-            </div>
-            <div className="h-80">
-              <ResponsiveLine
-                data={monthlyData}
-                margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-                xScale={{ type: 'point' }}
-                yScale={{ type: 'linear', min: 'auto', max: 'auto' }}
-                axisTop={null}
-                axisRight={null}
-                pointSize={10}
-                pointColor={{ theme: 'background' }}
-                pointBorderWidth={2}
-                pointBorderColor={{ from: 'serieColor' }}
-                enableGridX={false}
-                colors={{ scheme: 'set2' }}
-                enableArea={true}
-                areaOpacity={0.15}
-                useMesh={true}
-                legends={[
-                  {
-                    anchor: 'bottom-right',
-                    direction: 'column',
-                    justify: false,
-                    translateX: 100,
-                    translateY: 0,
-                    itemsSpacing: 0,
-                    itemDirection: 'left-to-right',
-                    itemWidth: 80,
-                    itemHeight: 20,
-                    symbolSize: 12,
-                    symbolShape: 'circle',
-                  }
-                ]}
-              />
-            </div>
+            <h2 className="text-xl text-black font-semibold mb-4">Lista de Torneos</h2>
+            <TournamentList tournaments={tournaments} />
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl text-black font-semibold">Ingresos por Cancha</h2>
-              <Link 
-                href="/incomes/courts" 
-                className="text-blue-600 hover:text-blue-700 font-semibold flex items-center"
-              >
-                Ver todos
-                <svg 
-                  className="w-4 h-4 ml-1" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth="2" 
-                    d="M9 5l7 7-7 7" 
-                  />
-                </svg>
-              </Link>
-            </div>
-            <div className="h-80">
-              <ResponsivePie
-                data={courtIncomeData}
-                margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-                innerRadius={0.5}
-                padAngle={0.7}
-                cornerRadius={3}
-                activeOuterRadiusOffset={8}
-                borderWidth={1}
-                borderColor={{ from: 'color', modifiers: [ [ 'darker', 0.2 ] ] }}
-                enableArcLinkLabels={true}
-                arcLinkLabelsSkipAngle={10}
-                arcLinkLabelsTextColor="#1a1a1a"
-                arcLabelsSkipAngle={10}
-                legends={[
-                  {
-                    anchor: 'bottom',
-                    direction: 'row',
-                    justify: false,
-                    translateX: 0,
-                    translateY: 56,
-                    itemsSpacing: 0,
-                    itemWidth: 100,
-                    itemHeight: 18,
-                    itemTextColor: '#000',
-                    itemDirection: 'left-to-right',
-                    itemOpacity: 1,
-                    symbolSize: 18,
-                    symbolShape: 'circle',
-                  }
-                ]}
+            <h2 className="text-xl text-black font-semibold mb-4">Ingresos Estimados</h2>
+            <div style={{ height: '400px' }}>
+              <ResponsiveBar
+                data={estimatedIncomeData}
+                keys={['estimatedIncome']}
+                indexBy="tournamentName"
+                margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
+                padding={0.3}
+                colors={{ scheme: 'nivo' }}
+                axisBottom={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0,
+                  legend: 'Torneos',
+                  legendPosition: 'middle',
+                  legendOffset: 32,
+                }}
+                axisLeft={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0,
+                  legend: 'Ingresos Estimados',
+                  legendPosition: 'middle',
+                  legendOffset: -40,
+                }}
+                labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+                role="application"
+                ariaLabel="Estimación de ingresos por torneo"
               />
             </div>
           </div>
@@ -265,11 +84,10 @@ export default function IncomesPage() {
             <h2 className="text-xl font-semibold text-black mb-4">Calendario de Ingresos</h2>
             <div className="income-calendar" style={{ maxWidth: '400px', margin: '0 auto' }}>
               <Calendar
-                onChange={setDate}
+                onChange={(value) => setDate(value as Date)}
                 value={date}
                 tileClassName={({ date: tileDate, view }) => {
                   if (view === 'month') {
-                    // Example logic for different income levels
                     const day = tileDate.getDate();
                     if (day % 3 === 0) return 'high-income-day';
                     if (day % 3 === 1) return 'medium-income-day';
@@ -285,7 +103,7 @@ export default function IncomesPage() {
             <h2 className="text-xl font-semibold text-black mb-4">Detalles del día seleccionado</h2>
             <div className="space-y-4">
               <p className="text-gray-600 flex items-center">
-                <FaCalendarAlt className="inline mr-2" />
+                <FaChartBar className="inline mr-2" />   
                 {date.toLocaleDateString()}
               </p>
               <div className="border-t pt-4">

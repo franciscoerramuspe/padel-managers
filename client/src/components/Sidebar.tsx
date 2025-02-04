@@ -5,16 +5,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   HomeIcon,
-  CalendarIcon,
   UsersIcon,
   Cog6ToothIcon as CogIcon,
   TrophyIcon,
   ArrowRightOnRectangleIcon as LogoutIcon,
   Bars3Icon,
   XMarkIcon,
-  UserIcon
+  UserIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
-import { GiTennisCourt } from 'react-icons/gi';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
 import { ClientSideWrapper } from './ClientSideWrapper';
@@ -25,13 +24,65 @@ interface SidebarProps {
   
 }
 
-const menuItems = [
+const MENU_ITEMS = [
   { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
-  { name: 'Reservas', href: '/bookings', icon: CalendarIcon },
-  { name: 'Usuarios', href: '/users', icon: UsersIcon },
-  { name: 'Configuraciones', href: '/settings', icon: CogIcon },
   { name: 'Torneos', href: '/tournaments', icon: TrophyIcon },
-];
+  { name: 'Usuarios', href: '/users', icon: UsersIcon },
+  { name: 'Canchas', href: '/courts', icon: TrophyIcon },
+  { name: 'Estadisticas', href: '/incomes', icon: ChartBarIcon },
+  { name: 'Configuraciones', href: '/settings', icon: CogIcon },
+] as const;
+
+const MenuItem = ({ item, isHovered, onHover }: { 
+  item: typeof MENU_ITEMS[number], 
+  isHovered: boolean,
+  onHover: (name: string | null) => void 
+}) => (
+  <Link href={item.href}>
+    <div
+      className={`flex items-center p-3 rounded-xl text-gray-800 transition-all duration-300 ease-in-out ${
+        isHovered ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'
+      }`}
+      onMouseEnter={() => onHover(item.name)}
+      onMouseLeave={() => onHover(null)}
+    >
+      <item.icon
+        className={`w-5 h-5 mr-3 ${
+          isHovered ? 'text-white' : 'text-gray-500'
+        }`}
+      />
+      <span className="text-sm font-medium">{item.name}</span>
+    </div>
+  </Link>
+);
+
+const LogoCard = () => (
+  <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300 hover:shadow-xl">
+    <div className="relative w-full h-36 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-[url('/assets/pattern.png')] opacity-10" />
+      <div className="relative w-28 h-28 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/50 transform transition-transform duration-300 hover:scale-105">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full animate-pulse-slow" />
+        <Image
+          src="/assets/recrealogo.jpeg"
+          alt="Recrea Padel Club"
+          fill
+          className="object-contain p-2 rounded-full relative z-10"
+          style={{ 
+            objectFit: 'contain',
+            background: 'white',
+          }}
+        />
+        <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur opacity-30 group-hover:opacity-40 animate-tilt" />
+      </div>
+    </div>
+    <div className="p-5 bg-white">
+      <h3 className="text-sm font-semibold text-gray-700 mb-1">Club:</h3>
+      <p className="text-base font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
+        Recrea Padel Club
+      </p>
+    </div>
+  </div>
+);
 
 const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const router = useRouter();
@@ -138,57 +189,19 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
               </div>
             </div>
             
-            {/* Logo Card */}
-            <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300 hover:shadow-xl">
-              <div className="relative w-full h-36 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 flex items-center justify-center p-4">
-                <div className="absolute inset-0 bg-[url('/assets/pattern.png')] opacity-10"></div>
-                <div className="relative w-28 h-28 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/50 transform transition-transform duration-300 hover:scale-105">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full animate-pulse-slow"></div>
-                  <Image
-                    src="/assets/recrealogo.jpeg"
-                    alt="Recrea Padel Club"
-                    fill
-                    className="object-contain p-2 rounded-full relative z-10"
-                    style={{ 
-                      objectFit: 'contain',
-                      background: 'white',
-                    }}
-                  />
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-blue-400 rounded-full blur opacity-30 group-hover:opacity-40 animate-tilt"></div>
-                </div>
-              </div>
-              <div className="p-5 bg-white">
-                <h3 className="text-sm font-semibold text-gray-700 mb-1">Club:</h3>
-                <p className="text-base font-medium bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-                  Recrea Padel Club
-                </p>
-              </div>
-            </div>
+            <LogoCard />
           </div>
 
           {/* Navigation Section */}
           <nav className="flex-1 p-4 overflow-y-auto">
             <ul className="space-y-2">
-              {menuItems.map((item, index) => (
-                <li key={index}>
-                  <Link href={item.href}>
-                    <div
-                      className={`flex items-center p-3 rounded-xl text-gray-800 transition-all duration-300 ease-in-out ${
-                        hoveredItem === item.name
-                          ? 'bg-blue-500 text-white'
-                          : 'hover:bg-gray-100'
-                      }`}
-                      onMouseEnter={() => setHoveredItem(item.name)}
-                      onMouseLeave={() => setHoveredItem(null)}
-                    >
-                      <item.icon
-                        className={`w-5 h-5 mr-3 ${
-                          hoveredItem === item.name ? 'text-white' : 'text-gray-500'
-                        }`}
-                      />
-                      <span className="text-sm font-medium">{item.name}</span>
-                    </div>
-                  </Link>
+              {MENU_ITEMS.map((item) => (
+                <li key={item.name}>
+                  <MenuItem 
+                    item={item} 
+                    isHovered={hoveredItem === item.name}
+                    onHover={setHoveredItem}
+                  />
                 </li>
               ))}
               <li>

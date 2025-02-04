@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import UsersTable from '../../components/Users/UsersTable';
 import UserFilters from '../../components/Users/UserFilter';
+import Header from '@/components/Header';
+import { UsersIcon } from '@heroicons/react/24/outline';
 
 interface User {
   id: string;
@@ -51,18 +53,12 @@ export default function UsersPage() {
   }, []);
 
   const filteredUsers = users.filter(user => {
-    // Convertimos el término de búsqueda a minúsculas y eliminamos espacios extra
-    const searchTermLower = searchTerm.toLowerCase().trim();
-    
-    // Buscamos en nombre, email y teléfono
+    const searchTermLower = searchTerm.toLowerCase().trim();    
     const matchesSearch = 
       user.name.toLowerCase().includes(searchTermLower) ||
       user.email.toLowerCase().includes(searchTermLower) ||
-      user.phone.toLowerCase().includes(searchTermLower);
-    
-    // Verificamos el rol
+      user.phone.toLowerCase().includes(searchTermLower);    
     const matchesRole = selectedRole === 'all' || user.role === selectedRole;
-    
     return matchesSearch && matchesRole;
   });
 
@@ -78,17 +74,21 @@ export default function UsersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Usuarios</h1>
-        </div>
-
-        <UserFilters
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedRole={selectedRole}
-          setSelectedRole={setSelectedRole}
+      <div className="max-w-7xl mx-auto space-y-6">
+        <Header 
+          title="Usuarios"
+          description="Administra y visualiza todos los usuarios."
+          icon={<UsersIcon className="w-6 h-6" />}
         />
+
+        <div className="mb-8">
+          <UserFilters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            selectedRole={selectedRole}
+            setSelectedRole={setSelectedRole}
+          />
+        </div>
 
         <div className="mt-8">
           <UsersTable users={filteredUsers} />
