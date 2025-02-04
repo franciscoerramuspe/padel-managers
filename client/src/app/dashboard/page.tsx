@@ -3,16 +3,22 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FaCalendarAlt, FaClock, FaUsers, FaChartBar } from 'react-icons/fa';
-import { GiTennisCourt } from 'react-icons/gi';
-import ActiveUsers from '../../components/Dashboard/ActiveUsers';
-import { useUsers } from '../../hooks/useUsers';
+import { CalendarIcon, UsersIcon, ChartBarIcon,ScaleIcon, ClockIcon} from '@heroicons/react/24/outline';
+import dynamic from 'next/dynamic';
+import { useUsers } from '@/hooks/useUsers';
+
+
+// Lazy load de componentes grandes
+const ActiveUsers = dynamic(() => import('../../components/Dashboard/ActiveUsers'), {
+  loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-xl"></div>,
+  ssr: false
+});
 
 const quickStats = [
   { 
     title: 'Reservas Hoy', 
     value: '12', 
-    icon: FaCalendarAlt, 
+    icon: CalendarIcon,
     color: 'bg-gradient-to-r from-blue-400 to-blue-600',
     hover: 'hover:from-blue-500 hover:to-blue-700',
     iconBg: 'bg-blue-400/30',
@@ -21,7 +27,7 @@ const quickStats = [
   { 
     title: 'Usuarios Registrados', 
     value: '45', 
-    icon: FaUsers, 
+    icon: UsersIcon,
     color: 'bg-gradient-to-r from-purple-400 to-purple-600',
     hover: 'hover:from-purple-500 hover:to-purple-700',
     iconBg: 'bg-purple-400/30',
@@ -30,7 +36,7 @@ const quickStats = [
   { 
     title: 'Canchas Registradas', 
     value: '8', 
-    icon: GiTennisCourt, 
+    icon: ScaleIcon,
     color: 'bg-gradient-to-r from-orange-400 to-orange-600',
     hover: 'hover:from-orange-500 hover:to-orange-700',
     iconBg: 'bg-orange-400/30',
@@ -39,7 +45,7 @@ const quickStats = [
   { 
     title: 'Ingresos del Día', 
     value: '$1,250', 
-    icon: FaChartBar, 
+    icon: ChartBarIcon,
     color: 'bg-gradient-to-r from-green-400 to-green-600',
     hover: 'hover:from-green-500 hover:to-green-700',
     iconBg: 'bg-green-400/30',
@@ -141,7 +147,7 @@ export default function Dashboard() {
     { 
       title: 'Reservas Hoy', 
       value: '12', 
-      icon: FaCalendarAlt, 
+      icon: CalendarIcon,
       color: 'bg-gradient-to-r from-blue-400 to-blue-600',
       hover: 'hover:from-blue-500 hover:to-blue-700',
       iconBg: 'bg-blue-400/30',
@@ -150,7 +156,7 @@ export default function Dashboard() {
     { 
       title: 'Usuarios Registrados', 
       value: isLoading ? '...' : users.length.toString(), 
-      icon: FaUsers, 
+      icon: UsersIcon,
       color: 'bg-gradient-to-r from-purple-400 to-purple-600',
       hover: 'hover:from-purple-500 hover:to-purple-700',
       iconBg: 'bg-purple-400/30',
@@ -159,7 +165,7 @@ export default function Dashboard() {
     { 
       title: 'Canchas Registradas', 
       value: '8', 
-      icon: GiTennisCourt, 
+      icon: ScaleIcon,
       color: 'bg-gradient-to-r from-orange-400 to-orange-600',
       hover: 'hover:from-orange-500 hover:to-orange-700',
       iconBg: 'bg-orange-400/30',
@@ -168,7 +174,7 @@ export default function Dashboard() {
     { 
       title: 'Ingresos del Día', 
       value: '$1,250', 
-      icon: FaChartBar, 
+      icon: ChartBarIcon,
       color: 'bg-gradient-to-r from-green-400 to-green-600',
       hover: 'hover:from-green-500 hover:to-green-700',
       iconBg: 'bg-green-400/30',
@@ -177,9 +183,9 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div className="text-center mb-6">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto space-y-6 p-8">
+        <div className="text-center mb-6 min-h-[80px]">
           <h2 className="text-2xl font-bold text-gray-800">¡Que tengas un bonito día!</h2>
           <p suppressHydrationWarning className="text-gray-600 text-sm">
             {formattedDate}
@@ -256,7 +262,7 @@ export default function Dashboard() {
                 <div key={reservation.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
                   <div className="flex items-center">
                     <div className="bg-blue-100 rounded-full p-2 mr-3">
-                      <FaClock className="text-blue-600 w-4 h-4" />
+                      <ClockIcon className="text-blue-600 w-4 h-4" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800">{reservation.court}</p>
