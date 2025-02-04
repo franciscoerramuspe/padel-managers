@@ -11,6 +11,8 @@ import { UpcomingTournaments } from '@/components/Dashboard/UpcomingTournaments'
 import { UpcomingReservations } from '@/components/Dashboard/UpcomingReservations';
 import { DateTime } from '@/components/Dashboard/DateTime';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { HomeIcon } from '@heroicons/react/24/outline';
+import Header from '@/components/Header';
 
 const ActiveUsers = dynamic(() => import('../../components/Dashboard/ActiveUsers'), {
   loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-xl"></div>,
@@ -28,8 +30,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-100">
       <div className="max-w-7xl mx-auto p-8 space-y-6">
+        <Header 
+          title="Inicio"
+          description="Visualiza las estadísticas y la información general."
+          icon={<HomeIcon className="w-6 h-6" />}
+        />
+        
         <DateTime />
         <DashboardStats stats={stats} />
         <UpcomingTournaments tournaments={upcomingTournaments} />
