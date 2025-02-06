@@ -102,6 +102,27 @@ export default function EditSponsorModal({
 
           <div>
             <Label>Logo del Patrocinador</Label>
+            <div className="mt-2 mb-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <ImageIcon className="h-5 w-5 text-blue-500 mt-0.5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-medium text-blue-800">
+                    Recomendación para la imagen
+                  </h4>
+                  <ul className="mt-1 text-sm text-blue-700 space-y-1">
+                    <li>• Tamaño recomendado: 1920 x 1080 píxeles</li>
+                    <li>• Formato: PNG o JPG</li>
+                    <li>• Máximo 5MB</li>
+                  </ul>
+                  <p className="mt-2 text-sm text-blue-600">
+                    Usar estas dimensiones asegurará que tu logo se vea perfectamente en el banner del cliente.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-4">
               <div className="flex flex-col items-center">
                 {previewUrl ? (

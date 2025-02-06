@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSponsors } from "@/hooks/useSponsors";
 import { toast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 interface AddSponsorModalProps {
   isOpen: boolean;
@@ -73,14 +74,11 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Añadir Patrocinador</h2>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Añadir Patrocinador</DialogTitle>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -96,6 +94,27 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
 
           <div>
             <Label>Logo del Patrocinador</Label>
+            <div className="mt-2 mb-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <ImageIcon className="h-5 w-5 text-blue-500 mt-0.5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-medium text-blue-800">
+                    Recomendación para la imagen
+                  </h4>
+                  <ul className="mt-1 text-sm text-blue-700 space-y-1">
+                    <li>• Tamaño recomendado: 1920 x 1080 píxeles</li>
+                    <li>• Formato: PNG o JPG</li>
+                    <li>• Máximo 5MB</li>
+                  </ul>
+                  <p className="mt-2 text-sm text-blue-600">
+                    Usar estas dimensiones asegurará que tu logo se vea perfectamente en el banner del cliente.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-4">
               <div className="flex flex-col items-center">
                 {previewUrl ? (
@@ -139,31 +158,31 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
                 )}
               </div>
             </div>
-            {error && (
-              <p className="text-sm text-red-500 mt-2">{error}</p>
-            )}
           </div>
 
-          <div className="flex gap-3">
+          {error && (
+            <p className="text-sm text-red-500 mt-2">{error}</p>
+          )}
+
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
               disabled={isLoading}
-              className="flex-1"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               {isLoading ? "Guardando..." : "Guardar"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
