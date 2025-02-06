@@ -1,57 +1,62 @@
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useEffect, useState } from 'react';
+import { CalendarIcon, ClockIcon } from '@heroicons/react/24/outline';
 
-export const DateTime = () => {
-  const [time, setTime] = useState(new Date());
+export function DateTime() {
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTime(new Date());
-    }, 1000);
-
+    const timer = setInterval(() => setDate(new Date()), 60000); 
     return () => clearInterval(timer);
   }, []);
 
-  const hours = format(time, 'HH');
-  const minutes = format(time, 'mm');
-  const dayName = format(time, 'EEEE', { locale: es });
-  const day = format(time, 'dd');
-  const month = format(time, 'MMM', { locale: es });
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Digital Clock Display */}
-        <div className="bg-gray-50 rounded-xl p-6 flex items-center justify-center">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-4">
-              <div className="bg-gray-900 text-white px-6 py-4 rounded-xl">
-                <span className="text-4xl font-mono font-bold">{hours}</span>
-              </div>
-              <span className="text-4xl font-bold text-gray-400 animate-pulse">:</span>
-              <div className="bg-gray-900 text-white px-6 py-4 rounded-xl">
-                <span className="text-4xl font-mono font-bold">{minutes}</span>
-              </div>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+      <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+        <div className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-blue-50 p-3 rounded-xl">
+              <CalendarIcon className="w-6 h-6 text-blue-500" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Fecha actual</p>
+              <p className="text-lg font-semibold text-gray-900 capitalize">
+                {formatDate(date)}
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Date Display */}
-        <div className="bg-gray-50 rounded-xl p-6">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">
-              {dayName}
-            </p>
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-4xl font-bold text-gray-900">{day}</span>
-              <span className="text-xl font-medium text-gray-500 uppercase mt-1">
-                {month}
-              </span>
+        <div className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-indigo-50 p-3 rounded-xl">
+              <ClockIcon className="w-6 h-6 text-indigo-500" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Hora actual</p>
+              <p className="text-lg font-semibold text-gray-900">
+                {formatTime(date)}
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-}; 
+} 
