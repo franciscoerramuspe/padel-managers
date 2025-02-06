@@ -13,6 +13,7 @@ import {
   XMarkIcon,
   UserIcon,
   ChartBarIcon,
+  PhotoIcon as ImageIcon,
 } from '@heroicons/react/24/outline';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
@@ -27,6 +28,7 @@ const MENU_ITEMS = [
   { name: 'Torneos', href: '/tournaments', icon: TrophyIcon },
   { name: 'Usuarios', href: '/users', icon: UsersIcon },
   { name: 'Canchas', href: '/courts', icon: TrophyIcon },
+  { name: 'Patrocinadores', href: '/sponsors', icon: ImageIcon },
   { name: 'Estadisticas', href: '/incomes', icon: ChartBarIcon },
   { name: 'Configuraciones', href: '/settings', icon: CogIcon },
 ] as const;
