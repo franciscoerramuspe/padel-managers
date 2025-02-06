@@ -16,12 +16,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
-import { ClientSideWrapper } from './ClientSideWrapper';
 import LoadingScreen from './LoadingScreen';
 
 interface SidebarProps {
   username?: string;
-  
 }
 
 const MENU_ITEMS = [
@@ -84,7 +82,7 @@ const LogoCard = () => (
   </div>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ username }) => {
+const Sidebar = ({ username }: SidebarProps) => {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -107,16 +105,11 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      
-      // 1. Primero hacemos el signOut en Supabase
       await supabase.auth.signOut();
-      
-      // 2. Limpiamos todo el localStorage
       localStorage.removeItem('adminToken');
       localStorage.removeItem('isAdmin');
       localStorage.removeItem('userName');
       
-      // 3. Llamada al backend para invalidar la sesión
       try {
         await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
           method: 'POST',
@@ -128,17 +121,11 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
         console.error('Error al cerrar sesión en el backend:', error);
       }
 
-      // 4. Agregamos un pequeño delay para mostrar la animación
       await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // 5. Redirigimos al login
       router.push('/');
-      
-      // 6. Forzamos un reload para limpiar cualquier estado residual
       window.location.reload();
     } catch (error) {
       console.error('Error durante el cierre de sesión:', error);
-      // Aún si hay error, intentamos limpiar todo
       localStorage.clear();
       router.push('/');
     }
@@ -147,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
   const userName = localStorage.getItem('userName');
 
   return (
-    <ClientSideWrapper>
+    <>
       {isLoggingOut && <LoadingScreen message="Cerrando sesión..." />}
       
       {/* Hamburger Menu Button */}
@@ -171,11 +158,11 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
 
       {/* Sidebar Content */}
       <div
-        className={`fixed md:sticky top-0 inset-y-0 left-0 z-40 w-[85%] md:w-64 bg-white min-h-screen transform transition-transform duration-300 ease-in-out ${
+        className={`fixed md:sticky top-0 inset-y-0 left-0 z-40 w-[85%] md:w-64 bg-white h-screen transform transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full max-h-screen">
           {/* Header Section with Logo */}
           <div className="p-4 bg-gradient-to-br from-blue-50 to-white rounded-b-3xl shadow-sm">
             <div className="flex items-center mb-4">
@@ -193,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
           </div>
 
           {/* Navigation Section */}
-          <nav className="flex-1 p-4 overflow-y-auto">
+          <nav className="flex-1 p-4 overflow-y-auto md:overflow-visible">
             <ul className="space-y-2">
               {MENU_ITEMS.map((item) => (
                 <li key={item.name}>
@@ -217,7 +204,7 @@ const Sidebar: React.FC<SidebarProps> = ({ username }) => {
           </nav>
         </div>
       </div>
-    </ClientSideWrapper>
+    </>
   );
 };
 

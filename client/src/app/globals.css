@@ -4,8 +4,8 @@
 
 body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -17,12 +17,10 @@ code, pre {
 }
 
 
-/* Webkit (Safari/Chrome) */
 body::-webkit-scrollbar {
   display: none;
 }
 
-/* Para elementos con scroll */
 .scroll-container {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -32,12 +30,10 @@ body::-webkit-scrollbar {
   display: none;
 }
 
-/* Add these styles to handle mobile overflow */
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Ensure content doesn't overflow on mobile */
 @media (max-width: 768px) {
   .max-w-7xl {
     max-width: 100%;
@@ -45,12 +41,24 @@ body::-webkit-scrollbar {
     padding-right: 1rem;
   }
   
-  /* Center align tabs on mobile */
   .flex.overflow-x-auto {
     justify-content: center;
     padding-bottom: 0.5rem;
   }
 }
+
+.sidebar-nav {
+  height: calc(100vh - 280px); 
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .sidebar-nav {
+    overflow-y: visible;
+    height: auto;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
