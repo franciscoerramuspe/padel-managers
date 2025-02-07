@@ -4,8 +4,8 @@ import { useState } from "react";
 import { ImageIcon, PlusCircle } from "lucide-react";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import AddSponsorModal from "@/components/sponsors/AddSponsorModal";
-import SponsorsGrid from "@/components/sponsors/SponsorsGrid";
+import AddSponsorModal from "@/components/Sponsors/AddSponsorModal";
+import SponsorsGrid from "@/components/Sponsors/SponsorsGrid";
 
 export default function SponsorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

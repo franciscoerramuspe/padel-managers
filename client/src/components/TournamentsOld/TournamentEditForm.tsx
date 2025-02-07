@@ -1,7 +1,7 @@
 import { Dialog } from '@headlessui/react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { Tournament } from '../app/tournaments/[id]/page'
+import { Tournament } from '../../app/tournaments/[id]/page'
 import { X, Calendar, Users, DollarSign, Trophy, MapPin, Layout, Activity } from 'lucide-react'
 
 type Props = {

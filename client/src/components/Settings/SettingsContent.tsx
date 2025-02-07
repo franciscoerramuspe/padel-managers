@@ -1,15 +1,19 @@
 "use client";
 
 import React, { useState } from 'react';
-import ProfileSettings from './ProfileSettings';
-import { FaUser, FaPlug,  FaShieldAlt, } from 'react-icons/fa';
-import IntegrationsPanel from './IntegrationsPanel';
-import SecuritySettings from './SecuritySettings';
+import ProfileSettings from '@/components/Settings/ProfileSettings';
+import IntegrationsPanel from '@/components/Settings/IntegrationsPanel';
+import SubscriptionPanel from '@/components/Settings/SubscriptionPanel';
+import { 
+  UserIcon, 
+  Square3Stack3DIcon, 
+  CreditCardIcon 
+} from '@heroicons/react/24/outline';
 
 const tabs = [
-  { id: 'profile', label: 'Perfil', icon: FaUser },
-  { id: 'integrations', label: 'Integraciones', icon: FaPlug },
-  { id: 'security', label: 'Seguridad', icon: FaShieldAlt },
+  { id: 'profile', label: 'Perfil', icon: UserIcon },
+  { id: 'integrations', label: 'Integraciones', icon: Square3Stack3DIcon },
+  { id: 'subscription', label: 'Suscripción', icon: CreditCardIcon },
 ];
 
 export default function SettingsContent() {
@@ -44,7 +48,7 @@ export default function SettingsContent() {
         <div className="bg-gray-50">
           {activeTab === 'profile' && <ProfileSettings />}
           {activeTab === 'integrations' && <IntegrationsPanel />}
-          {activeTab === 'security' && <SecuritySettings />}
+          {activeTab === 'subscription' && <SubscriptionPanel />}
         </div>
       </div>
     </div>

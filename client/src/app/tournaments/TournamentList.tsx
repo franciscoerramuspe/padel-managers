@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useCategories } from '@/hooks/useCategories';
-import { TournamentCard } from '@/components/tournaments/TournamentCard';
+import { TournamentCard } from '@/components/Tournaments/TournamentCard';
 import { Search } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
