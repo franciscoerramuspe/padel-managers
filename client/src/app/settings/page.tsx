@@ -1,5 +1,5 @@
 import React from 'react';
-import SettingsContent from '../../components/SettingsContent';
+import SettingsContent from '../../components/Settings/SettingsContent';
 import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import Header from '@/components/Header';
 

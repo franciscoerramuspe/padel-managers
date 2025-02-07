@@ -1,7 +1,7 @@
 import { PencilIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
 import { TournamentEditForm } from './TournamentEditForm'
-import { Tournament } from '../app/tournaments/[id]/page'
+import { Tournament } from '../../app/tournaments/[id]/page'
 
 type Props = {
   tournament: Tournament

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { FaWhatsapp, FaEdit } from 'react-icons/fa';
-import WhatsAppConfigModal from './modals/WhatsAppConfigModal';
+import WhatsAppConfigModal from '../Modals/WhatsAppConfigModal';
 import { toast } from "@/components/ui/use-toast";
 
 interface Integration {

@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import SingleEliminationBracket from '@/components/tournaments/SingleEliminationBracket';
-import RoundRobinBracket from '@/components/tournaments/RoundRobinBracket';
-import { ScheduleMatchModal } from '@/components/tournaments/ScheduleMatchModal';
+import SingleEliminationBracket from '@/components/Tournaments/SingleEliminationBracket';
+import RoundRobinBracket from '@/components/Tournaments/RoundRobinBracket';
+import { ScheduleMatchModal } from '@/components/Tournaments/ScheduleMatchModal';
 import { Tournament } from '../../../../types/tournament';
 
 interface Match {
