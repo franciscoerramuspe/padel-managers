@@ -6,6 +6,7 @@ import { useUsers } from '@/hooks/useUsers';
 import { useQuickStats } from '@/hooks/useQuickStats';
 import { useUpcomingReservations } from '@/hooks/useUpcomingReservations';
 import { useTournaments } from '@/hooks/useTournaments';
+import { useSponsors } from '@/hooks/useSponsors';
 import { DashboardStats } from '@/components/Dashboard/DashboardStats';
 import { UpcomingTournaments } from '@/components/Dashboard/UpcomingTournaments';
 import { UpcomingReservations } from '@/components/Dashboard/UpcomingReservations';
@@ -21,11 +22,12 @@ const ActiveUsers = dynamic(() => import('../../components/Dashboard/ActiveUsers
 
 export default function Dashboard() {
   const { users, isLoading: usersLoading } = useUsers();
-  const { stats, loading: statsLoading } = useQuickStats(users);
+  const { tournaments, loading: tournamentsLoading } = useTournaments();
+  const { sponsors, isLoading: sponsorsLoading } = useSponsors();
+  const { stats, loading: statsLoading } = useQuickStats(users, tournaments, sponsors);
   const { reservations, loading: reservationsLoading } = useUpcomingReservations();
-  const { tournaments: upcomingTournaments, loading: tournamentsLoading } = useTournaments();
 
-  if (usersLoading || statsLoading || reservationsLoading || tournamentsLoading) {
+  if (usersLoading || statsLoading || reservationsLoading || tournamentsLoading || sponsorsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -40,7 +42,7 @@ export default function Dashboard() {
         
         <DateTime />
         <DashboardStats stats={stats} />
-        <UpcomingTournaments tournaments={upcomingTournaments} />
+        <UpcomingTournaments tournaments={tournaments} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[400px]">
           <UpcomingReservations reservations={reservations} />
           <ActiveUsers />

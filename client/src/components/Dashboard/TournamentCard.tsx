@@ -15,14 +15,14 @@ const TournamentCard: React.FC<TournamentCardProps> = ({ tournament }) => {
       href={`/tournaments/${tournament.id}`}
       className="group relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200"
     >
-      <div className="relative h-[430px] w-full">
+      <div className="relative h-[220px] w-full">
         {tournament.tournament_info[0]?.tournament_thumbnail ? (
           <Image
             src={tournament.tournament_info[0].tournament_thumbnail}
             alt={tournament.name}
             fill
             className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+            sizes="(max-width: 300px) 100vw, (max-width: 1200px) 33vw, 25vw"
           />
         ) : (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
