@@ -8,7 +8,7 @@ const nextConfig = {
     optimizePackageImports: ['@heroicons/react', '@phosphor-icons/react'],
   },
   images: {
-    domains: ['goipmracccjxjmhpizib.supabase.co', 'your-image-domain.com'],
+    domains: ['goipmracccjxjmhpizib.supabase.co'],
     remotePatterns: [
       {
         protocol: 'https',
