@@ -180,11 +180,12 @@ export default function Home() {
             <div className="text-center text-white max-w-lg mx-auto">
               <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-xl">
                 <div className="relative w-32 h-32 mx-auto mb-8 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/30">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full"></div>
                   <Image
                     src="/assets/recrealogo.jpeg"
                     alt="Recrea Padel Club"
                     fill
+                    priority
+                    sizes="128px"
                     className="object-contain p-2 rounded-full relative z-10"
                     style={{ 
                       objectFit: 'contain',

@@ -8,6 +8,8 @@ export default function EmptyState() {
           src="/assets/court_padel.png"
           alt="No courts found"
           fill
+          priority
+          sizes="(max-width: 768px) 256px, 128px"
           className="object-contain"
         />
       </div>

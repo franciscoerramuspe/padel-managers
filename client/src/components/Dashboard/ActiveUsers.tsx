@@ -57,6 +57,8 @@ export default function ActiveUsers() {
                   src={user.profile_photo || '/assets/user.png'}
                   alt={`${user.first_name} ${user.last_name}`}
                   fill
+                  priority
+                  sizes="128px"
                   className="rounded-full object-cover"
                 />
               </div>

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { supabase } from '@/lib/supabase'
-
+import Image from 'next/image';
 interface Category {
   id: string
   name: string
@@ -238,11 +238,14 @@ export default function CreateTournamentPage() {
                   <div className="flex items-center justify-center">
                     {tournamentInfo.tournament_thumbnail ? (
                       <div className="relative group">
-                        <img
-                          src={URL.createObjectURL(tournamentInfo.tournament_thumbnail)}
-                          alt="Vista previa"
-                          className="h-48 w-96 object-cover rounded-lg"
-                        />
+                    <Image
+                      src={URL.createObjectURL(tournamentInfo.tournament_thumbnail)}
+                      alt="Vista previa"
+                      width={384}
+                      height={192}
+                      priority
+                      className="h-48 w-96 object-cover rounded-lg"
+                    />
                         <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
                           <button
                             type="button"

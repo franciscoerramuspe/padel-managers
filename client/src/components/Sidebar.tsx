@@ -59,13 +59,14 @@ const MenuItem = ({ item, isHovered, onHover }: {
 const LogoCard = () => (
   <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300 hover:shadow-xl">
     <div className="relative w-full h-36 bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[url('/assets/pattern.png')] opacity-10" />
       <div className="relative w-28 h-28 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/50 transform transition-transform duration-300 hover:scale-105">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-white rounded-full animate-pulse-slow" />
         <Image
           src="/assets/recrealogo.jpeg"
           alt="Recrea Padel Club"
           fill
+          priority
+          sizes="(max-width: 768px) 112px, 112px"
           className="object-contain p-2 rounded-full relative z-10"
           style={{ 
             objectFit: 'contain',

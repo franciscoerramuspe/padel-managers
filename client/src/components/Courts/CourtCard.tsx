@@ -27,12 +27,12 @@ export default function CourtCard({ id, name, photo_url, onDelete, onEdit }: Cou
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="relative h-48">
         <Image
-          src={getImageUrl(photo_url)}
+          src={photo_url}
           alt={name}
           fill
-          className="object-cover"
+          priority
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={true}
+          className="object-cover transition-all duration-300 group-hover:scale-105"
         />
       </div>
       <div className="p-4">

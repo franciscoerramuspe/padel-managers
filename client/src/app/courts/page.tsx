@@ -33,7 +33,7 @@ export default function CourtsPage() {
   };
 
   const handleEdit = (court: { id: string; name: string; photo_url: string }) => {
-    setEditingCourt(court);
+    setEditingCourt(court); 
   };
 
   const handleDelete = async () => {
@@ -72,7 +72,7 @@ export default function CourtsPage() {
         
         <div className="mt-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {courts.length === 0 ? (
+            {!isLoading && courts.length === 0 ? (
               <div className="col-span-full">
                 <EmptyState />
               </div>
