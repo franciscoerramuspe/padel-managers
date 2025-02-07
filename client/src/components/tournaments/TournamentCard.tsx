@@ -11,6 +11,10 @@ interface TournamentCardProps {
 }
 
 export const TournamentCard = ({ tournament, categories }: TournamentCardProps) => {
+  const MAX_TEAMS = 8;
+  const teamsCount = tournament.tournament_teams?.length || 0;
+  const progressPercentage = (teamsCount / MAX_TEAMS) * 100;
+
   return (
     <Link
       href={`/tournaments/${tournament.id}`}
@@ -22,8 +26,9 @@ export const TournamentCard = ({ tournament, categories }: TournamentCardProps) 
             src={tournament.tournament_info[0].tournament_thumbnail}
             alt={tournament.name}
             fill
-            className="object-cover"
+            priority
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
           />
         ) : (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center">
@@ -63,11 +68,20 @@ export const TournamentCard = ({ tournament, categories }: TournamentCardProps) 
                 <MapPin className="h-4 w-4" />
                 <span className="text-sm">{tournament.tournament_info[0].tournament_club_name}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span className="text-sm">
-                  {tournament.tournament_teams?.length || 0} equipos inscritos
-                </span>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    <span className="text-sm">Equipos inscriptos</span>
+                  </div>
+                  <span className="text-sm font-medium">{teamsCount}/{MAX_TEAMS}</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-green-500 h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
               </div>
             </>
           )}

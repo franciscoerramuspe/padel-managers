@@ -15,6 +15,8 @@ export default function LoadingScreen({ message = "Cargando..." }: LoadingScreen
             alt="Recrea Padel Club"
             fill
             className="object-contain p-2 rounded-full relative z-10"
+            priority
+            sizes="128px"
             style={{ 
               objectFit: 'contain',
               background: 'white',

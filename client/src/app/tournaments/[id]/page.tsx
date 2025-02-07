@@ -13,7 +13,7 @@ import {
   ArrowLeft,
   Share2
 } from 'lucide-react';
-
+import Image from 'next/image';
 interface Tournament {
   id: string;
   name: string;
@@ -91,11 +91,14 @@ export default function TournamentDetailsPage() {
       {/* Hero Section with Image */}
       <div className="relative h-[300px] bg-gradient-to-r from-blue-600 to-blue-800">
         {tournament.tournament_info[0]?.tournament_thumbnail && (
-          <img
-            src={tournament.tournament_info[0].tournament_thumbnail}
-            alt={tournament.name}
-            className="w-full h-full object-cover opacity-30"
-          />
+        <Image
+        src={tournament.tournament_info[0].tournament_thumbnail}
+        alt={tournament.name}
+        fill
+        priority
+        sizes="100vw"
+        className="w-full h-full object-cover opacity-30"
+      />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8">

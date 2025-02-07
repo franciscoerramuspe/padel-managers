@@ -80,6 +80,8 @@ export default function UsersTable({ users }: UsersTableProps) {
                         src={user.avatar}
                         alt={user.name}
                         fill
+                        priority
+                        sizes="128px"
                         className="rounded-full object-cover"
                       />
                     </div>

@@ -1,4 +1,4 @@
-import TournamentList from './TournamentList';
+import TournamentList from '../../components/Tournaments/TournamentList';
 import { PlusCircle, TrophyIcon } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';

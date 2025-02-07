@@ -141,6 +141,8 @@ export default function IntegrationsPanel() {
                       src={integration.icon}
                       alt={integration.name}
                       fill
+                      priority
+                      sizes="128px"
                       className="object-contain"
                     />
                   </div>

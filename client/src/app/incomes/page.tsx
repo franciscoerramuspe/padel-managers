@@ -15,8 +15,6 @@ export default function IncomesPage() {
   const { tournaments, loading, error } = useTournaments();
   const [date, setDate] = useState(new Date());
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div>Error al cargar los torneos</div>;
 
   const estimatedIncomeData = tournaments.map(tournament => {
     const startDate = new Date(tournament.start_date);
