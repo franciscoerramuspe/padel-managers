@@ -4,16 +4,16 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import { useUsers } from '@/hooks/useUsers';
 import { useQuickStats } from '@/hooks/useQuickStats';
-import { useUpcomingReservations } from '@/hooks/useUpcomingReservations';
 import { useTournaments } from '@/hooks/useTournaments';
 import { useSponsors } from '@/hooks/useSponsors';
+import { useCourts } from '@/hooks/useCourts';
 import { DashboardStats } from '@/components/Dashboard/DashboardStats';
 import { UpcomingTournaments } from '@/components/Dashboard/UpcomingTournaments';
-import { UpcomingReservations } from '@/components/Dashboard/UpcomingReservations';
 import { DateTime } from '@/components/Dashboard/DateTime';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { HomeIcon } from '@heroicons/react/24/outline';
 import Header from '@/components/Header';
+import { ActiveCourts } from '@/components/Dashboard/ActiveCourts';
 
 const ActiveUsers = dynamic(() => import('../../components/Dashboard/ActiveUsers'), {
   loading: () => <div className="animate-pulse bg-gray-100 h-64 rounded-xl"></div>,
@@ -24,10 +24,10 @@ export default function Dashboard() {
   const { users, isLoading: usersLoading } = useUsers();
   const { tournaments, loading: tournamentsLoading } = useTournaments();
   const { sponsors, isLoading: sponsorsLoading } = useSponsors();
+  const { courts, isLoading: courtsLoading } = useCourts();
   const { stats, loading: statsLoading } = useQuickStats(users, tournaments, sponsors);
-  const { reservations, loading: reservationsLoading } = useUpcomingReservations();
 
-  if (usersLoading || statsLoading || reservationsLoading || tournamentsLoading || sponsorsLoading) {
+  if (usersLoading || statsLoading || tournamentsLoading || sponsorsLoading || courtsLoading) {
     return <LoadingSpinner />;
   }
 
@@ -44,7 +44,7 @@ export default function Dashboard() {
         <DashboardStats stats={stats} />
         <UpcomingTournaments tournaments={tournaments} />
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-h-[400px]">
-          <UpcomingReservations reservations={reservations} />
+          <ActiveCourts courts={courts} />
           <ActiveUsers />
         </div>
       </div>
