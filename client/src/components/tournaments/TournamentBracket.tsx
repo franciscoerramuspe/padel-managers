@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Space } from 'lucide-react';
 
 interface Match {
@@ -24,27 +23,30 @@ export function TournamentBracket({ matches, format, tournamentId }: TournamentB
   const [matchesByRound, setMatchesByRound] = useState<{[key: number]: any[]}>({});
 
   useEffect(() => {
-    const fetchDraw = async () => {
-      try {
-        const response = await fetch(`/api/tournaments/${tournamentId}/draw`);
-        const data = await response.json();
-        
-        // Group matches by round
-        const grouped = data.matches.reduce((acc: any, match: any) => {
-          if (!acc[match.round]) acc[match.round] = [];
-          acc[match.round].push(match);
-          return acc;
-        }, {});
-        setMatchesByRound(grouped);
-      } catch (error) {
-        console.error('Error fetching draw:', error);
-      }
-    };
-
-    if (tournamentId) {
-      fetchDraw();
+    if (matches && matches.length > 0) {
+      // Solo agrupar si tenemos matches
+      const grouped = matches.reduce((acc: any, match: any) => {
+        if (!acc[match.round]) acc[match.round] = [];
+        acc[match.round].push(match);
+        return acc;
+      }, {});
+      
+      setMatchesByRound(grouped);
     }
-  }, [tournamentId]);
+  }, [matches]);
+
+  if (!matches || matches.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          No hay partidos programados
+        </h2>
+        <p className="text-gray-500">
+          Aún no se han generado los partidos para este torneo.
+        </p>
+      </div>
+    );
+  }
 
   const renderSingleElimination = () => (
     <div className="tournament-bracket">
