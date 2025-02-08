@@ -11,9 +11,13 @@ import {
   Trophy, 
   DollarSign,
   ArrowLeft,
-  Share2
+  Share2,
+  Shield
 } from 'lucide-react';
 import Image from 'next/image';
+import { useToast } from "@/components/ui/use-toast";
+import { useUsers } from '@/hooks/useUsers';
+
 interface Tournament {
   id: string;
   name: string;
@@ -41,6 +45,11 @@ export default function TournamentDetailsPage() {
   const router = useRouter();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
+  const [teams, setTeams] = useState([]);
+  const [matches, setMatches] = useState([]);
+  const { toast } = useToast();
+  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+  const isAdmin = !!adminToken;
 
   useEffect(() => {
     const fetchTournament = async () => {
@@ -51,6 +60,11 @@ export default function TournamentDetailsPage() {
         setTournament(data);
       } catch (error) {
         console.error('Error:', error);
+        toast({
+          title: 'Error al cargar el torneo',
+          description: 'Por favor, inténtelo de nuevo más tarde',
+          variant: 'destructive'
+        });
       } finally {
         setLoading(false);
       }
@@ -60,6 +74,82 @@ export default function TournamentDetailsPage() {
       fetchTournament();
     }
   }, [params.id]);
+
+  useEffect(() => {
+    const fetchTournamentData = async () => {
+      if (params.id) {
+        try {
+          const [teamsResponse, matchesResponse] = await Promise.all([
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/teams`),
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/matches`)
+          ]);
+          
+          if (!teamsResponse.ok || !matchesResponse.ok) {
+            throw new Error('Error fetching data');
+          }
+
+          const teamsData = await teamsResponse.json();
+          const matchesData = await matchesResponse.json();
+          
+          setTeams(teamsData.teams);
+          setMatches(matchesData.matches);
+        } catch (error) {
+          console.error('Error fetching tournament data:', error);
+          toast({
+            title: 'Error al cargar los datos del torneo',
+            description: 'Por favor, inténtelo de nuevo más tarde',
+            variant: 'destructive'
+          });
+        }
+      }
+    };
+
+    fetchTournamentData();
+  }, [params.id]);
+
+  const handleGenerateBracket = async () => {
+    try {
+      if (!adminToken) {
+        toast({
+          title: 'Error',
+          description: 'No tienes permisos de administrador',
+          variant: 'destructive'
+        });
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/generate-bracket`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${adminToken}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al generar el bracket');
+      }
+
+      const data = await response.json();
+      setMatches(data.scheduledMatches);
+      toast({
+        title: 'Éxito',
+        description: 'Bracket generado correctamente',
+        variant: 'default'
+      });
+    } catch (error) {
+      console.error('Error generating bracket:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Error al generar el bracket',
+        variant: 'destructive'
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -168,6 +258,102 @@ export default function TournamentDetailsPage() {
                 )}
               </div>
             </div>
+
+            {/* Admin Section */}
+            {isAdmin && (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-blue-600" />
+                    <h2 className="text-xl font-semibold">Panel de Administración</h2>
+                  </div>
+                  {teams.length === 8 && !matches.length && (
+                    <button
+                      onClick={handleGenerateBracket}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Generar Bracket
+                    </button>
+                  )}
+                </div>
+
+                {/* Teams Section */}
+                <div className="mb-8">
+                  <h3 className="text-lg font-semibold mb-4">Equipos Inscritos ({teams.length}/8)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {teams.map((team: any) => (
+                      <div 
+                        key={team.team_id}
+                        className="bg-gray-50 rounded-lg p-4"
+                      >
+                        <p className="font-medium">Equipo {team.team_id.slice(0, 8)}</p>
+                        <div className="text-sm text-gray-600 mt-1">
+                          <p>Jugador 1: {team.player1?.first_name} {team.player1?.last_name}</p>
+                          <p>Jugador 2: {team.player2?.first_name} {team.player2?.last_name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>  
+
+                {/* Bracket Section */}
+                {matches.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="text-lg font-semibold mb-4">Bracket del Torneo</h3>
+                    <div className="overflow-x-auto">
+                      <div className="min-w-[800px]">
+                        {[1, 2, 3].map((round) => {
+                          const roundMatches = matches.filter((m: any) => m.round === round);
+                          return (
+                            <div key={round} className="mb-8">
+                              <h4 className="text-md font-medium mb-4">
+                                {round === 1 ? 'Cuartos de Final' :
+                                 round === 2 ? 'Semifinales' : 'Final'}
+                              </h4>
+                              <div className="grid gap-4">
+                                {roundMatches.map((match: any) => (
+                                  <div 
+                                    key={match.id}
+                                    className="border rounded-lg p-4 bg-white"
+                                  >
+                                    <div className="text-sm text-gray-500 mb-2">
+                                      {match.match_day} - {match.start_time}
+                                    </div>
+                                    <div className="space-y-2">
+                                      <div className="flex justify-between items-center">
+                                        <div className="text-sm">
+                                          {match.home_team ? (
+                                            <>
+                                              {match.home_team.player1?.first_name} {match.home_team.player1?.last_name} /
+                                              {match.home_team.player2?.first_name} {match.home_team.player2?.last_name}
+                                            </>
+                                          ) : 'Por definir'}
+                                        </div>
+                                      </div>
+                                      <div className="border-t my-2"></div>
+                                      <div className="flex justify-between items-center">
+                                        <div className="text-sm">
+                                          {match.away_team ? (
+                                            <>
+                                              {match.away_team.player1?.first_name} {match.away_team.player1?.last_name} /
+                                              {match.away_team.player2?.first_name} {match.away_team.player2?.last_name}
+                                            </>
+                                          ) : 'Por definir'}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
