@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Space } from 'lucide-react';
 
 interface Match {
   id: string;
@@ -14,23 +15,22 @@ interface Match {
 }
 
 interface TournamentBracketProps {
-  tournamentId: string;
+  matches: any[];
   format: 'single_elimination' | 'round_robin';
+  tournamentId: string;
 }
 
-const TournamentBracket = ({ tournamentId, format }: TournamentBracketProps) => {
-  const [matches, setMatches] = useState<Match[]>([]);
-  const [matchesByRound, setMatchesByRound] = useState<{[key: number]: Match[]}>({});
+export function TournamentBracket({ matches, format, tournamentId }: TournamentBracketProps) {
+  const [matchesByRound, setMatchesByRound] = useState<{[key: number]: any[]}>({});
 
   useEffect(() => {
     const fetchDraw = async () => {
       try {
         const response = await fetch(`/api/tournaments/${tournamentId}/draw`);
         const data = await response.json();
-        setMatches(data.matches);
-
+        
         // Group matches by round
-        const grouped = data.matches.reduce((acc: any, match: Match) => {
+        const grouped = data.matches.reduce((acc: any, match: any) => {
           if (!acc[match.round]) acc[match.round] = [];
           acc[match.round].push(match);
           return acc;
@@ -41,7 +41,9 @@ const TournamentBracket = ({ tournamentId, format }: TournamentBracketProps) => 
       }
     };
 
-    fetchDraw();
+    if (tournamentId) {
+      fetchDraw();
+    }
   }, [tournamentId]);
 
   const renderSingleElimination = () => (
@@ -85,10 +87,37 @@ const TournamentBracket = ({ tournamentId, format }: TournamentBracketProps) => 
   );
 
   return (
-    <div>
-      {format === 'single_elimination' ? renderSingleElimination() : renderRoundRobin()}
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Bracket del Torneo</h2>
+        
+        <div className="min-h-[400px] bg-gray-50 rounded-lg p-4">
+          {Object.entries(matchesByRound).map(([round, roundMatches]) => (
+            <div key={round} className="mb-8">
+              <h3 className="text-lg font-semibold mb-4">Ronda {round}</h3>
+              <div className="grid gap-4">
+                {roundMatches.map((match: any) => (
+                  <Card key={match.id} className="p-4">
+                    <div className="flex justify-between items-center">
+                      <div className="space-y-2">
+                        <p className="font-medium">{match.team1?.name || 'TBD'}</p>
+                        <p className="font-medium">{match.team2?.name || 'TBD'}</p>
+                      </div>
+                      {match.winner && (
+                        <div className="text-green-600 font-medium">
+                          Ganador: {match.winner.name}
+                        </div>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default TournamentBracket; 

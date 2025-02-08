@@ -1,434 +1,52 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { 
-  Calendar, 
-  Clock, 
-  Users, 
-  MapPin, 
-  Building2, 
-  Trophy, 
-  DollarSign,
-  ArrowLeft,
-  Share2,
-  Shield
-} from 'lucide-react';
-import Image from 'next/image';
 import { useToast } from "@/components/ui/use-toast";
-import { useUsers } from '@/hooks/useUsers';
-
-interface Tournament {
-  id: string;
-  name: string;
-  category: string;
-  status: string;
-  start_date: string;
-  end_date: string;
-  tournament_teams: any[];
-  tournament_info: [{
-    description: string;
-    rules: string;
-    tournament_location: string;
-    tournament_club_name: string;
-    tournament_thumbnail?: string;
-    inscription_cost: number;
-    signup_limit_date: string;
-    first_place_prize: string;
-    second_place_prize: string;
-    third_place_prize: string;
-  }];
-}
+import { TournamentHeader } from '@/components/Tournaments/TournamentHeader';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useTournaments } from '@/hooks/useTournaments';
+import { TournamentOverview } from '@/components/Tournaments/TournamentOverview';
+import { TournamentPrizes } from '@/components/Tournaments/TournamentPrizes';
+import { TournamentTeams } from '@/components/Tournaments/TournamentTeams';
+import { TournamentRules } from '@/components/Tournaments/TournamentRules';
+import { TournamentStats } from '@/components/Tournaments/TournamentStats';
 
 export default function TournamentDetailsPage() {
   const params = useParams();
   const router = useRouter();
-  const [tournament, setTournament] = useState<Tournament | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [teams, setTeams] = useState([]);
-  const [matches, setMatches] = useState([]);
-  const { toast } = useToast();
-  const adminToken = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
-  const isAdmin = !!adminToken;
+  const { tournament, teams, loading } = useTournaments(params.id as string);
 
-  useEffect(() => {
-    const fetchTournament = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}`);
-        if (!response.ok) throw new Error('Failed to fetch tournament');
-        const data = await response.json();
-        setTournament(data);
-      } catch (error) {
-        console.error('Error:', error);
-        toast({
-          title: 'Error al cargar el torneo',
-          description: 'Por favor, inténtelo de nuevo más tarde',
-          variant: 'destructive'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (params.id) {
-      fetchTournament();
-    }
-  }, [params.id]);
-
-  useEffect(() => {
-    const fetchTournamentData = async () => {
-      if (params.id) {
-        try {
-          const [teamsResponse, matchesResponse] = await Promise.all([
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/teams`),
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/matches`)
-          ]);
-          
-          if (!teamsResponse.ok || !matchesResponse.ok) {
-            throw new Error('Error fetching data');
-          }
-
-          const teamsData = await teamsResponse.json();
-          const matchesData = await matchesResponse.json();
-          
-          setTeams(teamsData.teams);
-          setMatches(matchesData.matches);
-        } catch (error) {
-          console.error('Error fetching tournament data:', error);
-          toast({
-            title: 'Error al cargar los datos del torneo',
-            description: 'Por favor, inténtelo de nuevo más tarde',
-            variant: 'destructive'
-          });
-        }
-      }
-    };
-
-    fetchTournamentData();
-  }, [params.id]);
-
-  const handleGenerateBracket = async () => {
-    try {
-      if (!adminToken) {
-        toast({
-          title: 'Error',
-          description: 'No tienes permisos de administrador',
-          variant: 'destructive'
-        });
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/tournaments/${params.id}/generate-bracket`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${adminToken}`
-          }
-        }
-      );
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al generar el bracket');
-      }
-
-      const data = await response.json();
-      setMatches(data.scheduledMatches);
-      toast({
-        title: 'Éxito',
-        description: 'Bracket generado correctamente',
-        variant: 'default'
-      });
-    } catch (error) {
-      console.error('Error generating bracket:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Error al generar el bracket',
-        variant: 'destructive'
-      });
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  if (!tournament) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Torneo no encontrado</h1>
-          <button
-            onClick={() => router.push('/tournaments')}
-            className="text-blue-600 hover:text-blue-700 font-semibold flex items-center justify-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver a torneos
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner />;
+  if (!tournament) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Image */}
-      <div className="relative h-[300px] bg-gradient-to-r from-blue-600 to-blue-800">
-        {tournament.tournament_info[0]?.tournament_thumbnail && (
-        <Image
-        src={tournament.tournament_info[0].tournament_thumbnail}
-        alt={tournament.name}
-        fill
-        priority
-        sizes="100vw"
-        className="w-full h-full object-cover opacity-30"
+      <TournamentHeader 
+        tournament={tournament}
+        onBack={() => router.push('/tournaments')}
       />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8">
-          <div className="max-w-6xl mx-auto">
-            <button
-              onClick={() => router.push('/tournaments')}
-              className="text-white/80 hover:text-white font-semibold mb-4 flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Volver a torneos
-            </button>
-            <h1 className="text-4xl font-bold text-white mb-2">{tournament.name}</h1>
-            <div className="flex items-center gap-4">
-              <span className="px-3 py-1 bg-white/20 rounded-full text-white text-sm">
-                {tournament.category}
-              </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium
-                ${tournament.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
-                  tournament.status === 'in_progress' ? 'bg-green-100 text-green-800' :
-                  'bg-gray-100 text-gray-800'}`}>
-                {tournament.status === 'upcoming' ? 'Próximo' :
-                 tournament.status === 'in_progress' ? 'En Curso' : 'Finalizado'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-6xl mx-auto px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Descripción</h2>
-              <p className="text-gray-600">{tournament.tournament_info[0]?.description}</p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Reglas del Torneo</h2>
-              <p className="text-gray-600 whitespace-pre-line">{tournament.tournament_info[0]?.rules}</p>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-xl font-semibold mb-4">Premios</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {tournament.tournament_info[0]?.first_place_prize && (
-                  <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-4 rounded-lg">
-                    <Trophy className="h-6 w-6 text-yellow-600 mb-2" />
-                    <h3 className="font-semibold text-yellow-900">1er Lugar</h3>
-                    <p className="text-yellow-800">{tournament.tournament_info[0].first_place_prize}</p>
-                  </div>
-                )}
-                {tournament.tournament_info[0]?.second_place_prize && (
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg">
-                    <Trophy className="h-6 w-6 text-gray-600 mb-2" />
-                    <h3 className="font-semibold text-gray-900">2do Lugar</h3>
-                    <p className="text-gray-800">{tournament.tournament_info[0].second_place_prize}</p>
-                  </div>
-                )}
-                {tournament.tournament_info[0]?.third_place_prize && (
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg">
-                    <Trophy className="h-6 w-6 text-orange-600 mb-2" />
-                    <h3 className="font-semibold text-orange-900">3er Lugar</h3>
-                    <p className="text-orange-800">{tournament.tournament_info[0].third_place_prize}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Admin Section */}
-            {isAdmin && (
-              <div className="bg-white rounded-xl shadow-sm p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-blue-600" />
-                    <h2 className="text-xl font-semibold">Panel de Administración</h2>
-                  </div>
-                  {teams.length === 8 && !matches.length && (
-                    <button
-                      onClick={handleGenerateBracket}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Generar Bracket
-                    </button>
-                  )}
-                </div>
-
-                {/* Teams Section */}
-                <div className="mb-8">
-                  <h3 className="text-lg font-semibold mb-4">Equipos Inscritos ({teams.length}/8)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {teams.map((team: any) => (
-                      <div 
-                        key={team.team_id}
-                        className="bg-gray-50 rounded-lg p-4"
-                      >
-                        <p className="font-medium">Equipo {team.team_id.slice(0, 8)}</p>
-                        <div className="text-sm text-gray-600 mt-1">
-                          <p>Jugador 1: {team.player1?.first_name} {team.player1?.last_name}</p>
-                          <p>Jugador 2: {team.player2?.first_name} {team.player2?.last_name}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>  
-
-                {/* Bracket Section */}
-                {matches.length > 0 && (
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold mb-4">Bracket del Torneo</h3>
-                    <div className="overflow-x-auto">
-                      <div className="min-w-[800px]">
-                        {[1, 2, 3].map((round) => {
-                          const roundMatches = matches.filter((m: any) => m.round === round);
-                          return (
-                            <div key={round} className="mb-8">
-                              <h4 className="text-md font-medium mb-4">
-                                {round === 1 ? 'Cuartos de Final' :
-                                 round === 2 ? 'Semifinales' : 'Final'}
-                              </h4>
-                              <div className="grid gap-4">
-                                {roundMatches.map((match: any) => (
-                                  <div 
-                                    key={match.id}
-                                    className="border rounded-lg p-4 bg-white"
-                                  >
-                                    <div className="text-sm text-gray-500 mb-2">
-                                      {match.match_day} - {match.start_time}
-                                    </div>
-                                    <div className="space-y-2">
-                                      <div className="flex justify-between items-center">
-                                        <div className="text-sm">
-                                          {match.home_team ? (
-                                            <>
-                                              {match.home_team.player1?.first_name} {match.home_team.player1?.last_name} /
-                                              {match.home_team.player2?.first_name} {match.home_team.player2?.last_name}
-                                            </>
-                                          ) : 'Por definir'}
-                                        </div>
-                                      </div>
-                                      <div className="border-t my-2"></div>
-                                      <div className="flex justify-between items-center">
-                                        <div className="text-sm">
-                                          {match.away_team ? (
-                                            <>
-                                              {match.away_team.player1?.first_name} {match.away_team.player1?.last_name} /
-                                              {match.away_team.player2?.first_name} {match.away_team.player2?.last_name}
-                                            </>
-                                          ) : 'Por definir'}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            <TournamentOverview tournament={tournament} />
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <DollarSign className="h-5 w-5 text-green-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Costo de Inscripción</p>
-                    <p className="font-semibold text-green-600">
-                      ${tournament.tournament_info[0]?.inscription_cost}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Users className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Equipos Inscritos</p>
-                    <p className="font-semibold">{tournament.tournament_teams.length} equipos</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Fechas del Torneo</p>
-                    <p className="font-semibold">
-                      {new Date(tournament.start_date).toLocaleDateString()} - 
-                      {new Date(tournament.end_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Fecha Límite de Inscripción</p>
-                    <p className="font-semibold">
-                      {new Date(tournament.tournament_info[0]?.signup_limit_date).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <Building2 className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Club</p>
-                    <p className="font-semibold">{tournament.tournament_info[0]?.tournament_club_name}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <MapPin className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="text-sm text-gray-600">Ubicación</p>
-                    <p className="font-semibold">{tournament.tournament_info[0]?.tournament_location}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                <button className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  Inscribirse al Torneo
-                </button>
-                <button className="w-full bg-gray-100 text-gray-700 py-3 px-4 rounded-lg font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
-                  <Share2 className="h-4 w-4" />
-                  Compartir Torneo
-                </button>
-              </div>
-            </div>
+          <div className="space-y-8">
+            <TournamentStats 
+              tournament={tournament}
+              teams={teams}
+              tournamentId={params.id as string}
+            />
           </div>
         </div>
-      </div>
+
+        <div className="mt-8 space-y-8">
+          <TournamentPrizes tournament={tournament} />
+          <TournamentTeams teams={teams} />
+          <TournamentRules tournament={tournament} />
+        </div>
+      </main>
     </div>
   );
 }
