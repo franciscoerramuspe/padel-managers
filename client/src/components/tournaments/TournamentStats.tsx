@@ -13,7 +13,7 @@ export function TournamentStats({ tournament, teams, tournamentId }: TournamentS
   const router = useRouter();
   const tournamentInfo = tournament.tournament_info?.[0];
   const teamsCount = tournament.tournament_teams?.length || 0;
-  const MAX_TEAMS = 8;
+  const MAX_TEAMS = 12;
   const progressPercentage = (teamsCount / MAX_TEAMS) * 100;
 
   return (
@@ -41,10 +41,9 @@ export function TournamentStats({ tournament, teams, tournamentId }: TournamentS
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="h-5 w-5 text-blue-600" />
-                <span className="text-sm font-medium text-blue-600">Equipos</span>
+                <span className="text-sm font-medium text-blue-600">Equipos inscriptos</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">{teamsCount}</p>
-              <p className="text-sm text-gray-500">equipos inscritos</p>
             </div>
 
             <div className="bg-green-50 rounded-lg p-4">
@@ -53,7 +52,6 @@ export function TournamentStats({ tournament, teams, tournamentId }: TournamentS
                 <span className="text-sm font-medium text-green-600">Inscripción</span>
               </div>
               <p className="text-2xl font-bold text-gray-900">${tournamentInfo?.inscription_cost}</p>
-              <p className="text-sm text-gray-500">por equipo</p>
             </div>
 
             <div className="bg-purple-50 rounded-lg p-4">
@@ -85,7 +83,7 @@ export function TournamentStats({ tournament, teams, tournamentId }: TournamentS
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => router.push(`/tournaments/${tournamentId}/draw`)}
             >
-              Ver Bracket del Torneo
+              Ver parejas inscriptas
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

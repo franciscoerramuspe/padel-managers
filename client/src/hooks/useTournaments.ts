@@ -43,7 +43,7 @@ export const useTournaments = (tournamentId?: string) => {
 
     try {
       const [tournamentResponse, teamsResponse, matchesResponse] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}`),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}?include=category`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/teams`),
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments/${tournamentId}/matches`)
       ]);
@@ -60,8 +60,8 @@ export const useTournaments = (tournamentId?: string) => {
 
       setData({
         tournament: tournamentData,
-        teams: teamsData.teams,
-        matches: matchesData.matches,
+        teams: teamsData.teams || [],
+        matches: matchesData.matches || [],
         tournaments: data.tournaments
       });
     } catch (err) {

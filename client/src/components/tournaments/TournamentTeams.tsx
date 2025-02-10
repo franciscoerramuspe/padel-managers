@@ -5,7 +5,7 @@ interface TournamentTeamsProps {
 }
 
 export function TournamentTeams({ teams }: TournamentTeamsProps) {
-  const MAX_TEAMS = 8;
+  const MAX_TEAMS = 12;
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
