@@ -18,13 +18,15 @@ interface Match {
   team2?: any;
   winner?: any;
   nextMatchId?: string;
+  score?: string;
 }
 
 interface DrawBracketProps {
   matches: Match[];
+  onUpdateMatch?: (match: Match) => void;
 }
 
-export function DrawBracket({ matches }: DrawBracketProps) {
+export function DrawBracket({ matches, onUpdateMatch }: DrawBracketProps) {
   // Función para crear un nodo de partido
   const createMatchNode = (match: Match, x: number, y: number): Node => ({
     id: match.id,
@@ -32,13 +34,32 @@ export function DrawBracket({ matches }: DrawBracketProps) {
     type: 'default',
     data: {
       label: (
-        <div className="border border-gray-200 bg-white rounded-lg shadow-sm w-[280px]">
-          <div className="p-3 border-b border-gray-200 bg-gray-50">
+        <div 
+          className={`
+            border bg-white rounded-lg shadow-sm w-[280px] transition-all
+            ${match.team1 && match.team2 && !match.winner 
+              ? 'cursor-pointer hover:border-blue-400 hover:shadow-md border-blue-200' 
+              : 'border-gray-200'
+            }
+          `}
+          onClick={() => {
+            if (match.team1 && match.team2 && !match.winner && onUpdateMatch) {
+              onUpdateMatch(match);
+            }
+          }}
+        >
+          <div className="p-3 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
             <span className="text-sm font-medium text-gray-600">
               {match.round === 1 ? 'Cuartos de Final' :
-               match.round === 2 ? 'Semifinal' :
-               'Final'}
+               match.round === 2 ? 'Semifinal' : 'Final'}
             </span>
+            {match.team1 && match.team2 && !match.winner && (
+              <span className="text-xs text-blue-600 flex items-center">
+                <button className="flex items-center gap-1 px-2 py-1 bg-blue-50 rounded-md hover:bg-blue-100">
+                  Actualizar resultado
+                </button>
+              </span>
+            )}
           </div>
           <div className="p-3">
             <div className="space-y-3">
@@ -52,6 +73,11 @@ export function DrawBracket({ matches }: DrawBracketProps) {
                     ? `${match.team1.player1.first_name} / ${match.team1.player2.first_name}`
                     : 'Por definir'}
                 </p>
+                {match.score && (
+                  <span className="text-sm font-semibold text-gray-600">
+                    {match.score.split('-')[0]}
+                  </span>
+                )}
               </div>
               
               <div className="relative flex items-center">
@@ -70,6 +96,11 @@ export function DrawBracket({ matches }: DrawBracketProps) {
                     ? `${match.team2.player1.first_name} / ${match.team2.player2.first_name}`
                     : 'Por definir'}
                 </p>
+                {match.score && (
+                  <span className="text-sm font-semibold text-gray-600">
+                    {match.score.split('-')[1]}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -142,7 +173,7 @@ export function DrawBracket({ matches }: DrawBracketProps) {
         fitView
         minZoom={0.4}
         maxZoom={1.5}
-        defaultViewport={{ x: 0, y: 0, zoom: 0.65 }} // Zoom inicial reducido
+        defaultViewport={{ x: 0, y: 0, zoom: 0.65 }}
         attributionPosition="bottom-left"
         className="bg-gray-50"
       >

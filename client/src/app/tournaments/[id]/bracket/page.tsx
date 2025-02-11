@@ -8,18 +8,81 @@ import { Trophy, Users, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import { useState } from "react";
+import { MatchResultBracketModal } from "@/components/Tournaments/MatchResultBracketModal";
+
+interface Match {
+  id: string;
+  round: number;
+  position: number;
+  team1?: {
+    id: string;
+    player1: {
+      first_name: string;
+      last_name: string;
+    };
+    player2: {
+      first_name: string;
+      last_name: string;
+    };
+  };
+  team2?: {
+    id: string;
+    player1: {
+      first_name: string;
+      last_name: string;
+    };
+    player2: {
+      first_name: string;
+      last_name: string;
+    };
+  };
+  winner?: {
+    id: string;
+  };
+  nextMatchId?: string;
+}
 
 export default function TournamentBracketFullPage() {
   const params = useParams();
   const { tournament, matches, teams, loading, generateBracket } = useTournaments(params.id as string);
+  const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (loading) return <LoadingSpinner />;
   if (!tournament || !teams) return null;
 
   const handleGenerateBracket = async () => {
-    // TODO: Aquí irá la lógica para generar los cruces cuando tengamos el backend
-    // Por ahora podemos mostrar un console.log
     console.log("Generando cruces de fase final con los 8 equipos clasificados");
+  };
+
+  // Función para manejar el click en un partido
+  const handleUpdateMatch = (match: any) => {
+    console.log("Match seleccionado:", match);
+    setSelectedMatch(match);
+    setIsModalOpen(true);
+  };
+
+  // Función para manejar el submit del resultado
+  const handleSubmitResult = async (matchId: string, result: any) => {
+    console.log('Actualizando resultado:', { matchId, result });
+    setIsModalOpen(false);
+  };
+
+  // Datos de ejemplo para probar el modal
+  const sampleMatch = {
+    id: "1",
+    round: 1,
+    team1: {
+      id: "team1",
+      player1: { first_name: "Jugador 1A" },
+      player2: { first_name: "Jugador 1B" }
+    },
+    team2: {
+      id: "team2",
+      player1: { first_name: "Jugador 2A" },
+      player2: { first_name: "Jugador 2B" }
+    }
   };
 
   return (
@@ -132,10 +195,36 @@ export default function TournamentBracketFullPage() {
           </div>
         </div>
 
+        {/* Botón temporal para probar el modal */}
+        <div className="mb-6">
+          <Button
+            onClick={() => {
+              setSelectedMatch(sampleMatch);
+              setIsModalOpen(true);
+            }}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Probar Modal de Resultado
+          </Button>
+        </div>
+
         {/* Bracket */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <DrawBracket matches={matches} />
+          <DrawBracket 
+            matches={matches || []} 
+            onUpdateMatch={handleUpdateMatch}
+          />
         </div>
+
+        {/* Modal de Resultados */}
+        {selectedMatch && (
+          <MatchResultBracketModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            match={selectedMatch}
+            onSubmit={handleSubmitResult}
+          />
+        )}
       </div>
     </div>
   );

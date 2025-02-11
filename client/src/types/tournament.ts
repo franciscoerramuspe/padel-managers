@@ -98,28 +98,49 @@ interface Score {
   sets: Set[];
 }
 
-interface Match {
+export interface Match {
   id: string;
-  team1: {
-    id: string;
-    name: string;
-  } | null;
-  team2: {
-    id: string;
-    name: string;
-  } | null;
-  status: 'pending' | 'completed';
-  team1_score: Score | null;
-  team2_score: Score | null;
-  winner_id: string | null;
-  scheduled_start?: string;
-  scheduled_end?: string;
-  court?: {
-    id: string;
-    name: string;
-  };
+  tournament_id: string;
+  home_team_id?: string;
+  away_team_id?: string;
+  court_id?: string;
+  score?: string;
+  created_at: Date;
+  updated_at: Date;
+  status: string;
+  start_hour: string;
+  match_day: Date;
+  round_number: number;
+  winner_team_id?: string;
   round: number;
-  position: number;
+  start_time: string;
+  home_team?: {
+    id: string;
+    player1_id: string;
+    player2_id: string;
+    player1: {
+      first_name: string;
+      last_name: string;
+    };
+    player2: {
+      first_name: string;
+      last_name: string;
+    };
+  };
+  away_team?: {
+    id: string;
+    player1_id: string;
+    player2_id: string;
+    player1: {
+      first_name: string;
+      last_name: string;
+    };
+    player2: {
+      first_name: string;
+      last_name: string;
+    };
+  };
+  nextMatchId?: string;
 }
 
 interface TournamentDraw {
