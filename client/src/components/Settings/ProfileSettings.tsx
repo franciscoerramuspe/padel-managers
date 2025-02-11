@@ -1,149 +1,98 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { supabase } from '../../lib/supabase';
+import { useEffect, useState } from 'react';
+import { Mail, Phone } from 'lucide-react';
+
+interface AdminData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+}
 
 export default function ProfileSettings() {
-  const [userEmail, setUserEmail] = useState<string>('');
-  const [userData, setUserData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: ''
-  });
-  const [hasChanges, setHasChanges] = useState(false);
+  const [profile, setProfile] = useState<AdminData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function getUserData() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user?.email) {
-        setUserEmail(user.email);
+    async function loadProfile() {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) throw new Error('No se encontró token');
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Error al cargar el perfil');
+        const data = await response.json();
+        setProfile(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al cargar el perfil');
       }
     }
-    getUserData();
+
+    loadProfile();
   }, []);
 
-  const handleInputChange = (field: string, value: string) => {
-    setUserData(prev => ({ ...prev, [field]: value }));
-    setHasChanges(true);
-  };
-
-  const handleSaveChanges = async () => {
-    try {
-      // Aquí iría la lógica para guardar en la base de datos
-      console.log('Guardando cambios:', userData);
-      setHasChanges(false);
-      
-      // Mostrar notificación de éxito (puedes usar una librería de notificaciones)
-      alert('Cambios guardados correctamente');
-    } catch (error) {
-      console.error('Error al guardar los cambios:', error);
-      alert('Error al guardar los cambios');
-    }
-  };
+  if (error) return <div className="text-red-500">{error}</div>;
+  if (!profile) return null;
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg">
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-800">Perfil</h2>
-        <p className="text-gray-600">Actualiza tus datos personales y configuraciones de cuenta</p>
-      </div>
+    <div className="min-h-screen bg-gray-50 w-full">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">Perfil</h2>
+            <p className="text-gray-600">Gestiona tu información personal</p>
+          </div>
+        </div>
 
-      <div className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                value={userData.firstName}
-                onChange={(e) => handleInputChange('firstName', e.target.value)}
-                className="w-full px-3 py-2 text-base rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ingresa tu nombre"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                Apellido
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                value={userData.lastName}
-                onChange={(e) => handleInputChange('lastName', e.target.value)}
-                className="w-full px-3 py-2 text-base rounded-md border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ingresa tu apellido"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Correo electrónico
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={userEmail}
-              disabled
-              className="w-full px-3 py-2 text-base rounded-md border border-gray-300 bg-gray-50 text-gray-500"
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              El correo electrónico no se puede modificar ya que está vinculado a tu cuenta de Google.
-            </p>
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Teléfono
-            </label>
-            <div className="flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                <Image 
-                  src="/assets/uruguay-flag.png" 
-                  alt="Uruguay" 
-                  width={20} 
-                  height={15} 
-                  className="mr-2" 
+          {/* Información Personal */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input 
+                  type="text"
+                  value={profile.first_name}
+                  disabled
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700"
                 />
-                +598
-              </span>
-              <input
-                type="tel"
-                id="phone"
-                value={userData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="flex-1 min-w-0 block w-full px-3 py-2 text-base rounded-none rounded-r-md border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="99 123 456"
-              />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+                <input 
+                  type="text"
+                  value={profile.last_name}
+                  disabled
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-700"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Información de Contacto */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <Mail className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm text-gray-500">Email</p>
+                  <p className="font-medium text-gray-900">{profile.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <Phone className="w-5 h-5 text-gray-400" />
+                <div>
+                  <p className="text-sm text-gray-500">Teléfono</p>
+                  <p className="font-medium text-gray-900">{profile.phone}</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        
-        {hasChanges && (
-          <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-            <button
-              onClick={handleSaveChanges}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path 
-                  fillRule="evenodd" 
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                  clipRule="evenodd" 
-                />
-              </svg>
-              Confirmar cambios
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

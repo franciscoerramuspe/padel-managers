@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useToast } from "@/components/ui/use-toast";
 import { TournamentHeader } from '@/components/Tournaments/TournamentHeader';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useTournaments } from '@/hooks/useTournaments';
@@ -10,6 +9,7 @@ import { TournamentPrizes } from '@/components/Tournaments/TournamentPrizes';
 import { TournamentTeams } from '@/components/Tournaments/TournamentTeams';
 import { TournamentRules } from '@/components/Tournaments/TournamentRules';
 import { TournamentStats } from '@/components/Tournaments/TournamentStats';
+import { SocialMediaGenerator } from '@/components/Tournaments/SocialMediaGenerator';
 
 export default function TournamentDetailsPage() {
   const params = useParams();
@@ -27,23 +27,36 @@ export default function TournamentDetailsPage() {
       />
 
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
-            <TournamentOverview tournament={tournament} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          <div className="lg:col-span-2">
+            <div className="h-full bg-white rounded-xl shadow-sm p-6">
+              <TournamentOverview tournament={tournament} />
+            </div>
           </div>
 
+          <div className="h-full">
+            <div className="h-full bg-white rounded-xl shadow-sm p-6">
+              <TournamentStats 
+                tournament={tournament}
+                teams={teams}
+                tournamentId={params.id as string}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <TournamentTeams teams={teams} />
           <div className="space-y-8">
-            <TournamentStats 
+            <TournamentPrizes tournament={tournament} />
+            <SocialMediaGenerator 
               tournament={tournament}
-              teams={teams}
-              tournamentId={params.id as string}
+              tournamentInfo={tournament.tournament_info?.[0]}
             />
           </div>
         </div>
 
-        <div className="mt-8 space-y-8">
-          <TournamentPrizes tournament={tournament} />
-          <TournamentTeams teams={teams} />
+        <div className="space-y-8">
           <TournamentRules tournament={tournament} />
         </div>
       </main>
