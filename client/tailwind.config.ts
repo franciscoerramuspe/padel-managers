@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import animate from "tailwindcss-animate"
 
 const config: Config = {
     darkMode: ['class'],
@@ -53,7 +54,11 @@ const config: Config = {
   		},
   		animation: {
   			'fade-in-down': 'fadeInDown 1s ease-out',
-  			bounce: 'bounce 2s infinite'
+  			bounce: 'bounce 2s infinite',
+  			slideDown: 'slideDown 300ms ease-out',
+  			slideUp: 'slideUp 300ms ease-out',
+  			'accordion-down': 'accordion-down 0.2s ease-out',
+  			'accordion-up': 'accordion-up 0.2s ease-out'
   		},
   		keyframes: {
   			fadeInDown: {
@@ -73,6 +78,38 @@ const config: Config = {
   				'50%': {
   					transform: 'translateY(-10px)'
   				}
+  			},
+  			slideDown: {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-collapsible-content-height)'
+  				}
+  			},
+  			slideUp: {
+  				from: {
+  					height: 'var(--radix-collapsible-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
+  			},
+  			'accordion-down': {
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
+  			},
+  			'accordion-up': {
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
   			}
   		},
   		fontFamily: {
@@ -90,6 +127,6 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };
 export default config;

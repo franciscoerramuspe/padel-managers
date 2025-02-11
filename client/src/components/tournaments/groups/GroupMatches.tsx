@@ -41,7 +41,6 @@ function formatScore(score: { sets: { games: number; tiebreak: number | null }[]
 }
 
 export function GroupMatches({ matches, onUpdateResult }: GroupMatchesProps) {
-  // Group matches by their group
   const groupedMatches = matches.reduce((acc, match) => {
     if (!match.group) return acc;
     if (!acc[match.group]) {
