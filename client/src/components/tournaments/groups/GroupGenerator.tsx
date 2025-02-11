@@ -5,39 +5,62 @@ import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { GroupStatusBar } from './GroupStatusBar';
-
-interface Team {
-  id: string;
-  name: string;
-}
+import { 
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell 
+} from '@/components/ui/table';
+import { Card } from '@/components/ui/card';
 
 interface Match {
   id: string;
   tournament_id: string;
-  round: number;
-  position: number;
-  team1_id: string;
-  team2_id: string;
-  winner_id: string | null;
-  team1_score: {
-    sets: { games: number; tiebreak: number | null }[];
-  } | null;
-  team2_score: {
-    sets: { games: number; tiebreak: number | null }[];
-  } | null;
+  home_team_id: string;
+  away_team_id: string;
+  winner_team_id: string | null;
+  score: string | null;
   status: 'pending' | 'completed';
-  group: string;
-  team1: Team;
-  team2: Team;
+  round_number: number;
+  match_day: string | null;
+  start_time: string | null;
+}
+
+interface Team {
+  id: string;
+  player1_id: string;
+  player2_id: string;
+}
+
+interface GroupTeam {
+  id: string;
+  name: string;
+  matches_played: number;
+  matches_won: number;
+  matches_lost: number;
+  points: number;
+  player1_id: string;
+  player2_id: string;
+}
+
+interface GroupMatch {
+  id: string;
+  home_team_id: string;
+  away_team_id: string;
+  score: string | null;
+  status: 'pending' | 'completed';
+  round_number: number;
+  match_day: string;
+  start_time: string;
 }
 
 interface Group {
+  id: string;
   name: string;
-  teams: Array<{
-    id: string;
-    name: string;
-    seed: number;
-  }>;
+  teams: GroupTeam[];
+  matches: GroupMatch[];
 }
 
 interface GroupGeneratorProps {
@@ -53,24 +76,20 @@ export function GroupGenerator({
   matches,
   onMatchesUpdate 
 }: GroupGeneratorProps) {
-  const [numberOfGroups, setNumberGroups] = useState(2);
+  const [numberOfGroups, setNumberGroups] = useState<3 | 4>(3);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groups, setGroups] = useState<Record<string, Group>>({});
-  const [groupStatus, setGroupStatus] = useState<{
-    total: number;
-    completed: number;
-    isComplete: boolean;
-  }>({ total: 0, completed: 0, isComplete: false });
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [format, setFormat] = useState<'3groups' | '4groups'>('3groups');
 
-  const groupMatches = matches.filter(match => match.round === 1);
+  // Filtramos los partidos de la fase de grupos (round_number = 1)
+  const groupMatches = matches.filter(match => match.round_number === 1);
   const completedMatches = groupMatches.filter(match => 
     match.status === 'completed' && 
-    match.team1_score && 
-    match.team2_score && 
-    match.winner_id
+    match.score && 
+    match.winner_team_id
   );
 
   const isGroupPhaseComplete = groupMatches.length > 0 && 
@@ -78,12 +97,13 @@ export function GroupGenerator({
 
   useEffect(() => {
     fetchExistingGroups();
-    fetchGroupStatus();
   }, [tournamentId]);
 
   const fetchExistingGroups = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/groups`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/groups`
+      );
       if (!response.ok) throw new Error('Failed to fetch groups');
       
       const data = await response.json();
@@ -97,197 +117,169 @@ export function GroupGenerator({
     }
   };
 
-  const fetchGroupStatus = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/group-status`
-      );
-      if (!response.ok) throw new Error('Failed to fetch group status');
-      const status = await response.json();
-      setGroupStatus(status);
-    } catch (err) {
-      console.error('Error fetching group status:', err);
-    }
-  };
-
   const generateGroups = async () => {
     try {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/groups`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numberOfGroups })
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/groups`, 
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numberOfGroups })
+        }
+      );
 
       if (!response.ok) throw new Error('Failed to generate groups');
       
       const data = await response.json();
       setGroups(data.groups);
+      await onMatchesUpdate();
       
     } catch (err) {
-      setError('Could not generate groups');
+      setError('No se pudieron generar los grupos');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const generateKnockoutPhase = async () => {
-    if (!groupStatus.isComplete) {
-      setError('Todos los partidos de grupo deben estar completados');
-      return;
-    }
-
+  const handleUpdateResult = async (matchId: string, result: any) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/${tournamentId}/knockout`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/matches/${matchId}/score`,
         {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            teamsPerGroup: 2 // Top 2 teams from each group advance
-          })
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(result)
         }
       );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Knockout generation error:', errorData);
-        throw new Error(errorData.message || 'Error al generar la fase eliminatoria');
-      }
-
-      const data = await response.json();
-      console.log('Knockout phase generated:', data);
-
-      // Redirect directly to the draw page to show the knockout bracket
-      window.location.href = `/tournaments/${tournamentId}/draw`;
-    } catch (error) {
-      console.error('Error generating knockout phase:', error);
-      setError(error instanceof Error ? error.message : 'No se pudo generar la fase eliminatoria');
-    }
-  };
-
-  const handleUpdateResult = async (matchId: string, data: any) => {
-    try {
-      const team1 = data.teams[0];
-      const team2 = data.teams[1];
-
-      const scoreData = {
-        team1_score: team1.score,
-        team2_score: team2.score,
-        winner_id: data.winner_id
-      };
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tournaments/matches/${matchId}/score`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(scoreData),
-      });
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error response:', errorData);
-        throw new Error(errorData.error || 'Error al actualizar el resultado');
-      }
+      if (!response.ok) throw new Error('Failed to update match result');
       
       await onMatchesUpdate();
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Error updating match result:', error);
       setError('No se pudo actualizar el resultado del partido');
     }
   };
 
-  const maxGroups = Math.floor(totalTeams / 2);
-
   if (isLoading) {
     return <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-500" />;
   }
-  console.log(groupStatus)
-  return (
-    <div className="space-y-4">
-      {Object.keys(groups).length === 0 ? (
-        <div className="flex items-center gap-4">
-          <Label htmlFor="groupSelect" className="text-sm font-medium">
-            Número de Grupos:
-          </Label>
-          <Select
-            id="groupSelect"
-            value={numberOfGroups.toString()}
-            onValueChange={(value) => setNumberGroups(Number(value))}
-          >
-            {Array.from({length: maxGroups - 1}, (_, i) => i + 2).map(num => (
-              <Select.Option key={num} value={num.toString()}>
-                {num} grupos ({Math.ceil(totalTeams / num)} equipos por grupo)
-              </Select.Option>
-            ))}
-          </Select>
-          
-          <Button
-            onClick={generateGroups}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Generando...' : 'Generar Grupos'}
-          </Button>
-        </div>
-      ) : (
-        <>
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.entries(groups).map(([groupKey, group]) => (
-              <div key={groupKey} className="bg-gray-50 p-6 rounded-lg shadow">
-                <h3 className="text-lg font-semibold mb-4">{group.name}</h3>
-                <ul className="space-y-3">
-                  {group.teams.map((team) => (
-                    <li 
-                      key={team.id} 
-                      className="flex justify-between items-center p-2 bg-white rounded shadow-sm"
-                    >
-                      <span>{team.name}</span>
-                      <span className="text-sm text-gray-500">Seed: {team.seed}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          
-          <GroupMatches 
-            matches={matches}
-            onUpdateResult={(match) => {
-              setSelectedMatch(match);
-              setIsModalOpen(true);
-            }}
-          />
-          
-          <GroupStatusBar 
-            total={groupMatches.length}
-            completed={completedMatches.length}
-          />
 
-          <div className="flex justify-end">
-            {isGroupPhaseComplete ? (
-              <Button
-                onClick={generateKnockoutPhase}
-                className="bg-green-600 text-white hover:bg-green-700"
-              >
-                Generar Fase Eliminatoria
-              </Button>
-            ) : (
-              <Button
-                disabled
-                className="bg-gray-300 text-gray-500 cursor-not-allowed"
-              >
-                Complete todos los partidos de grupo
-              </Button>
-            )}
+  return (
+    <div className="space-y-8">
+      {/* Selector de Formato */}
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold mb-4">Formato del Torneo</h2>
+        <div className="flex gap-4">
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              format === '3groups' ? 'bg-blue-600 text-white' : 'bg-gray-100'
+            }`}
+            onClick={() => setFormat('3groups')}
+          >
+            3 Grupos
+            <span className="block text-sm">
+              2 mejores primeros a semifinal + ronda previa
+            </span>
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              format === '4groups' ? 'bg-blue-600 text-white' : 'bg-gray-100'
+            }`}
+            onClick={() => setFormat('4groups')}
+          >
+            4 Grupos
+            <span className="block text-sm">
+              2 clasificados por grupo
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Vista de Grupos */}
+      <div className="grid grid-cols-2 gap-6">
+        {groups.map((group, index) => (
+          <div key={index} className="bg-white rounded-xl p-6 shadow-sm">
+            <h3 className="text-lg font-semibold mb-4">Grupo {index + 1}</h3>
+            {/* Tabla de posiciones */}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Equipo</TableHead>
+                  <TableHead>PJ</TableHead>
+                  <TableHead>PG</TableHead>
+                  <TableHead>PP</TableHead>
+                  <TableHead>PTS</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {group.teams.map((team) => (
+                  <TableRow key={team.id}>
+                    <TableCell>Equipo {team.id.slice(0, 4)}</TableCell>
+                    <TableCell>{team.matches_played}</TableCell>
+                    <TableCell>{team.matches_won}</TableCell>
+                    <TableCell>{team.matches_lost}</TableCell>
+                    <TableCell className="font-bold">{team.points}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {/* Lista de partidos */}
+            <div className="mt-4">
+              <h4 className="font-semibold">Partidos</h4>
+              {group.matches.map((match) => (
+                <div key={match.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-center">
+                    <span>{match.team1_name}</span>
+                    <span className="font-bold">
+                      {match.score || 'vs'}
+                    </span>
+                    <span>{match.team2_name}</span>
+                  </div>
+                  {!match.completed && (
+                    <Button
+                      onClick={() => {
+                        setSelectedMatch(match);
+                        setIsModalOpen(true);
+                      }}
+                      className="mt-2 w-full"
+                      variant="outline"
+                    >
+                      Actualizar Resultado
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </>
-      )}
+        ))}
+      </div>
+
+      <div className="flex justify-end mt-6">
+        {isGroupPhaseComplete ? (
+          <Button
+            onClick={() => {
+              // Aquí iría la lógica para generar la siguiente fase
+              // según el formato elegido (3 o 4 grupos)
+            }}
+            className="bg-green-600 text-white hover:bg-green-700"
+          >
+            {numberOfGroups === 3 
+              ? 'Generar Ronda Previa y Semifinales'
+              : 'Generar Cuartos de Final'}
+          </Button>
+        ) : (
+          <Button
+            disabled
+            className="bg-gray-300 text-gray-500 cursor-not-allowed"
+          >
+            Complete todos los partidos de grupo
+          </Button>
+        )}
+      </div>
 
       {error && (
         <div className="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
@@ -300,11 +292,72 @@ export function GroupGenerator({
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           match={selectedMatch}
-          team1Name={selectedMatch.team1.name}
-          team2Name={selectedMatch.team2.name}
           onSubmit={handleUpdateResult}
         />
       )}
+    </div>
+  );
+}
+
+export function TournamentGroupStage({ groups, onUpdateMatch }) {
+  return (
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {groups.map((group) => (
+          <Card key={group.id} className="p-6">
+            <h3 className="text-xl font-bold mb-4">Grupo {group.name}</h3>
+            
+            {/* Tabla de posiciones */}
+            <Table>
+              <thead>
+                <tr>
+                  <th>Equipo</th>
+                  <th>PJ</th>
+                  <th>PG</th>
+                  <th>PP</th>
+                  <th>PTS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {group.teams.map((team) => (
+                  <tr key={team.id}>
+                    <td>{team.name}</td>
+                    <td>{team.played}</td>
+                    <td>{team.won}</td>
+                    <td>{team.lost}</td>
+                    <td className="font-bold">{team.points}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+
+            {/* Partidos del grupo */}
+            <div className="mt-6 space-y-4">
+              <h4 className="font-semibold">Partidos</h4>
+              {group.matches.map((match) => (
+                <div key={match.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-center">
+                    <span>{match.team1_name}</span>
+                    <span className="font-bold">
+                      {match.score || 'vs'}
+                    </span>
+                    <span>{match.team2_name}</span>
+                  </div>
+                  {!match.completed && (
+                    <Button
+                      onClick={() => onUpdateMatch(match)}
+                      className="mt-2 w-full"
+                      variant="outline"
+                    >
+                      Actualizar Resultado
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

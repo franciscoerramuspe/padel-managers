@@ -33,9 +33,11 @@ interface Match {
   court_id?: string
 }
 
+type TournamentFormat = "single_elimination" | "round_robin";
+
 interface TournamentBracketProps {
   matches: Match[]
-  format: 'single_elimination' | 'round_robin' | 'group_stage'
+  format: TournamentFormat
   onUpdateMatch?: (matchId: string, winnerId: string) => void
   onScheduleMatch?: (matchId: string, startTime: string, endTime: string, courtId: string) => void
 }
