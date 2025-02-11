@@ -4,7 +4,10 @@ import { useParams } from 'next/navigation';
 import { useTournaments } from '@/hooks/useTournaments';
 import { DrawBracket } from '@/components/Tournaments/DrawBracket';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Trophy, Users, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 
 export default function TournamentBracketFullPage() {
   const params = useParams();
@@ -13,53 +16,50 @@ export default function TournamentBracketFullPage() {
   if (loading) return <LoadingSpinner />;
   if (!tournament || !teams) return null;
 
+  const handleGenerateBracket = async () => {
+    // TODO: Aquí irá la lógica para generar los cruces cuando tengamos el backend
+    // Por ahora podemos mostrar un console.log
+    console.log("Generando cruces de fase final con los 8 equipos clasificados");
+  };
+
   return (
-    <div className="flex flex-col h-screen">
-      <div className="bg-white shadow-sm">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {tournament.name}
-              </h1>
-              <p className="text-sm text-gray-500">Bracket del Torneo</p>
-            </div>
-            <Link
-              href={`/tournaments/${params.id}/draw`}
-              className="text-gray-600 hover:text-gray-900 flex items-center gap-2"
-            >
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-5 w-5" 
-                viewBox="0 0 20 20" 
-                fill="currentColor"
-              >
-                <path 
-                  fillRule="evenodd" 
-                  d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" 
-                  clipRule="evenodd" 
-                />
-              </svg>
-              Volver
-            </Link>
-          </div>
+          <Link
+            href={`/tournaments/${params.id}`}
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="h-5 w-5 mr-2" />
+            Volver al torneo
+          </Link>
+          <h1 className="mt-1 text-2xl font-bold text-gray-900">
+            {tournament.name}
+          </h1>
+          <p className="text-sm text-gray-500">Fase Final - Eliminación Directa</p>
         </div>
       </div>
 
-      <div className="flex flex-1 bg-gray-50">
-        <div className="w-80 bg-white border-r border-gray-200 overflow-hidden">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-gray-900">Equipos Participantes</h2>
-              <span className="px-2.5 py-0.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
-                {teams.length}/8
-              </span>
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        {/* Panel Superior */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Card de Equipos Clasificados */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="bg-blue-100 rounded-full p-3">
+                <Users className="h-6 w-6 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">Equipos Clasificados</h3>
+                <p className="text-sm text-gray-500">Fase Final</p>
+              </div>
             </div>
-            <div className="space-y-2 mb-6">
+            <div className="grid grid-cols-2 gap-3">
               {teams.map((team, index) => (
                 <div 
-                  key={team.team_id} 
-                  className="p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all shadow-sm"
+                  key={team.team_id}
+                  className="p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
@@ -69,7 +69,7 @@ export default function TournamentBracketFullPage() {
                       <p className="text-sm font-medium text-gray-900">
                         {team.player1.first_name} {team.player1.last_name}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500">
                         {team.player2.first_name} {team.player2.last_name}
                       </p>
                     </div>
@@ -77,24 +77,64 @@ export default function TournamentBracketFullPage() {
                 </div>
               ))}
             </div>
-            
-            <button
-              onClick={generateBracket}
-              disabled={teams.length !== 8}
-              className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {teams.length === 8 ? 'Generar cruces de partidos' : `Faltan ${8 - teams.length} equipos`}
-            </button>
+          </div>
+
+          {/* Card de Información modificada */}
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="bg-amber-100 rounded-full p-3">
+                <Trophy className="h-6 w-6 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900">Fase Final</h3>
+                <p className="text-sm text-gray-500">Eliminación Directa</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="font-medium text-gray-900 mb-2">Cuartos de Final</h4>
+                <p className="text-sm text-gray-600">8 equipos clasificados se enfrentan en 4 partidos</p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="font-medium text-gray-900 mb-2">Semifinal</h4>
+                <p className="text-sm text-gray-600">4 equipos ganadores avanzan a 2 partidos</p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h4 className="font-medium text-gray-900 mb-2">Final</h4>
+                <p className="text-sm text-gray-600">2 equipos finalistas se enfrentan por el título</p>
+              </div>
+            </div>
+
+            {/* Estado y Botón de Generación */}
+            {teams.length > 8 ? (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center gap-2 text-yellow-800">
+                  <AlertCircle className="h-5 w-5" />
+                  <p className="text-sm">Esperando a que finalice la fase de grupos</p>
+                </div>
+              </div>
+            ) : teams.length < 8 ? (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <div className="flex items-center gap-2 text-yellow-800">
+                  <AlertCircle className="h-5 w-5" />
+                  <p className="text-sm">Faltan {8 - teams.length} equipos por clasificar</p>
+                </div>
+              </div>
+            ) : (
+              <Button
+                onClick={handleGenerateBracket}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                Generar Fase Final
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="flex-1 p-6 overflow-auto">
-          <div className="h-[600px] w-full bg-white rounded-lg shadow-sm border border-gray-200">
-            <DrawBracket 
-              matches={matches} 
-              fullScreen 
-            />
-          </div>
+        {/* Bracket */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <DrawBracket matches={matches} />
         </div>
       </div>
     </div>

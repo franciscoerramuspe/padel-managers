@@ -7,13 +7,12 @@ import ReactFlow, {
   Edge,
   Position,
   MarkerType,
-  Viewport
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
 interface Match {
   id: string;
-  round: number;
+  round: number; // 1: cuartos, 2: semifinal, 3: final
   position: number;
   team1?: any;
   team2?: any;
@@ -23,10 +22,9 @@ interface Match {
 
 interface DrawBracketProps {
   matches: Match[];
-  fullScreen?: boolean;
 }
 
-export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
+export function DrawBracket({ matches }: DrawBracketProps) {
   // Función para crear un nodo de partido
   const createMatchNode = (match: Match, x: number, y: number): Node => ({
     id: match.id,
@@ -34,12 +32,12 @@ export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
     type: 'default',
     data: {
       label: (
-        <div className="border border-gray-200 bg-white rounded-lg shadow-sm min-w-[280px]">
+        <div className="border border-gray-200 bg-white rounded-lg shadow-sm w-[280px]">
           <div className="p-3 border-b border-gray-200 bg-gray-50">
             <span className="text-sm font-medium text-gray-600">
               {match.round === 1 ? 'Cuartos de Final' :
                match.round === 2 ? 'Semifinal' :
-               match.round === 3 ? 'Final' : `Ronda ${match.round}`}
+               'Final'}
             </span>
           </div>
           <div className="p-3">
@@ -54,11 +52,6 @@ export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
                     ? `${match.team1.player1.first_name} / ${match.team1.player2.first_name}`
                     : 'Por definir'}
                 </p>
-                {match.team1 && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {`${match.team1.player1.last_name} - ${match.team1.player2.last_name}`}
-                  </p>
-                )}
               </div>
               
               <div className="relative flex items-center">
@@ -77,11 +70,6 @@ export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
                     ? `${match.team2.player1.first_name} / ${match.team2.player2.first_name}`
                     : 'Por definir'}
                 </p>
-                {match.team2 && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    {`${match.team2.player1.last_name} - ${match.team2.player2.last_name}`}
-                  </p>
-                )}
               </div>
             </div>
           </div>
@@ -92,50 +80,53 @@ export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
     targetPosition: Position.Left,
   });
 
-  // Crear nodos y conexiones
   const createFlowElements = () => {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
-    const roundSpacing = 400; // Aumentado para dar más espacio entre rondas
-    const matchSpacing = 300; // Aumentado para dar más espacio vertical entre partidos
+    
+    const roundSpacing = 450;  
+    const matchSpacing = 250;  
+    
+    // Cuartos de final (4 partidos)
+    const quarterFinals = matches.filter(m => m.round === 1).slice(0, 4);
+    quarterFinals.forEach((match, index) => {
+      const y = -375 + (index * matchSpacing); // Aumentado el espaciado vertical
+      nodes.push(createMatchNode(match, 0, y));
+    });
 
-    // Agrupar partidos por ronda
-    const matchesByRound = matches.reduce((acc, match) => {
-      if (!acc[match.round]) acc[match.round] = [];
-      acc[match.round].push(match);
-      return acc;
-    }, {} as Record<number, Match[]>);
+    // Semifinales (2 partidos)
+    const semiFinals = matches.filter(m => m.round === 2).slice(0, 2);
+    semiFinals.forEach((match, index) => {
+      const y = -200 + (index * matchSpacing * 2); // Más espacio entre semifinales
+      nodes.push(createMatchNode(match, roundSpacing, y));
+    });
 
-    // Calcular el offset vertical para centrar los partidos
-    Object.entries(matchesByRound).forEach(([round, roundMatches]) => {
-      const roundNumber = parseInt(round);
-      const totalHeight = (roundMatches.length - 1) * matchSpacing;
-      const startY = -totalHeight / 2; // Centrar verticalmente
+    // Final (1 partido)
+    const final = matches.find(m => m.round === 3);
+    if (final) {
+      nodes.push(createMatchNode(final, roundSpacing * 2, -100));
+    }
 
-      roundMatches.forEach((match, index) => {
-        const y = startY + (index * matchSpacing);
-        const x = (roundNumber - 1) * roundSpacing;
-        
-        nodes.push(createMatchNode(match, x, y));
-
-        if (match.nextMatchId) {
-          edges.push({
-            id: `${match.id}-${match.nextMatchId}`,
-            source: match.id,
-            target: match.nextMatchId,
-            type: 'smoothstep',
-            markerEnd: {
-              type: MarkerType.ArrowClosed,
-              width: 20,
-              height: 20,
-            },
-            style: {
-              strokeWidth: 2,
-              stroke: '#94a3b8', // slate-400
-            },
-          });
-        }
-      });
+    // Crear conexiones solo para los partidos que necesitamos
+    const validMatches = [...quarterFinals, ...semiFinals, final].filter(Boolean);
+    validMatches.forEach(match => {
+      if (match?.nextMatchId) {
+        edges.push({
+          id: `${match.id}-${match.nextMatchId}`,
+          source: match.id,
+          target: match.nextMatchId,
+          type: 'smoothstep',
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 20,
+            height: 20,
+          },
+          style: {
+            strokeWidth: 2,
+            stroke: '#94a3b8',
+          },
+        });
+      }
     });
 
     return { nodes, edges };
@@ -143,18 +134,15 @@ export function DrawBracket({ matches, fullScreen = false }: DrawBracketProps) {
 
   const { nodes, edges } = createFlowElements();
 
-  // Ajustar el viewport por defecto para un zoom más alejado
-  const defaultViewport: Viewport = { x: 0, y: 0, zoom: 0.75 };
-
   return (
-    <div className={`h-full w-full ${fullScreen ? '' : 'rounded-xl shadow-sm'}`}>
+    <div className="h-[800px] w-full">
       <ReactFlow
         nodes={nodes}
         edges={edges}
         fitView
-        minZoom={0.5}
+        minZoom={0.4}
         maxZoom={1.5}
-        defaultViewport={defaultViewport}
+        defaultViewport={{ x: 0, y: 0, zoom: 0.65 }} // Zoom inicial reducido
         attributionPosition="bottom-left"
         className="bg-gray-50"
       >
