@@ -4,6 +4,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Team {
   id: string;
@@ -17,18 +21,38 @@ interface Team {
   };
 }
 
+interface Match {
+  id: string;
+  team1: string;
+  team2: string;
+  score?: string | null;
+  completed: boolean;
+}
+
 interface GroupTableProps {
   groupIndex: number;
   teams: Team[];
-  matches: any[];
-  onUpdateMatch: (match: any) => void;
+  matches: Match[];
+  onUpdateMatch: (match: Match) => void;
 }
 
 export function GroupTable({ groupIndex, teams, matches, onUpdateMatch }: GroupTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const matchesPerPage = 3;
+  const totalPages = Math.ceil(matches.length / matchesPerPage);
+
+  const getCurrentPageMatches = () => {
+    const start = (currentPage - 1) * matchesPerPage;
+    const end = start + matchesPerPage;
+    return matches.slice(start, end);
+  };
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value={`group-${groupIndex}`} className="border-none">
-        <AccordionTrigger className="w-full bg-blue-600 px-6 py-4 rounded-t-xl hover:no-underline">
+        <AccordionTrigger 
+          className="w-full bg-blue-600 px-6 py-4 rounded-t-xl hover:no-underline [&[data-state=open]>div>svg]:rotate-180 [&>div>svg]:text-white [&>div>svg]:h-6 [&>div>svg]:w-6"
+        >
           <div className="flex justify-between items-center w-full">
             <h3 className="text-lg font-semibold text-white">Grupo {groupIndex + 1}</h3>
           </div>
@@ -71,21 +95,59 @@ export function GroupTable({ groupIndex, teams, matches, onUpdateMatch }: GroupT
             </div>
 
             <div className="mt-6">
-              <h4 className="text-sm font-semibold text-gray-900 mb-4">Partidos</h4>
-              <div className="space-y-3">
-                {matches.map((match, index) => (
-                  <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-sm font-semibold text-gray-900">Fecha {currentPage}</h4>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <span className="flex items-center px-2 text-sm text-gray-600">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-3">
+                {getCurrentPageMatches().map((match) => (
+                  <div 
+                    key={match.id} 
+                    className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{match.team1}</span>
-                      <span className="text-sm font-medium text-gray-900">vs</span>
-                      <span className="text-sm text-gray-600">{match.team2}</span>
+                      <div className="flex-1 text-right">
+                        <span className="text-sm font-medium text-gray-900">{match.team1}</span>
+                      </div>
+                      <div className="px-4">
+                        {match.score ? (
+                          <span className="text-sm font-bold text-gray-900">{match.score}</span>
+                        ) : (
+                          <span className="text-sm font-medium text-gray-600">vs</span>
+                        )}
+                      </div>
+                      <div className="flex-1 text-left">
+                        <span className="text-sm font-medium text-gray-900">{match.team2}</span>
+                      </div>
                     </div>
-                    <button 
-                      onClick={() => onUpdateMatch(match)}
-                      className="mt-2 w-full px-3 py-1.5 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                    >
-                      Actualizar Resultado
-                    </button>
+                    {!match.completed && (
+                      <button 
+                        onClick={() => onUpdateMatch(match)}
+                        className="mt-2 w-full px-3 py-1.5 text-sm text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                      >
+                        Actualizar Resultado
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
