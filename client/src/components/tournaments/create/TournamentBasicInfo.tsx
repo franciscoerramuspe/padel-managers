@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button"
-import { Command, CommandGroup, CommandInput, CommandEmpty } from "@/components/ui/command"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Command, CommandGroup, CommandInput, CommandEmpty, CommandItem } from "@/components/ui/command"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { ChevronsUpDown, CalendarIcon } from "lucide-react"
+import { ChevronsUpDown, CalendarIcon, Trophy, ArrowRight } from "lucide-react"
 import { format, parseISO, startOfDay } from "date-fns"
 import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { Category, FormData } from "@/types/tournament"
 import { useState } from "react"
+import { Check } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 
 
 interface TournamentBasicInfoProps {
@@ -28,23 +30,17 @@ export function TournamentBasicInfo({
 }: TournamentBasicInfoProps) {
   const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
-
   const handleCategoryToggle = (categoryId: string) => {
-    const newCategoryIds = formData.category_ids.includes(categoryId)
-      ? formData.category_ids.filter((id: string) => id !== categoryId)
-      : [...formData.category_ids, categoryId]
-    setFormData({ ...formData, category_ids: newCategoryIds })
+    const currentCategories = formData.category_ids || []
+    const newCategories = currentCategories.includes(categoryId)
+      ? currentCategories.filter(id => id !== categoryId)
+      : [...currentCategories, categoryId]
+    setFormData({ ...formData, category_ids: newCategories })
   }
 
-  const handleSelectAll = () => {
-    const allSelected = formData.category_ids.length === categories.length
-    setFormData({
-      ...formData,
-      category_ids: allSelected ? [] : categories.map(category => category.id)
-    })
+  const handleSelectAllCategories = () => {
+    const allCategoryIds = categories.map(category => category.id)
+    setFormData({ ...formData, category_ids: allCategoryIds })
   }
 
   const handleStartDateSelect = (date: Date | undefined) => {
@@ -73,90 +69,104 @@ export function TournamentBasicInfo({
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={onSubmit} className="p-6 space-y-8">
+      {/* Sección de Información Básica */}
       <div className="space-y-6">
-        {/* Nombre del Torneo */}
-        <div>
-          <Label htmlFor="name">Nombre del Torneo</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            placeholder="Ingrese el nombre del torneo"
-            className="mt-2"
-          />
+        <div className="flex items-start gap-3 mb-6">
+          <div className="p-2 bg-blue-500 rounded-full">
+            <Trophy className="h-5 w-5 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">Información Básica</h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Ingrese los detalles principales del torneo.
+            </p>
+          </div>
         </div>
 
-        {/* Categorías */}
-        <div>
-          <Label>Categorías</Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                className="w-full justify-between mt-2"
-              >
-                {formData.category_ids.length > 0
-                  ? `${formData.category_ids.length} categorías seleccionadas`
-                  : "Seleccionar categorías"}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-              
-                <CommandInput 
-                  placeholder="Buscar categoría..." 
-                  value={searchQuery}
-                  onValueChange={setSearchQuery}
-                />
-                <CommandGroup>
-                  {categories.length > 0 ? (
-                    <>
-                      <div 
-                        className="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-gray-100"
-                        onClick={handleSelectAll}
-                      >
-                        <Checkbox
-                          checked={formData.category_ids.length === categories.length}
-                        />
-                        <span>Seleccionar todas</span>
-                      </div>
-                      {filteredCategories.map((category) => (
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Nombre del Torneo */}
+          <div className="col-span-2">
+            <Label htmlFor="name" className="text-base font-medium">
+              Nombre del Torneo
+            </Label>
+            <Input
+              id="name"
+              value={formData.name || ''}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Ingrese el nombre del torneo"
+              className="mt-2"
+            />
+          </div>
+
+          {/* Categorías con multiselect restaurado */}
+          <div className="col-span-2">
+            <Label htmlFor="categories" className="text-base font-medium">
+              Categorías
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  className="w-full justify-between mt-2"
+                >
+                  {formData.category_ids?.length > 0
+                    ? `${formData.category_ids.length} categorías seleccionadas`
+                    : "Seleccionar categorías"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput 
+                    placeholder="Buscar categoría..." 
+                    value={searchQuery}
+                    onValueChange={setSearchQuery}
+                  />
+                  <CommandGroup>
+                    <div 
+                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
+                      onClick={handleSelectAllCategories}
+                    >
+                      <Checkbox
+                        checked={formData.category_ids?.length === categories.length}
+                        className="border-primary data-[state=checked]:bg-primary"
+                      />
+                      <span className="font-medium">Seleccionar todas</span>
+                    </div>
+                    <div className="py-2">
+                      {categories.map((category) => (
                         <div
                           key={category.id}
-                          className="flex items-center gap-2 px-2 py-1.5 cursor-pointer hover:bg-gray-100"
+                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
                           onClick={() => handleCategoryToggle(category.id)}
                         >
                           <Checkbox
-                            checked={formData.category_ids.includes(category.id)}
+                            checked={formData.category_ids?.includes(category.id)}
+                            className="border-primary data-[state=checked]:bg-primary"
                           />
                           <span>{category.name}</span>
                         </div>
                       ))}
-                    </>
-                  ) : (
-                    <div className="px-2 py-4 text-sm text-gray-500 text-center">
-                      No hay categorías disponibles
                     </div>
-                  )}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </div>
+                  </CommandGroup>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
 
-        {/* Fechas */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="start_date">Fecha de Inicio</Label>
+          {/* Fechas - Manteniendo la lógica original */}
+          <div className="space-y-2">
+            <Label htmlFor="start_date" className="text-base font-medium">
+              Fecha de Inicio
+            </Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal mt-2",
                     !formData.start_date && "text-muted-foreground"
                   )}
                 >
@@ -178,17 +188,18 @@ export function TournamentBasicInfo({
                 />
               </PopoverContent>
             </Popover>
-            
           </div>
 
-          <div className="flex flex-col space-y-2">
-            <Label htmlFor="end_date">Fecha de Finalización</Label>
+          <div className="space-y-2">
+            <Label htmlFor="end_date" className="text-base font-medium">
+              Fecha de Finalización
+            </Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal mt-2",
                     !formData.end_date && "text-muted-foreground"
                   )}
                 >
@@ -212,8 +223,16 @@ export function TournamentBasicInfo({
             </Popover>
           </div>
         </div>
+      </div>
 
-        <Button type="submit" className="w-full">
+      {/* Botón de Siguiente */}
+      <div className="pt-6 border-t">
+        <Button 
+          type="submit" 
+          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+          size="lg"
+        >
+          <ArrowRight className="w-4 h-4 mr-2" />
           Siguiente Paso
         </Button>
       </div>

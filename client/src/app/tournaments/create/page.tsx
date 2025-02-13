@@ -41,6 +41,10 @@ export default function CreateTournamentPage() {
     setStep(2)
   }
 
+  const handleBack = () => {
+    setStep(1)
+  }
+
   const handleTournamentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -106,7 +110,7 @@ export default function CreateTournamentPage() {
           <div className="bg-white rounded-xl shadow-lg">
             {step === 1 ? (
               <TournamentBasicInfo
-                formData={formData as FormData}
+                formData={formData}
                 setFormData={setFormData}
                 categories={categories}
                 onSubmit={handleFirstStep}
@@ -116,6 +120,7 @@ export default function CreateTournamentPage() {
                 tournamentInfo={tournamentInfo}
                 setTournamentInfo={setTournamentInfo}
                 onSubmit={handleTournamentSubmit}
+                onBack={handleBack}
               />
             )}
           </div>

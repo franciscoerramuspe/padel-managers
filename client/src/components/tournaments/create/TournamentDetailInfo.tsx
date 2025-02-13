@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown } from "lucide-react"
 import { useState } from "react"
-import { MapPin, Trophy, Info, Clock } from "lucide-react"
+import { MapPin, Trophy, Info, Clock, ArrowLeft, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format, startOfDay } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -22,12 +22,14 @@ interface TournamentDetailInfoProps {
   tournamentInfo: TournamentInfo
   setTournamentInfo: (info: TournamentInfo) => void
   onSubmit: (e: React.FormEvent) => void
+  onBack: () => void
 }
 
 export function TournamentDetailInfo({
   tournamentInfo,
   setTournamentInfo,
-  onSubmit
+  onSubmit,
+  onBack
 }: TournamentDetailInfoProps) {
   const { courts, isLoading } = useCourts()
   const [searchQuery, setSearchQuery] = useState("")
@@ -51,15 +53,14 @@ export function TournamentDetailInfo({
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      const normalizedDate = startOfDay(date)
       setTournamentInfo({ 
         ...tournamentInfo, 
-        signup_limit_date: format(normalizedDate, "yyyy-MM-dd") 
+        signup_limit_date: format(date, 'yyyy-MM-dd')
       })
     } else {
       setTournamentInfo({ 
         ...tournamentInfo, 
-        signup_limit_date: "" 
+        signup_limit_date: '' 
       })
     }
   }
@@ -109,7 +110,7 @@ export function TournamentDetailInfo({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+    <form onSubmit={handleSubmit} className="p-6">
       <div className="space-y-8">
         {/* Sección de Canchas */}
         <div className="bg-blue-50/50 p-6 rounded-lg border border-blue-100 shadow-sm">
@@ -234,7 +235,10 @@ export function TournamentDetailInfo({
               <Input
                 type="number"
                 value={tournamentInfo.inscription_cost}
-                onChange={(e) => setTournamentInfo({ ...tournamentInfo, inscription_cost: Number(e.target.value) })}
+                onChange={(e) => setTournamentInfo({ 
+                  ...tournamentInfo, 
+                  inscription_cost: Number(e.target.value) 
+                })}
                 placeholder="0.00"
                 className="bg-white border-purple-200 focus-visible:ring-purple-500"
               />
@@ -254,7 +258,7 @@ export function TournamentDetailInfo({
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {tournamentInfo.signup_limit_date ? (
-                      format(new Date(tournamentInfo.signup_limit_date), "PPP", { locale: es })
+                      format(new Date(tournamentInfo.signup_limit_date + 'T12:00:00'), "PPP", { locale: es })
                     ) : (
                       <span>Seleccionar fecha</span>
                     )}
@@ -263,7 +267,7 @@ export function TournamentDetailInfo({
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={tournamentInfo.signup_limit_date ? startOfDay(new Date(tournamentInfo.signup_limit_date)) : undefined}
+                    selected={tournamentInfo.signup_limit_date ? new Date(tournamentInfo.signup_limit_date + 'T12:00:00') : undefined}
                     onSelect={handleDateSelect}
                     initialFocus
                     locale={es}
@@ -290,7 +294,7 @@ export function TournamentDetailInfo({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="first_place_prize">Premio 1er Lugar</Label>
+              <Label htmlFor="first_place_prize">Premio para primer lugar</Label>
               <Input
                 id="first_place_prize"
                 value={tournamentInfo.first_place_prize}
@@ -303,7 +307,7 @@ export function TournamentDetailInfo({
               />
             </div>
             <div>
-              <Label htmlFor="second_place_prize">Premio 2do Lugar</Label>
+              <Label htmlFor="second_place_prize">Premio para segundo lugar</Label>
               <Input
                 id="second_place_prize"
                 value={tournamentInfo.second_place_prize}
@@ -316,7 +320,7 @@ export function TournamentDetailInfo({
               />
             </div>
             <div>
-              <Label htmlFor="third_place_prize">Premio 3er Lugar</Label>
+              <Label htmlFor="third_place_prize">Premio para tercer lugar</Label>
               <Input
                 id="third_place_prize"
                 value={tournamentInfo.third_place_prize}
@@ -408,12 +412,30 @@ export function TournamentDetailInfo({
           </div>
         </div>
 
-        <Button 
-          type="submit" 
-          className="w-full bg-blue-600 hover:bg-blue-700 text-lg font-medium py-6"
-        >
-          Crear Torneo
-        </Button>
+        {/* Sección de botones mejorada */}
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+            <Button 
+              type="button" 
+              variant="outline"
+              onClick={onBack}
+              className="flex-1 h-12 text-base font-medium border-2 hover:bg-gray-50"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Volver al paso anterior
+            </Button>
+            <Button 
+              type="submit" 
+              className="flex-1 h-12 text-base font-medium bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              Crear Torneo
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </div>
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Revisa todos los datos antes de crear el torneo
+          </p>
+        </div>
       </div>
     </form>
   )
