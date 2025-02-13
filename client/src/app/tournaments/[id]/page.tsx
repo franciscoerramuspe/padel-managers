@@ -10,6 +10,7 @@ import { TournamentTeams } from '@/components/Tournaments/TournamentTeams';
 import { TournamentRules } from '@/components/Tournaments/TournamentRules';
 import { TournamentStats } from '@/components/Tournaments/TournamentStats';
 import { SocialMediaGenerator } from '@/components/Tournaments/SocialMediaGenerator';
+import { RulesDownloader } from '@/components/Tournaments/RulesDownloader';
 
 export default function TournamentDetailsPage() {
   const params = useParams();
@@ -49,6 +50,10 @@ export default function TournamentDetailsPage() {
           <TournamentTeams teams={teams} />
           <div className="space-y-8">
             <TournamentPrizes tournament={tournament} />
+            <RulesDownloader 
+              tournament={tournament}
+              tournamentInfo={tournament.tournament_info?.[0]}
+            />
             <SocialMediaGenerator 
               tournament={tournament}
               tournamentInfo={tournament.tournament_info?.[0]}

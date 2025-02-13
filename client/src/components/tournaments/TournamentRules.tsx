@@ -1,5 +1,4 @@
-import { FileText, Download } from 'lucide-react';
-import { Button } from '../ui/button';
+import { FileText } from 'lucide-react';
 
 interface TournamentRulesProps {
   tournament: any; // TODO: Add proper type
@@ -11,15 +10,9 @@ export function TournamentRules({ tournament }: TournamentRulesProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <FileText className="h-7 w-7 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Reglamento</h2>
-          </div>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Descargar PDF
-          </Button>
+        <div className="flex items-center gap-3 mb-6">
+          <FileText className="h-7 w-7 text-blue-600" />
+          <h2 className="text-2xl font-bold text-gray-900">Reglamento</h2>
         </div>
 
         <div className="prose max-w-none">
