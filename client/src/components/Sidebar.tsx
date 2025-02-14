@@ -14,6 +14,7 @@ import {
   UserIcon,
   ChartBarIcon,
   PhotoIcon as ImageIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
@@ -26,6 +27,7 @@ interface SidebarProps {
 const MENU_ITEMS = [
   { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
   { name: 'Torneos', href: '/tournaments', icon: TrophyIcon },
+  { name: 'Inscripciones', href: '/payments', icon: BanknotesIcon },
   { name: 'Usuarios', href: '/users', icon: UsersIcon },
   { name: 'Canchas', href: '/courts', icon: TrophyIcon },
   { name: 'Patrocinadores', href: '/sponsors', icon: ImageIcon },

@@ -52,7 +52,9 @@ export default function TournamentDetailsPage() {
             <TournamentPrizes tournament={tournament} />
             <RulesDownloader 
               tournament={tournament}
-              tournamentInfo={tournament.tournament_info?.[0]}
+              tournamentInfo={tournament.tournament_info?.[0] || {
+                time_slots: [],
+              }}
             />
             <SocialMediaGenerator 
               tournament={tournament}

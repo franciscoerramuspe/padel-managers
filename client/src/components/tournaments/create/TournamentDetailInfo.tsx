@@ -419,17 +419,19 @@ export function TournamentDetailInfo({
               type="button" 
               variant="outline"
               onClick={onBack}
-              className="flex-1 h-12 text-base font-medium border-2 hover:bg-gray-50"
+              size="lg"
+              className="flex-1 text-base font-medium border-2 hover:bg-gray-50"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al paso anterior
             </Button>
             <Button 
               type="submit" 
-              className="flex-1 h-12 text-base font-medium bg-blue-500 hover:bg-blue-600 text-white"
+              size="lg"
+              className="flex-1 text-base font-medium bg-blue-500 hover:bg-blue-600 text-white"
             >
               Crear Torneo
-              <ArrowRight className="w-5 h-5 ml-2" />
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
           <p className="text-center text-sm text-gray-500 mt-4">
