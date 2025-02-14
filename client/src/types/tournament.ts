@@ -54,34 +54,42 @@ export interface TournamentTeam extends Team {
   };
 }
 
+export interface TimeSlot {
+  start: string;
+  end: string;
+}
+
 export interface TournamentInfo {
-  id: string;
-  description: string;
-  inscription_cost: number;
-  tournament_location: string;
-  tournament_club_name: string;
-  tournament_thumbnail?: string;
-  rules?: string;
-  tournament_address?: string;
-  signup_limit_date?: string;
+  tournament_club_name?: string;
+  inscription_cost?: number;
+  time_slots?: string[];
   first_place_prize?: string;
   second_place_prize?: string;
   third_place_prize?: string;
+  rules?: string;
+  description?: string;
+  tournament_location?: string;
+  signup_limit_date?: string;
 }
 
 export interface Tournament {
   id: string;
   name: string;
-  status: 'upcoming' | 'in_progress' | 'completed';
+  category_id: string;
+  status: 'upcoming' | 'in_progress' | 'finished';
   start_date: string;
   end_date: string;
-  category_id: string;
   teams_limit: number;
   price?: number;
   prize_pool?: number;
   format: TournamentFormat;
   tournament_teams: TournamentTeam[];
-  tournament_info: TournamentInfo[];
+  tournament_info: Array<{
+    tournament_club_name?: string;
+    inscription_cost?: number;
+  }>;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Category {
@@ -145,4 +153,12 @@ export interface Match {
 
 interface TournamentDraw {
   matches: Match[];
+}
+
+export interface FormData {
+  name: string;
+  category_ids: string[];
+  start_date: string;
+  end_date: string;
+  status: string;
 }

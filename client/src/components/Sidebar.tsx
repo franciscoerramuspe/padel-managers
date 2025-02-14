@@ -14,47 +14,175 @@ import {
   UserIcon,
   ChartBarIcon,
   PhotoIcon as ImageIcon,
+  BanknotesIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline';
+import { ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
 import LoadingScreen from './LoadingScreen';
 
-interface SidebarProps {
-  username?: string;
+interface MenuItem {
+  name: string;
+  href: string;
+  icon: React.ForwardRefExoticComponent<any>;
+  iconColor?: string;
+  hoverColor?: string;
+  submenu?: {
+    name: string;
+    href: string;
+    icon: React.ForwardRefExoticComponent<any>;
+    iconColor?: string;
+    textColor?: string;
+  }[];
 }
 
-const MENU_ITEMS = [
-  { name: 'Inicio', href: '/dashboard', icon: HomeIcon },
-  { name: 'Torneos', href: '/tournaments', icon: TrophyIcon },
-  { name: 'Usuarios', href: '/users', icon: UsersIcon },
-  { name: 'Canchas', href: '/courts', icon: TrophyIcon },
-  { name: 'Patrocinadores', href: '/sponsors', icon: ImageIcon },
-  { name: 'Estadisticas', href: '/incomes', icon: ChartBarIcon },
-  { name: 'Configuraciones', href: '/settings', icon: CogIcon },
-] as const;
+const MENU_ITEMS: MenuItem[] = [
+  { 
+    name: 'Inicio', 
+    href: '/dashboard', 
+    icon: HomeIcon,
+    iconColor: 'text-blue-500',
+    hoverColor: 'hover:bg-blue-50'
+  },
+  { 
+    name: 'Torneos', 
+    href: '/tournaments', 
+    icon: TrophyIcon,
+    iconColor: 'text-indigo-500',
+    hoverColor: 'hover:bg-indigo-50',
+    submenu: [
+      { 
+        name: 'Ver torneos', 
+        href: '/tournaments', 
+        icon: TrophyIcon,
+        iconColor: 'text-indigo-500' 
+      },
+      { 
+        name: 'Crear torneo', 
+        href: '/tournaments/create', 
+        icon: PlusIcon,
+        iconColor: 'text-emerald-500',
+        textColor: 'text-emerald-600 font-medium'
+      },
+      { 
+        name: 'Inscripciones', 
+        href: '/payments', 
+        icon: BanknotesIcon,
+        iconColor: 'text-amber-500'
+      },
+      { 
+        name: 'Canchas', 
+        href: '/courts', 
+        icon: TrophyIcon,
+        iconColor: 'text-purple-500'
+      },
+    ]
+  },
+  { 
+    name: 'Usuarios', 
+    href: '/users', 
+    icon: UsersIcon,
+    iconColor: 'text-cyan-500',
+    hoverColor: 'hover:bg-cyan-50'
+  },
+  { 
+    name: 'Patrocinadores', 
+    href: '/sponsors', 
+    icon: ImageIcon,
+    iconColor: 'text-pink-500',
+    hoverColor: 'hover:bg-pink-50'
+  },
+  { 
+    name: 'Estadisticas', 
+    href: '/incomes', 
+    icon: ChartBarIcon,
+    iconColor: 'text-orange-500',
+    hoverColor: 'hover:bg-orange-50'
+  },
+  { 
+    name: 'Configuraciones', 
+    href: '/settings', 
+    icon: CogIcon,
+    iconColor: 'text-gray-500',
+    hoverColor: 'hover:bg-gray-50'
+  },
+];
 
-const MenuItem = ({ item, isHovered, onHover }: { 
-  item: typeof MENU_ITEMS[number], 
-  isHovered: boolean,
-  onHover: (name: string | null) => void 
-}) => (
-  <Link href={item.href}>
-    <div
-      className={`flex items-center p-3 rounded-xl text-gray-800 transition-all duration-300 ease-in-out ${
-        isHovered ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'
-      }`}
-      onMouseEnter={() => onHover(item.name)}
-      onMouseLeave={() => onHover(null)}
-    >
-      <item.icon
-        className={`w-5 h-5 mr-3 ${
-          isHovered ? 'text-white' : 'text-gray-500'
-        }`}
-      />
-      <span className="text-sm font-medium">{item.name}</span>
+const MenuItem = ({ 
+  item, 
+  isHovered, 
+  onHover,
+  isSubmenuOpen,
+  onToggleSubmenu 
+}: { 
+  item: MenuItem;
+  isHovered: boolean;
+  onHover: (name: string | null) => void;
+  isSubmenuOpen: boolean;
+  onToggleSubmenu: () => void;
+}) => {
+  const router = useRouter();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (item.submenu) {
+      onToggleSubmenu();
+    } else {
+      router.push(item.href);
+    }
+  };
+
+  return (
+    <div>
+      <div
+        className={`flex items-center justify-between p-3 rounded-xl transition-all duration-300 ease-in-out cursor-pointer
+          ${isHovered || isSubmenuOpen 
+            ? 'bg-gradient-to-r from-gray-50 to-gray-50/50' 
+            : item.hoverColor || 'hover:bg-gray-50'
+          }
+        `}
+        onMouseEnter={() => onHover(item.name)}
+        onMouseLeave={() => onHover(null)}
+        onClick={handleClick}
+      >
+        <div className="flex items-center">
+          <item.icon
+            className={`w-5 h-5 mr-3 transition-colors ${item.iconColor || 'text-gray-400'}`}
+          />
+          <span className="text-sm font-medium text-gray-700">
+            {item.name}
+          </span>
+        </div>
+        {item.submenu && (
+          <ChevronDown 
+            className={`w-4 h-4 transition-transform duration-200 text-gray-400
+              ${isSubmenuOpen ? 'rotate-180' : ''}`} 
+          />
+        )}
+      </div>
+      
+      {item.submenu && (
+        <div className={`ml-4 mt-1 space-y-1 overflow-hidden transition-all duration-200
+          ${isSubmenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+        >
+          {item.submenu.map((subItem) => (
+            <Link 
+              key={subItem.href} 
+              href={subItem.href}
+              className="flex items-center p-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              <subItem.icon className={`w-4 h-4 mr-2 ${subItem.iconColor || 'text-gray-400'}`} />
+              <span className={`text-sm ${subItem.textColor || ''}`}>
+                {subItem.name}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
-  </Link>
-);
+  );
+};
 
 const LogoCard = () => (
   <div className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 transform transition-all duration-300 hover:shadow-xl">
@@ -85,12 +213,17 @@ const LogoCard = () => (
   </div>
 );
 
+interface SidebarProps {
+  username?: string;
+}
+
 const Sidebar = ({ username }: SidebarProps) => {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -135,6 +268,10 @@ const Sidebar = ({ username }: SidebarProps) => {
   };
 
   const userName = localStorage.getItem('userName');
+
+  const handleSubmenuToggle = (itemName: string) => {
+    setOpenSubmenu(openSubmenu === itemName ? null : itemName);
+  };
 
   return (
     <>
@@ -191,20 +328,23 @@ const Sidebar = ({ username }: SidebarProps) => {
                     item={item} 
                     isHovered={hoveredItem === item.name}
                     onHover={setHoveredItem}
+                    isSubmenuOpen={openSubmenu === item.name}
+                    onToggleSubmenu={() => handleSubmenuToggle(item.name)}
                   />
                 </li>
               ))}
-              <li>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center w-full px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <LogoutIcon className="w-5 h-5 mr-3" />
-                  <span className="text-sm">Cerrar sesión</span>
-                </button>
-              </li>
             </ul>
           </nav>
+
+          <div className="mt-auto p-4 border-t border-gray-100">
+            <button
+              onClick={handleLogout}
+              className="flex items-center w-full p-3 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-colors group"
+            >
+              <LogoutIcon className="w-5 h-5 mr-3 text-red-500 group-hover:text-red-600" />
+              <span className="font-medium">Cerrar sesión</span>
+            </button>
+          </div>
         </div>
       </div>
     </>

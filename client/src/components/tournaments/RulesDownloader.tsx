@@ -1,8 +1,8 @@
 import { FileText, Download, Info } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { RulesGenerator } from './RulesGenerator';
-import { TournamentInfo } from '@/types/tournament';
 import { Tournament } from '@/types/tournament';
+import { TournamentInfo } from '@/types/tournament';
 
 interface RulesDownloaderProps {
   tournament: Tournament;
