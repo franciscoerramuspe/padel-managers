@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   compress: true,
   experimental: {
@@ -16,6 +17,7 @@ const nextConfig = {
         pathname: '/storage/v1/object/public/**',
       },
     ],
+    unoptimized: true
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -23,6 +25,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  poweredByHeader: false,
 };
 
 export default nextConfig;

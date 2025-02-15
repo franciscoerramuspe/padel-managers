@@ -1,0 +1,13 @@
+{
+    "buildCommand": "cd client && npm install && npm run build",
+    "outputDirectory": "client/.next",
+    "framework": "nextjs",
+    "regions": ["gru1"],
+    "installCommand": "cd client && npm install",
+    "builds": [
+      {
+        "src": "client/next.config.ts",
+        "use": "@vercel/next"
+      }
+    ]
+  }
