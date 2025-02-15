@@ -26,6 +26,10 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   poweredByHeader: false,
+  webpack: (config, { isServer }) => {
+    config.stats = 'verbose';
+    return config;
+  }
 };
 
 export default nextConfig;
