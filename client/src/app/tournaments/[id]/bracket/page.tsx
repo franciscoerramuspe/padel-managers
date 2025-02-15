@@ -2,14 +2,14 @@
 
 import { useParams } from 'next/navigation';
 import { useTournaments } from '@/hooks/useTournaments';
-import { DrawBracket } from "../../../../components/Tournaments/DrawBracket";
+import { DrawBracket } from "@/components/Tournaments/DrawBracket";
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Trophy, Users, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { useState } from "react";
-import { MatchResultBracketModal } from "../../../../components/Tournaments/MatchResultBracketModal";
+import { MatchResultBracketModal } from "@/components/Tournaments/MatchResultBracketModal";
 
 interface Match {
   id: string;

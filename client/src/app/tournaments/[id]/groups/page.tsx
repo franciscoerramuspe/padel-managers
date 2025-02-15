@@ -5,7 +5,7 @@ import { useTournaments } from '@/hooks/useTournaments';
 import Link from 'next/link';
 import { useState } from 'react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { MatchResultModal } from '../../../../components/Tournaments/groups/MatchResultModal';
+import { MatchResultModal } from "@/components/Tournaments/groups/MatchResultModal";
 import { GroupTable } from '../../../../components/Tournaments/groups/GroupTable';
 import { Info, Users, AlertCircle } from "lucide-react";
 
