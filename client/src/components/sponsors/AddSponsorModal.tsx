@@ -7,14 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSponsors } from "@/hooks/useSponsors";
 import { toast } from "@/components/ui/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-interface AddSponsorModalProps {
+export default function AddSponsorModal({ isOpen, onClose }: {
   isOpen: boolean;
   onClose: () => void;
-}
-
-export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProps) {
+}) {
   const { createSponsor } = useSponsors();
   const [formData, setFormData] = useState({
     name: "",
@@ -76,9 +74,7 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Añadir Patrocinador</DialogTitle>
-        </DialogHeader>
+        <DialogTitle>Añadir Patrocinador</DialogTitle>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
@@ -164,7 +160,7 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
             <p className="text-sm text-red-500 mt-2">{error}</p>
           )}
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <div className="flex justify-end gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"
@@ -180,7 +176,7 @@ export default function AddSponsorModal({ isOpen, onClose }: AddSponsorModalProp
             >
               {isLoading ? "Guardando..." : "Guardar"}
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>

@@ -21,12 +21,10 @@ interface Match {
   score?: string;
 }
 
-interface DrawBracketProps {
+export default function DrawBracket({ matches, onUpdateMatch }: { 
   matches: Match[];
-  onUpdateMatch?: (match: Match) => void;
-}
-
-export function DrawBracket({ matches, onUpdateMatch }: DrawBracketProps) {
+  onUpdateMatch: (match: Match) => void;
+}) {
   // Función para crear un nodo de partido
   const createMatchNode = (match: Match, x: number, y: number): Node => ({
     id: match.id,
