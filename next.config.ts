@@ -28,6 +28,7 @@ const nextConfig = {
   poweredByHeader: false,
   webpack: (config, { isServer }) => {
     config.stats = 'verbose';
+    config.cache = false;
     return config;
   }
 };
