@@ -57,6 +57,7 @@ export interface TournamentTeam extends Team {
 export interface TimeSlot {
   start: string;
   end: string;
+  day: 'friday' | 'saturday' | 'sunday';
 }
 
 export interface TournamentInfo {
