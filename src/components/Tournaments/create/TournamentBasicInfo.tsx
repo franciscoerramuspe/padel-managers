@@ -29,6 +29,30 @@ export function TournamentBasicInfo({
   onSubmit 
 }: TournamentBasicInfoProps) {
   const [searchQuery, setSearchQuery] = useState("")
+  const [errors, setErrors] = useState<{
+    name?: boolean;
+    category_ids?: boolean;
+    start_date?: boolean;
+    end_date?: boolean;
+  }>({})
+
+  const validateForm = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    const newErrors = {
+      name: !formData.name,
+      category_ids: !formData.category_ids?.length,
+      start_date: !formData.start_date,
+      end_date: !formData.end_date,
+    }
+
+    setErrors(newErrors)
+
+    // Si no hay errores, continuamos
+    if (!Object.values(newErrors).some(Boolean)) {
+      onSubmit(e)
+    }
+  }
 
   const handleCategoryToggle = (categoryId: string) => {
     const currentCategories = formData.category_ids || []
@@ -69,7 +93,7 @@ export function TournamentBasicInfo({
   }
 
   return (
-    <form onSubmit={onSubmit} className="p-6 space-y-8">
+    <form onSubmit={validateForm} className="p-6 space-y-8">
       {/* Sección de Información Básica */}
       <div className="space-y-6">
         <div className="flex items-start gap-3 mb-6">
@@ -95,8 +119,16 @@ export function TournamentBasicInfo({
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Ingrese el nombre del torneo"
-              className="mt-2"
+              className={cn(
+                "mt-2",
+                errors.name && "border-red-500 focus-visible:ring-red-500"
+              )}
             />
+            {errors.name && (
+              <p className="text-xs text-red-500 mt-1">
+                El nombre del torneo es requerido
+              </p>
+            )}
           </div>
 
           {/* Categorías con multiselect restaurado */}
@@ -109,7 +141,10 @@ export function TournamentBasicInfo({
                 <Button
                   variant="outline"
                   role="combobox"
-                  className="w-full justify-between mt-2"
+                  className={cn(
+                    "w-full justify-between mt-2",
+                    errors.category_ids && "border-red-500 focus-visible:ring-red-500"
+                  )}
                 >
                   {formData.category_ids?.length > 0
                     ? `${formData.category_ids.length} categorías seleccionadas`
@@ -154,6 +189,11 @@ export function TournamentBasicInfo({
                 </Command>
               </PopoverContent>
             </Popover>
+            {errors.category_ids && (
+              <p className="text-xs text-red-500 mt-1">
+                Debe seleccionar al menos una categoría
+              </p>
+            )}
           </div>
 
           {/* Fechas - Manteniendo la lógica original */}
@@ -167,7 +207,8 @@ export function TournamentBasicInfo({
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal mt-2",
-                    !formData.start_date && "text-muted-foreground"
+                    !formData.start_date && "text-muted-foreground",
+                    errors.start_date && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -188,6 +229,11 @@ export function TournamentBasicInfo({
                 />
               </PopoverContent>
             </Popover>
+            {errors.start_date && (
+              <p className="text-xs text-red-500 mt-1">
+                La fecha de inicio es requerida
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -200,7 +246,8 @@ export function TournamentBasicInfo({
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal mt-2",
-                    !formData.end_date && "text-muted-foreground"
+                    !formData.end_date && "text-muted-foreground",
+                    errors.end_date && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
@@ -221,6 +268,11 @@ export function TournamentBasicInfo({
                 />
               </PopoverContent>
             </Popover>
+            {errors.end_date && (
+              <p className="text-xs text-red-500 mt-1">
+                La fecha de finalización es requerida
+              </p>
+            )}
           </div>
         </div>
       </div>

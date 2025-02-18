@@ -6,6 +6,7 @@ import { Trophy } from "lucide-react"
 import { TournamentBasicInfo } from "@/components/Tournaments/create/TournamentBasicInfo"
 import { TournamentDetailInfo } from "@/components/Tournaments/create/TournamentDetailInfo"
 import { useCategories } from "@/hooks/useCategories"
+import { useCourts } from "@/hooks/useCourts"
 import Header from "@/components/Header"
 import { toast } from "@/components/ui/use-toast"
 import { TournamentInfo, FormData } from "@/types/tournament"
@@ -35,6 +36,7 @@ export default function CreateTournamentPage() {
     third_place_prize: ''
   })
   const { categories, loading, error: categoriesError } = useCategories()
+  const { courts, isLoading: courtsLoading } = useCourts()
 
   const handleFirstStep = (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,6 +55,10 @@ export default function CreateTournamentPage() {
     
     if (!tournamentInfo.time_slots?.length) {
       errors.push("Debe agregar al menos un horario disponible")
+    }
+
+    if (!tournamentInfo.courts_available?.length) {
+      errors.push("Debe seleccionar al menos una cancha disponible")
     }
 
     // Otras validaciones necesarias...

@@ -60,16 +60,18 @@ export interface TimeSlot {
 }
 
 export interface TournamentInfo {
-  tournament_club_name?: string;
-  inscription_cost?: number;
-  time_slots?: string[];
-  first_place_prize?: string;
-  second_place_prize?: string;
-  third_place_prize?: string;
-  rules?: string;
-  description?: string;
-  tournament_location?: string;
-  signup_limit_date?: string;
+  time_slots: TimeSlot[];
+  courts_available: string[];
+  description: string;
+  rules: string;
+  tournament_location: string;
+  tournament_address: string;
+  tournament_club_name: string;
+  signup_limit_date: string;
+  inscription_cost: number;
+  first_place_prize: string;
+  second_place_prize: string;
+  third_place_prize: string;
 }
 
 export interface Tournament {
