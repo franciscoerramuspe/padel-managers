@@ -5,29 +5,58 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Clock, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { format, addDays } from "date-fns"
+import { es } from "date-fns/locale"
 
 interface TimeSlot {
   start: string
   end: string
-  day: 'friday' | 'saturday' | 'sunday'
+  day: string
+  date: string
   error?: string
 }
 
 interface TimeSlotsProps {
   timeSlots: TimeSlot[]
   onChange: (slots: TimeSlot[]) => void
+  startDate: string
+  endDate: string
 }
 
-export function TimeSlots({ timeSlots, onChange }: TimeSlotsProps) {
+export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: TimeSlotsProps) {
+  if (!startDate || !endDate) {
+    return (
+      <div className="text-center p-4 border border-dashed rounded-lg">
+        <p className="text-muted-foreground text-sm">
+          Por favor, selecciona las fechas de inicio y fin del torneo primero
+        </p>
+      </div>
+    );
+  }
+
   const hours = Array.from({ length: 24 }, (_, i) => 
     i.toString().padStart(2, '0') + ":00"
   )
 
-  const days = [
-    { id: 'friday', label: 'Viernes' },
-    { id: 'saturday', label: 'Sábado' },
-    { id: 'sunday', label: 'Domingo' }
-  ]
+  const getDaysBetweenDates = () => {
+    const start = new Date(startDate + 'T00:00:00')
+    const end = new Date(endDate + 'T00:00:00')
+    const days = []
+    let current = start
+
+    while (current <= end) {
+      days.push({
+        id: format(current, 'yyyy-MM-dd'),
+        label: format(current, 'EEEE d', { locale: es }),
+        date: format(current, 'yyyy-MM-dd')
+      })
+      current = addDays(current, 1)
+    }
+
+    return days
+  }
+
+  const days = getDaysBetweenDates()
 
   const getAvailableStartHours = (day: string, currentIndex: number) => {
     const daySlots = timeSlots.filter(slot => slot.day === day)
@@ -54,8 +83,8 @@ export function TimeSlots({ timeSlots, onChange }: TimeSlotsProps) {
     })
   }
 
-  const handleAddSlot = (day: 'friday' | 'saturday' | 'sunday') => {
-    const daySlots = timeSlots.filter(slot => slot.day === day)
+  const handleAddSlot = (dayInfo: { id: string, date: string }) => {
+    const daySlots = timeSlots.filter(slot => slot.day === dayInfo.id)
     if (daySlots.length >= 3) return
 
     const lastSlot = daySlots[daySlots.length - 1]
@@ -64,7 +93,13 @@ export function TimeSlots({ timeSlots, onChange }: TimeSlotsProps) {
 
     onChange([
       ...timeSlots,
-      { start: newStartTime, end: newEndTime, day }
+      { 
+        start: newStartTime, 
+        end: newEndTime, 
+        day: dayInfo.id,
+        date: dayInfo.date,
+        error: undefined
+      }
     ])
   }
 
@@ -125,6 +160,14 @@ export function TimeSlots({ timeSlots, onChange }: TimeSlotsProps) {
     return timeSlots.filter(slot => slot.day === day)
   }
 
+  const handleChange = (slots: TimeSlot[]) => {
+    onChange(slots.map(slot => ({
+      ...slot,
+      start: slot.start.toString(),
+      end: slot.end.toString()
+    })))
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid gap-4">
@@ -140,7 +183,7 @@ export function TimeSlots({ timeSlots, onChange }: TimeSlotsProps) {
                       type="button"
                       variant="outline"
                       size="sm"
-                      onClick={() => handleAddSlot(day.id as 'friday' | 'saturday' | 'sunday')}
+                      onClick={() => handleAddSlot(day)}
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Agregar Horario

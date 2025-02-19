@@ -8,63 +8,66 @@ import { ChevronsUpDown, CalendarIcon, Trophy, ArrowRight } from "lucide-react"
 import { format, parseISO, startOfDay } from "date-fns"
 import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
-import { Category, FormData } from "@/types/tournament"
+import { Category, TournamentFormData } from "@/types/tournament"
 import { useState } from "react"
-import { Check } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 
 
 interface TournamentBasicInfoProps {
-  formData: FormData
-  setFormData: (data: FormData) => void
-  categories: Category[]
-  onSubmit: (e: React.FormEvent) => void
+  formData: TournamentFormData;
+  setFormData: (data: TournamentFormData) => void;
+  categories: Category[];
+  onSubmit: (e: React.FormEvent) => void;
 }
 
 export function TournamentBasicInfo({ 
   formData, 
   setFormData, 
-  categories,
+  categories = [],
   onSubmit 
 }: TournamentBasicInfoProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [errors, setErrors] = useState<{
-    name?: boolean;
-    category_ids?: boolean;
-    start_date?: boolean;
-    end_date?: boolean;
-  }>({})
+  const [errors, setErrors] = useState({
+    name: false,
+    category_id: false,
+    start_date: false,
+    end_date: false
+  })
+
+  const handleCategorySelect = (categoryId: string) => {
+    const selectedCategory = categories.find(cat => cat.id === categoryId)
+    if (selectedCategory) {
+      setFormData((prev: TournamentFormData) => ({
+        ...prev,
+        category_id: categoryId,
+        category: {
+          id: selectedCategory.id,
+          name: selectedCategory.name
+        }
+      }))
+    }
+  }
+
+  const filteredCategories = Array.isArray(categories) 
+    ? categories.filter(category =>
+        category.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : []
 
   const validateForm = (e: React.FormEvent) => {
     e.preventDefault()
     
     const newErrors = {
       name: !formData.name,
-      category_ids: !formData.category_ids?.length,
+      category_id: !formData.category_id,
       start_date: !formData.start_date,
       end_date: !formData.end_date,
     }
 
     setErrors(newErrors)
 
-    // Si no hay errores, continuamos
     if (!Object.values(newErrors).some(Boolean)) {
       onSubmit(e)
     }
-  }
-
-  const handleCategoryToggle = (categoryId: string) => {
-    const currentCategories = formData.category_ids || []
-    const newCategories = currentCategories.includes(categoryId)
-      ? currentCategories.filter(id => id !== categoryId)
-      : [...currentCategories, categoryId]
-    setFormData({ ...formData, category_ids: newCategories })
-  }
-
-  const handleSelectAllCategories = () => {
-    const allCategoryIds = categories.map(category => category.id)
-    setFormData({ ...formData, category_ids: allCategoryIds })
   }
 
   const handleStartDateSelect = (date: Date | undefined) => {
@@ -131,10 +134,10 @@ export function TournamentBasicInfo({
             )}
           </div>
 
-          {/* Categorías con multiselect restaurado */}
+          {/* Categorías con single select */}
           <div className="col-span-2">
             <Label htmlFor="categories" className="text-base font-medium">
-              Categorías
+              Categoría
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -143,55 +146,38 @@ export function TournamentBasicInfo({
                   role="combobox"
                   className={cn(
                     "w-full justify-between mt-2",
-                    errors.category_ids && "border-red-500 focus-visible:ring-red-500"
+                    errors.category_id && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
-                  {formData.category_ids?.length > 0
-                    ? `${formData.category_ids.length} categorías seleccionadas`
-                    : "Seleccionar categorías"}
+                  {formData.category?.name || "Seleccionar categoría"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
+              <PopoverContent className="w-full p-0">
                 <Command>
                   <CommandInput 
                     placeholder="Buscar categoría..." 
                     value={searchQuery}
                     onValueChange={setSearchQuery}
                   />
+                  <CommandEmpty>No se encontraron categorías.</CommandEmpty>
                   <CommandGroup>
-                    <div 
-                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
-                      onClick={handleSelectAllCategories}
-                    >
-                      <Checkbox
-                        checked={formData.category_ids?.length === categories.length}
-                        className="border-primary data-[state=checked]:bg-primary"
-                      />
-                      <span className="font-medium">Seleccionar todas</span>
-                    </div>
-                    <div className="py-2">
-                      {categories.map((category) => (
-                        <div
-                          key={category.id}
-                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
-                          onClick={() => handleCategoryToggle(category.id)}
-                        >
-                          <Checkbox
-                            checked={formData.category_ids?.includes(category.id)}
-                            className="border-primary data-[state=checked]:bg-primary"
-                          />
-                          <span>{category.name}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {filteredCategories.map((category) => (
+                      <CommandItem
+                        key={category.id}
+                        value={category.id}
+                        onSelect={() => handleCategorySelect(category.id)}
+                      >
+                        <span>{category.name}</span>
+                      </CommandItem>
+                    ))}
                   </CommandGroup>
                 </Command>
               </PopoverContent>
             </Popover>
-            {errors.category_ids && (
+            {errors.category_id && (
               <p className="text-xs text-red-500 mt-1">
-                Debe seleccionar al menos una categoría
+                Debe seleccionar una categoría
               </p>
             )}
           </div>

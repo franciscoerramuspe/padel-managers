@@ -9,31 +9,33 @@ import { useCategories } from "@/hooks/useCategories"
 import { useCourts } from "@/hooks/useCourts"
 import Header from "@/components/Header"
 import { toast } from "@/components/ui/use-toast"
-import { TournamentInfo, FormData } from "@/types/tournament"
+import { TournamentInfo, TournamentFormData, TournamentBase } from "@/types/tournament"
+import { createTournament } from "@/services/tournamentService"
 
 export default function CreateTournamentPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<TournamentFormData>({
     name: '',
-    category_ids: [],
+    category_id: '',
     start_date: '',
     end_date: '',
-    status: 'draft'
-  })
-  const [tournamentInfo, setTournamentInfo] = useState<TournamentInfo>({
+    status: 'upcoming',
+    courts_available: 0,
     time_slots: [],
-    courts_available: [],
-    description: '',
-    rules: '',
-    tournament_location: '',
-    tournament_address: '',
-    tournament_club_name: '',
-    signup_limit_date: '',
-    inscription_cost: 0,
-    first_place_prize: '',
-    second_place_prize: '',
-    third_place_prize: ''
+    tournament_info: {
+      description: '',
+      rules: '',
+      tournament_location: '',
+      tournament_address: '',
+      tournament_club_name: '',
+      signup_limit_date: '',
+      inscription_cost: 0,
+      first_place_prize: '',
+      second_place_prize: '',
+      third_place_prize: '',
+      tournament_thumbnail: ''
+    }
   })
   const { categories, loading, error: categoriesError } = useCategories()
   const { courts, isLoading: courtsLoading } = useCourts()
@@ -50,45 +52,9 @@ export default function CreateTournamentPage() {
   const handleTournamentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    // Validamos todo junto antes de enviar
-    const errors = []
-    
-    if (!tournamentInfo.time_slots?.length) {
-      errors.push("Debe agregar al menos un horario disponible")
-    }
-
-    if (!tournamentInfo.courts_available?.length) {
-      errors.push("Debe seleccionar al menos una cancha disponible")
-    }
-
-    // Otras validaciones necesarias...
-
-    // Si hay errores, mostramos el toast con todos los errores
-    if (errors.length > 0) {
-      toast({
-        title: "Error",
-        description: errors.join(". "),
-        variant: "destructive",
-      })
-      return
-    }
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tournaments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          ...tournamentInfo,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Error al crear el torneo')
-      }
-
+      const response = await createTournament(formData)
+      
       toast({
         title: "Éxito",
         description: "Torneo creado correctamente",
@@ -123,8 +89,8 @@ export default function CreateTournamentPage() {
               />
             ) : (
               <TournamentDetailInfo
-                tournamentInfo={tournamentInfo}
-                setTournamentInfo={setTournamentInfo}
+                tournament={formData as TournamentBase & { tournament_info: TournamentInfo }}
+                setTournament={(tournament) => setFormData(prev => ({ ...prev, tournament_info: tournament as unknown as TournamentInfo }))}
                 onSubmit={handleTournamentSubmit}
                 onBack={handleBack}
               />
