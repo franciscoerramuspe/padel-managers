@@ -65,11 +65,7 @@ export function TournamentBasicInfo({
     });
   };
 
-  const filteredCategories = Array.isArray(categories) 
-    ? categories.filter(category =>
-        category.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : []
+  const filteredCategories = categories;
 
   const validateForm = (e: React.FormEvent) => {
     e.preventDefault()
@@ -171,14 +167,8 @@ export function TournamentBasicInfo({
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0">
+              <PopoverContent className="w-full p-0" align="start">
                 <Command>
-                  <CommandInput 
-                    placeholder="Buscar categoría..." 
-                    value={searchQuery}
-                    onValueChange={setSearchQuery}
-                  />
-                  <CommandEmpty>No se encontraron categorías.</CommandEmpty>
                   <CommandGroup>
                     <div 
                       className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
@@ -188,7 +178,7 @@ export function TournamentBasicInfo({
                         checked={formData.categories?.length === categories.length}
                         className="border-primary data-[state=checked]:bg-primary"
                       />
-                      <span className="font-medium">Seleccionar todas</span>
+                      <span className="text-xs font-medium">Seleccionar todas</span>
                     </div>
                     <div className="py-2">
                       {filteredCategories.map((category) => (
@@ -201,7 +191,7 @@ export function TournamentBasicInfo({
                             checked={formData.categories?.some(cat => cat.id === category.id)}
                             className="border-primary data-[state=checked]:bg-primary"
                           />
-                          <span>{category.name}</span>
+                          <span className="text-xs">{category.name}</span>
                         </div>
                       ))}
                     </div>

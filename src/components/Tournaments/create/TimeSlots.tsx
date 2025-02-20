@@ -59,41 +59,68 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
   const days = getDaysBetweenDates()
 
   const getAvailableStartHours = (day: string, currentIndex: number) => {
-    const daySlots = timeSlots.filter(slot => slot.day === day)
-    const previousSlot = daySlots[currentIndex - 1]
+    const daySlots = timeSlots.filter(slot => slot.day === day);
+    const previousSlot = daySlots[currentIndex - 1];
     
     if (previousSlot) {
-      return hours.filter(hour => hour > previousSlot.end)
+      // Convertir la hora de fin del slot anterior a número
+      const prevEndHour = parseInt(previousSlot.end.split(':')[0]);
+      // El siguiente slot debe empezar al menos 1 hora después
+      const minStartHour = prevEndHour + 1;
+      
+      return hours.filter(hour => {
+        const hourNum = parseInt(hour.split(':')[0]);
+        return hourNum >= minStartHour;
+      });
     }
     
-    return hours
-  }
+    return hours;
+  };
 
   const getAvailableEndHours = (day: string, startTime: string, currentIndex: number) => {
-    const daySlots = timeSlots.filter(slot => slot.day === day)
-    const nextSlot = daySlots[currentIndex + 1]
+    const daySlots = timeSlots.filter(slot => slot.day === day);
+    const nextSlot = daySlots[currentIndex + 1];
+    const startHour = parseInt(startTime.split(':')[0]);
     
     return hours.filter(hour => {
-      const isAfterStart = hour > startTime
-      const beforeNextSlot = nextSlot ? hour < nextSlot.start : true
-      return isAfterStart && beforeNextSlot
-    })
-  }
+      const hourNum = parseInt(hour.split(':')[0]);
+      const isAfterStart = hourNum > startHour;
+      
+      if (nextSlot) {
+        const nextStartHour = parseInt(nextSlot.start.split(':')[0]);
+        // Debe terminar al menos 1 hora antes del siguiente slot
+        return isAfterStart && hourNum < (nextStartHour - 1);
+      }
+      
+      return isAfterStart;
+    });
+  };
 
   const handleAddSlot = (dayInfo: { id: string, label: string }) => {
     const daySlots = timeSlots.filter(slot => slot.day === dayInfo.id);
     if (daySlots.length >= 3) return;
 
+    // Encontrar el último slot del día para sugerir el siguiente horario
+    const lastSlot = daySlots[daySlots.length - 1];
+    let suggestedStart = "08:00";
+    let suggestedEnd = "12:00";
+
+    if (lastSlot) {
+      const lastEndHour = parseInt(lastSlot.end.split(':')[0]);
+      suggestedStart = `${(lastEndHour + 1).toString().padStart(2, '0')}:00`;
+      suggestedEnd = `${(lastEndHour + 5).toString().padStart(2, '0')}:00`;
+    }
+
     const newSlot = {
-      start: "08:00",
-      end: "12:00",
+      start: suggestedStart,
+      end: suggestedEnd,
       day: dayInfo.id,
       date: dayInfo.id,
       error: undefined
     };
 
     const newTimeSlots = [...timeSlots, newSlot];
-    handleChange(newTimeSlots);
+    onChange(newTimeSlots);
   };
 
   const getNextHour = (time: string) => {
@@ -106,27 +133,36 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
     const newSlots = [...timeSlots];
     const slot = newSlots[index];
     
-    // Actualizar el valor
+    // Obtener todos los slots del mismo día
+    const daySlots = newSlots.filter(s => s.day === slot.day);
+    const dayIndex = daySlots.findIndex(s => s === slot);
+    
     if (type === 'start') {
       slot.start = value;
-      // Si la hora de fin es menor que la de inicio, ajustarla
-      if (slot.end <= value) {
-        slot.end = getNextHour(value);
-      }
+      // Ajustar automáticamente la hora de fin
+      const startHour = parseInt(value.split(':')[0]);
+      const endHour = startHour + 4; // Por defecto 4 horas después
+      slot.end = endHour.toString().padStart(2, '0') + ":00";
     } else {
       slot.end = value;
     }
 
-    // Validar el slot
+    // Validar el slot actual
     delete slot.error;
-    const overlappingSlot = newSlots.find((s, i) => 
-      i !== index && 
-      s.day === slot.day && 
-      ((s.start <= slot.start && s.end > slot.start) ||
-       (s.start < slot.end && s.end >= slot.end))
-    );
+    
+    // Validar que no haya solapamiento con otros slots del mismo día
+    const otherDaySlots = daySlots.filter((_, i) => i !== dayIndex);
+    const hasOverlap = otherDaySlots.some(otherSlot => {
+      const otherStart = parseInt(otherSlot.start.split(':')[0]);
+      const otherEnd = parseInt(otherSlot.end.split(':')[0]);
+      const currentStart = parseInt(slot.start.split(':')[0]);
+      const currentEnd = parseInt(slot.end.split(':')[0]);
+      
+      return (currentStart >= otherStart && currentStart < otherEnd) ||
+             (currentEnd > otherStart && currentEnd <= otherEnd);
+    });
 
-    if (overlappingSlot) {
+    if (hasOverlap) {
       slot.error = "Los horarios no pueden solaparse";
     }
 
@@ -149,6 +185,27 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
       end: slot.end.toString()
     })))
   }
+
+  const isHourAvailable = (hour: string, dayId: string, currentSlotIndex: number, type: 'start' | 'end') => {
+    const daySlots = timeSlots.filter(slot => slot.day === dayId);
+    const currentSlot = daySlots[currentSlotIndex];
+    
+    return !daySlots.some((slot, index) => {
+      if (index === currentSlotIndex) return false;
+      
+      const slotStart = parseInt(slot.start);
+      const slotEnd = parseInt(slot.end);
+      const currentHour = parseInt(hour);
+      
+      if (type === 'start') {
+        return currentHour >= slotStart && currentHour <= slotEnd;
+      } else {
+        // Para hora de fin, permitir seleccionar después del inicio actual
+        const currentStart = parseInt(currentSlot.start);
+        return currentHour <= slotEnd && currentHour > currentStart;
+      }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -183,15 +240,25 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                             value={slot.start}
                             onValueChange={(value) => handleChangeTime(index, 'start', value)}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Hora inicio" />
                             </SelectTrigger>
                             <SelectContent>
-                              {hours.map((hour) => (
-                                <SelectItem key={hour} value={hour}>
-                                  {hour}
-                                </SelectItem>
-                              ))}
+                              {hours.map((hour) => {
+                                const isDisabled = !isHourAvailable(hour, day.id, index, 'start');
+                                return (
+                                  <SelectItem 
+                                    key={hour} 
+                                    value={hour}
+                                    disabled={isDisabled}
+                                    className={cn(
+                                      isDisabled && "text-gray-400 cursor-not-allowed"
+                                    )}
+                                  >
+                                    {hour}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                         </div>
@@ -200,15 +267,25 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                             value={slot.end}
                             onValueChange={(value) => handleChangeTime(index, 'end', value)}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Hora fin" />
                             </SelectTrigger>
                             <SelectContent>
-                              {hours.map((hour) => (
-                                <SelectItem key={hour} value={hour}>
-                                  {hour}
-                                </SelectItem>
-                              ))}
+                              {hours.map((hour) => {
+                                const isDisabled = !isHourAvailable(hour, day.id, index, 'end');
+                                return (
+                                  <SelectItem 
+                                    key={hour} 
+                                    value={hour}
+                                    disabled={isDisabled}
+                                    className={cn(
+                                      isDisabled && "text-gray-400 cursor-not-allowed"
+                                    )}
+                                  >
+                                    {hour}
+                                  </SelectItem>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
                         </div>

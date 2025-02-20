@@ -53,7 +53,6 @@ export function TournamentDetailInfo({
 }: TournamentDetailInfoProps) {
   const { courts, isLoading } = useCourts()
   const [selectedCourts, setSelectedCourts] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
   const [errors, setErrors] = useState({
     rules: false,
     tournament_club_name: false,
@@ -207,46 +206,32 @@ export function TournamentDetailInfo({
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" align="start">
               <Command className="border-none">
-                <CommandInput 
-                  placeholder="Buscar cancha..." 
-                  value={searchQuery}
-                  onValueChange={setSearchQuery}
-                  className="border-none focus:ring-0"
-                />
                 <CommandGroup>
-                  {courts?.length > 0 ? (
-                    <>
-                      <div 
+                  <div 
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
+                    onClick={handleSelectAllCourts}
+                  >
+                    <Checkbox
+                      checked={selectedCourts?.length === courts.length}
+                      className="border-blue-400 data-[state=checked]:bg-blue-600"
+                    />
+                    <span className="text-xs font-medium">Seleccionar todas</span>
+                  </div>
+                  <div className="py-2">
+                    {courts.map((court) => (
+                      <div
+                        key={court.id}
                         className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
-                        onClick={handleSelectAllCourts}
+                        onClick={() => handleCourtToggle(court.id)}
                       >
                         <Checkbox
-                          checked={selectedCourts?.length === courts.length}
+                          checked={selectedCourts?.includes(court.id)}
                           className="border-blue-400 data-[state=checked]:bg-blue-600"
                         />
-                        <span className="font-medium">Seleccionar todas</span>
+                        <span className="text-xs">{court.name}</span>
                       </div>
-                      <div className="py-2">
-                        {courts.map((court) => (
-                          <div
-                            key={court.id}
-                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
-                            onClick={() => handleCourtToggle(court.id)}
-                          >
-                            <Checkbox
-                              checked={selectedCourts?.includes(court.id)}
-                              className="border-blue-400 data-[state=checked]:bg-blue-600"
-                            />
-                            <span>{court.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="px-3 py-6 text-sm text-gray-500 text-center">
-                      {isLoading ? "Cargando canchas..." : "No hay canchas disponibles"}
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CommandGroup>
               </Command>
             </PopoverContent>
