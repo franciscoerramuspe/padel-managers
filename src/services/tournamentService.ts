@@ -8,13 +8,14 @@ export const createTournament = async (tournamentData: {
   time_slots: [number, number][];
 }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  console.log('URL de la petición:', `${API_URL}/tournaments`);
+  console.log('URL de la petición:', `${API_URL}/tournaments/create`);
   console.log('Datos enviados al endpoint:', tournamentData);
   
-  const response = await fetch(`${API_URL}/tournaments`, {
+  const response = await fetch(`${API_URL}/tournaments/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
     },
     body: JSON.stringify(tournamentData),
   });
@@ -47,10 +48,11 @@ export const setTournamentRequiredInfo = async (
   }
 ) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const response = await fetch(`${API_URL}/tournaments/${tournamentId}/info`, {
+  const response = await fetch(`${API_URL}/tournaments/${tournamentId}/required-info`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
     },
     body: JSON.stringify(tournamentInfo),
   });

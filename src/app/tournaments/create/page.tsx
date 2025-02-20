@@ -22,7 +22,7 @@ export default function CreateTournamentPage() {
     start_date: '',
     end_date: '',
     status: 'upcoming',
-    courts_available: 0,
+    courts_available: 2,
     time_slots: [],
     tournament_info: {
       description: '',
@@ -68,7 +68,7 @@ export default function CreateTournamentPage() {
         start_date: tournamentData.start_date,
         end_date: tournamentData.end_date,
         status: tournamentData.status,
-        courts_available: tournamentData.courts_available,
+        courts_available: 2,
         time_slots: formattedTimeSlots
       };
       console.log('Payload a enviar al backend:', tournamentPayload);
