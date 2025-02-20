@@ -2,13 +2,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { TimeSlot, TournamentInfo } from "@/types/tournament"
+import { TournamentFormData } from "@/types/tournament"
 import { useCourts } from "@/hooks/useCourts"
-import { Command, CommandGroup, CommandInput } from "@/components/ui/command"
+import { Command, CommandGroup } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronsUpDown } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MapPin, Trophy, Info, Clock, ArrowLeft, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format, startOfDay } from "date-fns"
@@ -17,103 +17,154 @@ import { Calendar } from "@/components/ui/calendar"
 import { es } from "date-fns/locale"
 import { TimeSlots } from "@/components/Tournaments/create/TimeSlots"
 import { toast } from "@/components/ui/use-toast"
+import { TimeSlot } from "@/types/tournament"
+
 
 interface TournamentDetailInfoProps {
-  tournamentInfo: TournamentInfo
-  setTournamentInfo: (info: TournamentInfo) => void
-  onSubmit: (e: React.FormEvent) => void
-  onBack: () => void
+  tournament: TournamentFormData;
+  setTournament: (tournament: TournamentFormData) => void;
+  onSubmit: (tournamentData: TournamentFormData) => Promise<void>;
+  onBack: () => void;
 }
 
 export function TournamentDetailInfo({
-  tournamentInfo,
-  setTournamentInfo,
+  tournament,
+  setTournament,
   onSubmit,
   onBack
 }: TournamentDetailInfoProps) {
   const { courts, isLoading } = useCourts()
-  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCourts, setSelectedCourts] = useState<string[]>([])
+  const [errors, setErrors] = useState({
+    rules: false,
+    tournament_club_name: false,
+    tournament_location: false,
+    tournament_address: false,
+    signup_limit_date: false,
+    inscription_cost: false,
+    first_place_prize: false,
+    selectedCourts: false,
+    time_slots: false
+  })
+
+  const [tournamentState, setTournamentState] = useState(tournament);
 
   const handleCourtToggle = (courtId: string) => {
-    const currentCourts = tournamentInfo.courts_available || []
-    const updatedCourts = currentCourts.includes(courtId)
-      ? currentCourts.filter(id => id !== courtId)
-      : [...currentCourts, courtId]
+    const newSelectedCourts = selectedCourts.includes(courtId)
+      ? selectedCourts.filter(id => id !== courtId)
+      : [...selectedCourts, courtId]
     
-    setTournamentInfo({ ...tournamentInfo, courts_available: updatedCourts })
+    setSelectedCourts(newSelectedCourts)
   }
 
   const handleSelectAllCourts = () => {
     const allCourtIds = courts.map(court => court.id)
-    setTournamentInfo({ 
-      ...tournamentInfo, 
-      courts_available: tournamentInfo.courts_available?.length === courts.length ? [] : allCourtIds 
-    })
+    const newSelectedCourts = selectedCourts.length === courts.length ? [] : allCourtIds
+    setSelectedCourts(newSelectedCourts)
   }
+
+  const handleInputChange = (field: string, value: any) => {
+    setTournamentState(prev => ({
+      ...prev,
+      tournament_info: {
+        ...prev.tournament_info,
+        [field]: value
+      }
+    }));
+  };
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      setTournamentInfo({ 
-        ...tournamentInfo, 
-        signup_limit_date: format(date, 'yyyy-MM-dd')
-      })
-    } else {
-      setTournamentInfo({ 
-        ...tournamentInfo, 
-        signup_limit_date: '' 
-      })
-    }
-  }
+      const signupDate = new Date(date);
+      const tournamentStart = new Date(tournamentState.start_date);
+      
+      if (signupDate >= tournamentStart) {
+        toast({
+          title: "Error",
+          description: "La fecha límite de inscripción debe ser anterior a la fecha de inicio del torneo",
+          variant: "destructive",
+        });
+        return;
+      }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+      handleInputChange('signup_limit_date', format(date, 'yyyy-MM-dd'));
+    }
+  };
+
+  const handleTimeSlotChange = (slots: TimeSlot[]) => {
+    const updatedTournament = {
+      ...tournamentState,
+      time_slots: slots
+    };
+    setTournamentState(updatedTournament);
+    setTournament(updatedTournament);
+  };
+
+  const validateForm = () => {
+    const newErrors = {
+      rules: !tournamentState.tournament_info.rules?.trim(),
+      tournament_club_name: !tournamentState.tournament_info.tournament_club_name?.trim(),
+      tournament_location: !tournamentState.tournament_info.tournament_location?.trim(),
+      tournament_address: !tournamentState.tournament_info.tournament_address?.trim(),
+      signup_limit_date: !tournamentState.tournament_info.signup_limit_date?.trim(),
+      inscription_cost: !tournamentState.tournament_info.inscription_cost,
+      first_place_prize: !tournamentState.tournament_info.first_place_prize?.trim(),
+      selectedCourts: selectedCourts.length === 0,
+      time_slots: tournamentState.time_slots.length === 0
+    };
+
+    setErrors(newErrors);
+    return !Object.values(newErrors).some(Boolean);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (!tournamentInfo.time_slots || tournamentInfo.time_slots.length === 0) {
+    if (!validateForm()) {
       toast({
         title: "Error",
-        description: "Debe agregar al menos un horario disponible",
+        description: "Por favor, complete todos los campos requeridos",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    // Validar que haya seleccionado canchas
-    if (!tournamentInfo.courts_available || tournamentInfo.courts_available.length === 0) {
+    console.log('Estado del torneo antes de enviar:', tournamentState);
+    
+    try {
+      await onSubmit({
+        ...tournamentState,
+        tournament_info: {
+          ...tournamentState.tournament_info,
+          inscription_cost: Number(tournamentState.tournament_info.inscription_cost)
+        }
+      });
+    } catch (error) {
+      console.error('Error submitting tournament:', error);
       toast({
         title: "Error",
-        description: "Debe seleccionar al menos una cancha",
+        description: "Hubo un error al crear el torneo",
         variant: "destructive",
-      })
-      return
+      });
     }
+  };
 
-    // Validar campos requeridos
-    if (!tournamentInfo.rules?.trim()) {
-      toast({
-        title: "Error",
-        description: "Debe ingresar las reglas del torneo",
-        variant: "destructive",
-      })
-      return
-    }
+  // Cada vez que el estado local cambia, actualizamos el estado del padre
+  useEffect(() => {
+    setTournament(tournamentState);
+  }, [tournamentState, setTournament]);
 
-    if (!tournamentInfo.tournament_club_name?.trim()) {
-      toast({
-        title: "Error",
-        description: "Debe ingresar el nombre del club",
-        variant: "destructive",
-      })
-      return
-    }
-
-    onSubmit(e)
-  }
+  // Primero, asegúrate de que tournament.time_slots esté inicializado
+  const timeSlots = tournamentState.time_slots || [];
 
   return (
     <form onSubmit={handleSubmit} className="p-6">
       <div className="space-y-8">
         {/* Sección de Canchas */}
-        <div className="bg-blue-50/50 p-6 rounded-lg border border-blue-100 shadow-sm">
+        <div className={cn(
+          "bg-blue-50/50 p-6 rounded-lg border shadow-sm",
+          errors.selectedCourts ? "border-red-300" : "border-blue-100"
+        )}>
           <div className="flex items-start gap-3 mb-4">
             <div className="p-2 bg-blue-100 rounded-full">
               <MapPin className="h-5 w-5 text-blue-600" />
@@ -132,85 +183,84 @@ export function TournamentDetailInfo({
               <Button
                 variant="outline"
                 role="combobox"
-                className="w-full justify-between mt-2 bg-white border-blue-200 hover:bg-blue-50/50"
+                className={cn(
+                  "w-full justify-between mt-2 bg-white",
+                  errors.selectedCourts ? "border-red-500 hover:bg-red-50/50" : "border-blue-200 hover:bg-blue-50/50"
+                )}
               >
-                {tournamentInfo.courts_available?.length && tournamentInfo.courts_available.length > 0
-                  ? `${tournamentInfo.courts_available.length} canchas seleccionadas`
+                {selectedCourts?.length && selectedCourts.length > 0
+                  ? `${selectedCourts.length} canchas seleccionadas`
                   : "Seleccionar canchas"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-full p-0" align="start">
               <Command className="border-none">
-                <CommandInput 
-                  placeholder="Buscar cancha..." 
-                  value={searchQuery}
-                  onValueChange={setSearchQuery}
-                  className="border-none focus:ring-0"
-                />
                 <CommandGroup>
-                  {courts?.length > 0 ? (
-                    <>
-                      <div 
+                  <div 
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
+                    onClick={handleSelectAllCourts}
+                  >
+                    <Checkbox
+                      checked={selectedCourts?.length === courts.length}
+                      className="border-blue-400 data-[state=checked]:bg-blue-600"
+                    />
+                    <span className="text-xs font-medium">Seleccionar todas</span>
+                  </div>
+                  <div className="py-2">
+                    {courts.map((court) => (
+                      <div
+                        key={court.id}
                         className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
-                        onClick={handleSelectAllCourts}
+                        onClick={() => handleCourtToggle(court.id)}
                       >
                         <Checkbox
-                          checked={tournamentInfo.courts_available?.length === courts.length}
+                          checked={selectedCourts?.includes(court.id)}
                           className="border-blue-400 data-[state=checked]:bg-blue-600"
                         />
-                        <span className="font-medium">Seleccionar todas</span>
+                        <span className="text-xs">{court.name}</span>
                       </div>
-                      <div className="py-2">
-                        {courts.map((court) => (
-                          <div
-                            key={court.id}
-                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
-                            onClick={() => handleCourtToggle(court.id)}
-                          >
-                            <Checkbox
-                              checked={tournamentInfo.courts_available?.includes(court.id)}
-                              className="border-blue-400 data-[state=checked]:bg-blue-600"
-                            />
-                            <span>{court.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <div className="px-3 py-6 text-sm text-gray-500 text-center">
-                      {isLoading ? "Cargando canchas..." : "No hay canchas disponibles"}
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CommandGroup>
               </Command>
             </PopoverContent>
           </Popover>
+          {errors.selectedCourts && (
+            <p className="text-sm text-red-500 mt-2">
+              Debe seleccionar al menos una cancha
+            </p>
+          )}
         </div>
 
         {/* Sección de Time Slots */}
-        <div className="bg-blue-50/50 p-6 rounded-lg border border-blue-100 shadow-sm mt-6">
+        <div className={cn(
+          "bg-blue-50/50 p-6 rounded-lg border shadow-sm",
+          errors.time_slots ? "border-red-300" : "border-blue-100"
+        )}>
           <div className="flex items-start gap-3 mb-4">
             <div className="p-2 bg-blue-100 rounded-full">
               <Clock className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-blue-900">Horarios Disponibles</h3>
+              <h3 className="text-lg font-semibold text-blue-900">Horarios del Torneo</h3>
               <p className="text-sm text-blue-700 mt-1">
-                Configura hasta 3 franjas horarias para los partidos del torneo.
+                Configura los horarios para cada día del torneo (viernes a domingo). Puedes asignar un horario diferente para cada día.
               </p>
             </div>
           </div>
 
           <TimeSlots
-            timeSlots={tournamentInfo.time_slots || []}
-            onChange={(slots) => {
-              setTournamentInfo({
-                ...tournamentInfo,
-                time_slots: slots
-              })
-            }}
+            timeSlots={timeSlots as TimeSlot[]}
+            onChange={handleTimeSlotChange}
+            startDate={tournamentState.start_date}
+            endDate={tournamentState.end_date}
           />
+          {errors.time_slots && (
+            <p className="text-sm text-red-500 mt-2">
+              Debe agregar al menos un horario disponible
+            </p>
+          )}
         </div>
 
         {/* Sección de Fechas y Costos */}
@@ -234,11 +284,8 @@ export function TournamentDetailInfo({
               </Label>
               <Input
                 type="number"
-                value={tournamentInfo.inscription_cost}
-                onChange={(e) => setTournamentInfo({ 
-                  ...tournamentInfo, 
-                  inscription_cost: Number(e.target.value) 
-                })}
+                value={tournamentState.tournament_info.inscription_cost}
+                onChange={(e) => handleInputChange('inscription_cost', Number(e.target.value))}
                 placeholder="0.00"
                 className="bg-white border-purple-200 focus-visible:ring-purple-500"
               />
@@ -252,13 +299,14 @@ export function TournamentDetailInfo({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal bg-white border-purple-200 hover:bg-purple-50/50",
-                      !tournamentInfo.signup_limit_date && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal bg-white",
+                      errors.signup_limit_date ? "border-red-500" : "border-purple-200 hover:bg-purple-50/50",
+                      !tournamentState.tournament_info.signup_limit_date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {tournamentInfo.signup_limit_date ? (
-                      format(new Date(tournamentInfo.signup_limit_date + 'T12:00:00'), "PPP", { locale: es })
+                    {tournamentState.tournament_info.signup_limit_date ? (
+                      format(new Date(tournamentState.tournament_info.signup_limit_date + 'T12:00:00'), "PPP", { locale: es })
                     ) : (
                       <span>Seleccionar fecha</span>
                     )}
@@ -267,13 +315,21 @@ export function TournamentDetailInfo({
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={tournamentInfo.signup_limit_date ? new Date(tournamentInfo.signup_limit_date + 'T12:00:00') : undefined}
+                    selected={tournamentState.tournament_info.signup_limit_date ? new Date(tournamentState.tournament_info.signup_limit_date) : undefined}
                     onSelect={handleDateSelect}
+                    disabled={(date) => date < new Date()}
+                    fromDate={new Date()}
+                    toDate={new Date(tournamentState.start_date)}
                     initialFocus
                     locale={es}
                   />
                 </PopoverContent>
               </Popover>
+              {errors.signup_limit_date && (
+                <p className="text-sm text-red-500 mt-1">
+                  La fecha límite de inscripción es requerida
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -297,11 +353,8 @@ export function TournamentDetailInfo({
               <Label htmlFor="first_place_prize">Premio para primer lugar</Label>
               <Input
                 id="first_place_prize"
-                value={tournamentInfo.first_place_prize}
-                onChange={(e) => setTournamentInfo({ 
-                  ...tournamentInfo, 
-                  first_place_prize: e.target.value 
-                })}
+                value={tournamentState.tournament_info.first_place_prize}
+                onChange={(e) => handleInputChange('first_place_prize', e.target.value)}
                 placeholder="Premio"
                 className="mt-2"
               />
@@ -310,11 +363,8 @@ export function TournamentDetailInfo({
               <Label htmlFor="second_place_prize">Premio para segundo lugar</Label>
               <Input
                 id="second_place_prize"
-                value={tournamentInfo.second_place_prize}
-                onChange={(e) => setTournamentInfo({ 
-                  ...tournamentInfo, 
-                  second_place_prize: e.target.value 
-                })}
+                value={tournamentState.tournament_info.second_place_prize}
+                onChange={(e) => handleInputChange('second_place_prize', e.target.value)}
                 placeholder="Premio"
                 className="mt-2"
               />
@@ -323,11 +373,8 @@ export function TournamentDetailInfo({
               <Label htmlFor="third_place_prize">Premio para tercer lugar</Label>
               <Input
                 id="third_place_prize"
-                value={tournamentInfo.third_place_prize}
-                onChange={(e) => setTournamentInfo({ 
-                  ...tournamentInfo, 
-                  third_place_prize: e.target.value 
-                })}
+                value={tournamentState.tournament_info.third_place_prize}
+                onChange={(e) => handleInputChange('third_place_prize', e.target.value)}
                 placeholder="Premio"
                 className="mt-2"
               />
@@ -354,8 +401,8 @@ export function TournamentDetailInfo({
             <Label htmlFor="description">Descripción del Torneo</Label>
             <Textarea
               id="description"
-              value={tournamentInfo.description}
-              onChange={(e) => setTournamentInfo({ ...tournamentInfo, description: e.target.value })}
+              value={tournamentState.tournament_info.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Ingrese una descripción detallada del torneo"
               className="mt-2"
               rows={4}
@@ -363,56 +410,87 @@ export function TournamentDetailInfo({
           </div>
 
           {/* Reglas */}
-          <div>
+          <div className="space-y-2">
             <Label htmlFor="rules">Reglas del Torneo</Label>
             <Textarea
               id="rules"
-              value={tournamentInfo.rules}
-              onChange={(e) => setTournamentInfo({ ...tournamentInfo, rules: e.target.value })}
+              value={tournamentState.tournament_info.rules}
+              onChange={(e) => handleInputChange('rules', e.target.value)}
               placeholder="Ingrese las reglas del torneo"
-              className="mt-2"
-              rows={4}
+              className={cn(
+                "mt-2",
+                errors.rules && "border-red-500 focus-visible:ring-red-500"
+              )}
             />
+            {errors.rules && (
+              <p className="text-sm text-red-500">
+                Las reglas del torneo son requeridas
+              </p>
+            )}
           </div>
 
           {/* Ubicación */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
               <Label htmlFor="tournament_club_name">Club</Label>
               <Input
                 id="tournament_club_name"
-                value={tournamentInfo.tournament_club_name}
-                onChange={(e) => setTournamentInfo({ ...tournamentInfo, tournament_club_name: e.target.value })}
+                value={tournamentState.tournament_info.tournament_club_name}
+                onChange={(e) => handleInputChange('tournament_club_name', e.target.value)}
                 placeholder="Nombre del club"
-                className="mt-2"
+                className={cn(
+                  "mt-2",
+                  errors.tournament_club_name && "border-red-500 focus-visible:ring-red-500"
+                )}
               />
+              {errors.tournament_club_name && (
+                <p className="text-sm text-red-500 mt-1">
+                  El nombre del club es requerido
+                </p>
+              )}
             </div>
             <div>
               <Label htmlFor="tournament_location">Ubicación</Label>
               <Input
                 id="tournament_location"
-                value={tournamentInfo.tournament_location}
-                onChange={(e) => setTournamentInfo({ ...tournamentInfo, tournament_location: e.target.value })}
+                value={tournamentState.tournament_info.tournament_location}
+                onChange={(e) => handleInputChange('tournament_location', e.target.value)}
                 placeholder="Departamento"
-                className="mt-2"
+                className={cn(
+                  "mt-2",
+                  errors.tournament_location && "border-red-500 focus-visible:ring-red-500"
+                )}
               />
+              {errors.tournament_location && (
+                <p className="text-sm text-red-500 mt-1">
+                  La ubicación es requerida
+                </p>
+              )}
             </div>
           </div>
 
           {/* Dirección */}
-          <div>
+          <div className="mt-4">
             <Label htmlFor="tournament_address">Dirección</Label>
             <Input
               id="tournament_address"
-              value={tournamentInfo.tournament_address}
-              onChange={(e) => setTournamentInfo({ ...tournamentInfo, tournament_address: e.target.value })}
+              value={tournamentState.tournament_info.tournament_address}
+              onChange={(e) => handleInputChange('tournament_address', e.target.value)}
               placeholder="Dirección completa"
-              className="mt-2"
+              className={cn(
+                "mt-2",
+                errors.tournament_address && "border-red-500 focus-visible:ring-red-500"
+              )}
             />
+            {errors.tournament_address && (
+              <p className="text-sm text-red-500 mt-1">
+                La dirección es requerida
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Sección de botones mejorada */}
+        {/* Sección de botones */}
         <div className="mt-8 pt-6 border-t border-gray-200">
           <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
             <Button 

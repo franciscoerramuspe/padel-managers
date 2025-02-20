@@ -15,6 +15,7 @@ export interface TimeConstraint {
   team_id: UUID;
   start_time: Date;
   end_time: Date;
+  
 }
 
 export type TournamentFormat =
@@ -57,19 +58,71 @@ export interface TournamentTeam extends Team {
 export interface TimeSlot {
   start: string;
   end: string;
+  day: string;
+  date: string;
+  error?: string;
+}
+
+export interface TournamentBase {
+  name: string;
+  category_id: string;
+  start_date: string;
+  end_date: string;
+  status: 'draft' | 'upcoming' | 'in_progress' | 'finished';
+  courts_available: number;
+  time_slots: TimeSlot[];
 }
 
 export interface TournamentInfo {
-  tournament_club_name?: string;
-  inscription_cost?: number;
-  time_slots?: string[];
-  first_place_prize?: string;
-  second_place_prize?: string;
-  third_place_prize?: string;
-  rules?: string;
-  description?: string;
-  tournament_location?: string;
-  signup_limit_date?: string;
+  description: string;
+  rules: string;
+  tournament_location: string;
+  tournament_address: string;
+  tournament_club_name: string;
+  signup_limit_date: string;
+  inscription_cost: number;
+  first_place_prize: string;
+  second_place_prize: string;
+  third_place_prize: string;
+  tournament_thumbnail: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface TournamentFormData {
+  name: string;
+  category_ids: string[];
+  categories: Array<{
+    id: string;
+    name: string;
+  }>;
+  start_date: string;
+  end_date: string;
+  status: string;
+  courts_available: number;
+  time_slots: Array<{
+    start: string;
+    end: string;
+    day: string;
+    date: string;
+  }>;
+  tournament_info: {
+    description: string;
+    rules: string;
+    tournament_location: string;
+    tournament_address: string;
+    tournament_club_name: string;
+    signup_limit_date: string;
+    inscription_cost: number;
+    first_place_prize: string;
+    second_place_prize?: string;
+    third_place_prize?: string;
+    tournament_thumbnail?: string;
+    sponsors?: string[];
+  };
 }
 
 export interface Tournament {
@@ -90,11 +143,6 @@ export interface Tournament {
   }>;
   created_at?: string;
   updated_at?: string;
-}
-
-export interface Category {
-  id: string;
-  name: string;
 }
 
 interface Set {
@@ -153,12 +201,4 @@ export interface Match {
 
 interface TournamentDraw {
   matches: Match[];
-}
-
-export interface FormData {
-  name: string;
-  category_ids: string[];
-  start_date: string;
-  end_date: string;
-  status: string;
 }

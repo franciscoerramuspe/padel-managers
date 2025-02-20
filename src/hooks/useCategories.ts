@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Category } from '@/types/tournament';
 
-export const useCategories = () => {
+export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -9,13 +9,15 @@ export const useCategories = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
-        if (!response.ok) throw new Error('Error al cargar las categorías');
+        if (!response.ok) throw new Error('Error fetching categories');
         const data = await response.json();
-        setCategories(data);
+        setCategories(data || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
         console.error('Error fetching categories:', err);
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -25,4 +27,4 @@ export const useCategories = () => {
   }, []);
 
   return { categories, loading, error };
-}; 
+} 
