@@ -91,11 +91,8 @@ export interface Category {
 
 export interface TournamentFormData {
   name: string;
-  category_id: string;
-  category?: {
-    id: string;
-    name: string;
-  };
+  category_ids: string[];  
+  categories: Category[]; 
   start_date: string;
   end_date: string;
   status: string;

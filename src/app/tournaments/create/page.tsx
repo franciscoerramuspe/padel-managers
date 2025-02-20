@@ -17,7 +17,8 @@ export default function CreateTournamentPage() {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<TournamentFormData>({
     name: '',
-    category_id: '',
+    category_ids: [],
+    categories: [],
     start_date: '',
     end_date: '',
     status: 'upcoming',
@@ -89,7 +90,7 @@ export default function CreateTournamentPage() {
               />
             ) : (
               <TournamentDetailInfo
-                tournament={formData as TournamentBase & { tournament_info: TournamentInfo }}
+                tournament={formData as unknown as TournamentBase & { tournament_info: TournamentInfo }}
                 setTournament={(tournament) => setFormData(prev => ({ ...prev, tournament_info: tournament as unknown as TournamentInfo }))}
                 onSubmit={handleTournamentSubmit}
                 onBack={handleBack}

@@ -10,6 +10,7 @@ import { es } from "date-fns/locale"
 import { cn } from "@/lib/utils"
 import { Category, TournamentFormData } from "@/types/tournament"
 import { useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 
 interface TournamentBasicInfoProps {
@@ -33,19 +34,36 @@ export function TournamentBasicInfo({
     end_date: false
   })
 
-  const handleCategorySelect = (categoryId: string) => {
-    const selectedCategory = categories.find(cat => cat.id === categoryId)
-    if (selectedCategory) {
-      setFormData((prev: TournamentFormData) => ({
-        ...prev,
-        category_id: categoryId,
-        category: {
-          id: selectedCategory.id,
-          name: selectedCategory.name
-        }
-      }))
-    }
-  }
+  const handleCategoryToggle = (categoryId: string) => {
+    const selectedCategory = categories.find(cat => cat.id === categoryId);
+    if (!selectedCategory) return;
+
+    const currentCategories = formData.categories || [];
+    const categoryExists = currentCategories.some(cat => cat.id === categoryId);
+    
+    const newCategories = categoryExists
+      ? currentCategories.filter(cat => cat.id !== categoryId)
+      : [...currentCategories, { id: categoryId, name: selectedCategory.name }];
+
+    setFormData({
+      ...formData,
+      categories: newCategories,
+      category_ids: newCategories.map(cat => cat.id)
+    });
+  };
+
+  const handleSelectAllCategories = () => {
+    const allCategories = categories.map(category => ({
+      id: category.id,
+      name: category.name
+    }));
+    
+    setFormData({
+      ...formData,
+      categories: allCategories,
+      category_ids: allCategories.map(cat => cat.id)
+    });
+  };
 
   const filteredCategories = Array.isArray(categories) 
     ? categories.filter(category =>
@@ -58,7 +76,7 @@ export function TournamentBasicInfo({
     
     const newErrors = {
       name: !formData.name,
-      category_id: !formData.category_id,
+      category_id: !formData.category_ids?.length,
       start_date: !formData.start_date,
       end_date: !formData.end_date,
     }
@@ -149,7 +167,7 @@ export function TournamentBasicInfo({
                     errors.category_id && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
-                  {formData.category?.name || "Seleccionar categoría"}
+                  {formData.categories.map(cat => cat.name).join(', ') || "Seleccionar categoría"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -162,15 +180,31 @@ export function TournamentBasicInfo({
                   />
                   <CommandEmpty>No se encontraron categorías.</CommandEmpty>
                   <CommandGroup>
-                    {filteredCategories.map((category) => (
-                      <CommandItem
-                        key={category.id}
-                        value={category.id}
-                        onSelect={() => handleCategorySelect(category.id)}
-                      >
-                        <span>{category.name}</span>
-                      </CommandItem>
-                    ))}
+                    <div 
+                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
+                      onClick={handleSelectAllCategories}
+                    >
+                      <Checkbox
+                        checked={formData.categories?.length === categories.length}
+                        className="border-primary data-[state=checked]:bg-primary"
+                      />
+                      <span className="font-medium">Seleccionar todas</span>
+                    </div>
+                    <div className="py-2">
+                      {filteredCategories.map((category) => (
+                        <div
+                          key={category.id}
+                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
+                          onClick={() => handleCategoryToggle(category.id)}
+                        >
+                          <Checkbox
+                            checked={formData.categories?.some(cat => cat.id === category.id)}
+                            className="border-primary data-[state=checked]:bg-primary"
+                          />
+                          <span>{category.name}</span>
+                        </div>
+                      ))}
+                    </div>
                   </CommandGroup>
                 </Command>
               </PopoverContent>
