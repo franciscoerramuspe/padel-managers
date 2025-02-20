@@ -9,8 +9,8 @@ import { useCategories } from "@/hooks/useCategories"
 import { useCourts } from "@/hooks/useCourts"
 import Header from "@/components/Header"
 import { toast } from "@/components/ui/use-toast"
-import { TournamentInfo, TournamentFormData, TournamentBase } from "@/types/tournament"
-import { createTournament } from "@/services/tournamentService"
+import { TournamentFormData } from "@/types/tournament"
+import { createTournament, setTournamentRequiredInfo } from "@/services/tournamentService"
 
 export default function CreateTournamentPage() {
   const router = useRouter()
@@ -38,7 +38,8 @@ export default function CreateTournamentPage() {
       tournament_thumbnail: ''
     }
   })
-  const { categories, loading, error: categoriesError } = useCategories()
+
+  const { categories, loading: categoriesLoading } = useCategories()
   const { courts, isLoading: courtsLoading } = useCourts()
 
   const handleFirstStep = (e: React.FormEvent) => {
@@ -50,25 +51,49 @@ export default function CreateTournamentPage() {
     setStep(1)
   }
 
-  const handleTournamentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+  const handleTournamentSubmit = async (tournamentData: TournamentFormData) => {
     try {
-      const response = await createTournament(formData)
+      console.log('Datos del torneo a enviar:', tournamentData);
       
+      const formattedTimeSlots = tournamentData.time_slots.map(slot => {
+        const startHour = parseInt(slot.start);
+        const endHour = parseInt(slot.end);
+        return [startHour, endHour] as [number, number];
+      });
+      console.log('Time slots formateados:', formattedTimeSlots);
+
+      const tournamentPayload = {
+        name: tournamentData.name,
+        category_id: tournamentData.category_ids[0],
+        start_date: tournamentData.start_date,
+        end_date: tournamentData.end_date,
+        status: tournamentData.status,
+        courts_available: tournamentData.courts_available,
+        time_slots: formattedTimeSlots
+      };
+      console.log('Payload a enviar al backend:', tournamentPayload);
+
+      const tournamentResponse = await createTournament(tournamentPayload);
+      console.log('Respuesta del backend:', tournamentResponse);
+      
+      // Luego creamos la información adicional del torneo
+      if (tournamentResponse.torneo?.id) {
+        await setTournamentRequiredInfo(tournamentResponse.torneo.id, tournamentData.tournament_info);
+      }
+
       toast({
         title: "Éxito",
         description: "Torneo creado correctamente",
-      })
-      router.push('/tournaments')
+      });
+      router.push('/tournaments');
     } catch (err) {
       toast({
         title: "Error",
         description: err instanceof Error ? err.message : 'Error desconocido',
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -90,8 +115,8 @@ export default function CreateTournamentPage() {
               />
             ) : (
               <TournamentDetailInfo
-                tournament={formData as unknown as TournamentBase & { tournament_info: TournamentInfo }}
-                setTournament={(tournament) => setFormData(prev => ({ ...prev, tournament_info: tournament as unknown as TournamentInfo }))}
+                tournament={formData}
+                setTournament={setFormData}
                 onSubmit={handleTournamentSubmit}
                 onBack={handleBack}
               />

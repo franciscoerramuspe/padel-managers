@@ -95,13 +95,34 @@ export interface Category {
 export interface TournamentFormData {
   name: string;
   category_ids: string[];
-  categories: Category[];
+  categories: Array<{
+    id: string;
+    name: string;
+  }>;
   start_date: string;
   end_date: string;
   status: string;
   courts_available: number;
-  time_slots: [number, number][];
-  tournament_info: TournamentInfo;
+  time_slots: Array<{
+    start: string;
+    end: string;
+    day: string;
+    date: string;
+  }>;
+  tournament_info: {
+    description: string;
+    rules: string;
+    tournament_location: string;
+    tournament_address: string;
+    tournament_club_name: string;
+    signup_limit_date: string;
+    inscription_cost: number;
+    first_place_prize: string;
+    second_place_prize?: string;
+    third_place_prize?: string;
+    tournament_thumbnail?: string;
+    sponsors?: string[];
+  };
 }
 
 export interface Tournament {

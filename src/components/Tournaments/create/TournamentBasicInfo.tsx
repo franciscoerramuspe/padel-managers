@@ -79,8 +79,22 @@ export function TournamentBasicInfo({
 
     setErrors(newErrors)
 
+    console.log('Datos del primer paso:', {
+      name: formData.name,
+      category_ids: formData.category_ids,
+      categories: formData.categories,
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      status: formData.status,
+      courts_available: formData.courts_available,
+      time_slots: formData.time_slots
+    });
+
     if (!Object.values(newErrors).some(Boolean)) {
+      console.log('Formulario válido, pasando al siguiente paso');
       onSubmit(e)
+    } else {
+      console.log('Errores de validación:', newErrors);
     }
   }
 
