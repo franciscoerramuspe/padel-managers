@@ -3,24 +3,24 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Clock, Plus } from "lucide-react"
+import { Clock, Plus, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { format, addDays } from "date-fns"
 import { es } from "date-fns/locale"
 
 interface TimeSlot {
-  start: string
-  end: string
-  day: string
-  date: string
-  error?: string
+  start: string;
+  end: string;
+  day: string;
+  date: string;
+  error?: string;
 }
 
 interface TimeSlotsProps {
-  timeSlots: TimeSlot[]
-  onChange: (slots: TimeSlot[]) => void
-  startDate: string
-  endDate: string
+  timeSlots: TimeSlot[];
+  onChange: (slots: TimeSlot[]) => void;
+  startDate: string;
+  endDate: string;
 }
 
 export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: TimeSlotsProps) {
@@ -63,8 +63,7 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
     const previousSlot = daySlots[currentIndex - 1]
     
     if (previousSlot) {
-      // Si hay un slot anterior, solo permitir horas después del final del slot anterior
-      return hours.filter(hour => hour >= previousSlot.end)
+      return hours.filter(hour => hour > previousSlot.end)
     }
     
     return hours
@@ -75,33 +74,27 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
     const nextSlot = daySlots[currentIndex + 1]
     
     return hours.filter(hour => {
-      // La hora de fin debe ser mayor que la hora de inicio
       const isAfterStart = hour > startTime
-      // Si hay un siguiente slot, la hora de fin debe ser menor o igual a su hora de inicio
-      const beforeNextSlot = nextSlot ? hour <= nextSlot.start : true
+      const beforeNextSlot = nextSlot ? hour < nextSlot.start : true
       return isAfterStart && beforeNextSlot
     })
   }
 
-  const handleAddSlot = (dayInfo: { id: string, date: string }) => {
-    const daySlots = timeSlots.filter(slot => slot.day === dayInfo.id)
-    if (daySlots.length >= 3) return
+  const handleAddSlot = (dayInfo: { id: string, label: string }) => {
+    const daySlots = timeSlots.filter(slot => slot.day === dayInfo.id);
+    if (daySlots.length >= 3) return;
 
-    const lastSlot = daySlots[daySlots.length - 1]
-    const newStartTime = lastSlot ? lastSlot.end : "08:00"
-    const newEndTime = getNextHour(newStartTime)
+    const newSlot = {
+      start: "08:00",
+      end: "12:00",
+      day: dayInfo.id,
+      date: dayInfo.id,
+      error: undefined
+    };
 
-    onChange([
-      ...timeSlots,
-      { 
-        start: newStartTime, 
-        end: newEndTime, 
-        day: dayInfo.id,
-        date: dayInfo.date,
-        error: undefined
-      }
-    ])
-  }
+    const newTimeSlots = [...timeSlots, newSlot];
+    handleChange(newTimeSlots);
+  };
 
   const getNextHour = (time: string) => {
     const hour = parseInt(time.split(':')[0])
@@ -110,46 +103,35 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
   }
 
   const handleChangeTime = (index: number, type: 'start' | 'end', value: string) => {
-    const newSlots = [...timeSlots]
-    const slot = newSlots[index]
-    const daySlots = newSlots.filter(s => s.day === slot.day)
-    const dayIndex = daySlots.findIndex(s => s === slot)
-
-    // Limpiar error previo
-    delete newSlots[index].error
-
+    const newSlots = [...timeSlots];
+    const slot = newSlots[index];
+    
+    // Actualizar el valor
     if (type === 'start') {
-      if (value >= slot.end) {
-        newSlots[index].error = "La hora de inicio debe ser menor que la hora de fin"
-        onChange(newSlots)
-        return
-      }
-      const prevSlot = daySlots[dayIndex - 1]
-      if (prevSlot && value < prevSlot.end) {
-        newSlots[index].error = "La hora de inicio debe ser posterior al horario anterior"
-        onChange(newSlots)
-        return
+      slot.start = value;
+      // Si la hora de fin es menor que la de inicio, ajustarla
+      if (slot.end <= value) {
+        slot.end = getNextHour(value);
       }
     } else {
-      if (value <= slot.start) {
-        newSlots[index].error = "La hora de fin debe ser mayor que la hora de inicio"
-        onChange(newSlots)
-        return
-      }
-      const nextSlot = daySlots[dayIndex + 1]
-      if (nextSlot && value > nextSlot.start) {
-        newSlots[index].error = "La hora de fin debe ser anterior al siguiente horario"
-        onChange(newSlots)
-        return
-      }
+      slot.end = value;
     }
 
-    newSlots[index] = {
-      ...slot,
-      [type]: value
+    // Validar el slot
+    delete slot.error;
+    const overlappingSlot = newSlots.find((s, i) => 
+      i !== index && 
+      s.day === slot.day && 
+      ((s.start <= slot.start && s.end > slot.start) ||
+       (s.start < slot.end && s.end >= slot.end))
+    );
+
+    if (overlappingSlot) {
+      slot.error = "Los horarios no pueden solaparse";
     }
-    onChange(newSlots)
-  }
+
+    onChange(newSlots);
+  };
 
   const handleRemoveSlot = (index: number) => {
     const newSlots = timeSlots.filter((_, i) => i !== index)
@@ -193,72 +175,53 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
               </CardHeader>
               <CardContent>
                 {daySlots.length > 0 ? (
-                  <div className="space-y-3">
-                    {daySlots.map((slot, slotIndex) => {
-                      const index = timeSlots.findIndex(s => s === slot)
-                      return (
-                        <div key={slotIndex} className="space-y-2">
-                          <div className={cn(
-                            "flex items-center gap-2 p-2 rounded-md",
-                            slot.error ? "bg-red-50" : "bg-slate-50"
-                          )}>
-                            <Clock className="h-4 w-4 text-muted-foreground" />
-                            <Select
-                              value={slot.start}
-                              onValueChange={(value) => handleChangeTime(index, 'start', value)}
-                            >
-                              <SelectTrigger className={cn(
-                                "w-[120px]",
-                                slot.error && "border-red-500"
-                              )}>
-                                <SelectValue placeholder="Inicio" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {getAvailableStartHours(day.id, slotIndex).map((hour) => (
-                                  <SelectItem key={hour} value={hour}>
-                                    {hour}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-
-                            <span className="text-muted-foreground">hasta</span>
-
-                            <Select
-                              value={slot.end}
-                              onValueChange={(value) => handleChangeTime(index, 'end', value)}
-                            >
-                              <SelectTrigger className={cn(
-                                "w-[120px]",
-                                slot.error && "border-red-500"
-                              )}>
-                                <SelectValue placeholder="Fin" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {getAvailableEndHours(day.id, slot.start, slotIndex).map((hour) => (
-                                  <SelectItem key={hour} value={hour}>
-                                    {hour}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveSlot(index)}
-                            >
-                              Eliminar
-                            </Button>
-                          </div>
-                          {slot.error && (
-                            <p className="text-sm text-red-500 pl-6">
-                              {slot.error}
-                            </p>
-                          )}
+                  <div className="space-y-4">
+                    {daySlots.map((slot, index) => (
+                      <div key={index} className="flex items-center gap-4">
+                        <div className="flex-1">
+                          <Select
+                            value={slot.start}
+                            onValueChange={(value) => handleChangeTime(index, 'start', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Hora inicio" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {hours.map((hour) => (
+                                <SelectItem key={hour} value={hour}>
+                                  {hour}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                      )
-                    })}
+                        <div className="flex-1">
+                          <Select
+                            value={slot.end}
+                            onValueChange={(value) => handleChangeTime(index, 'end', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Hora fin" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {hours.map((hour) => (
+                                <SelectItem key={hour} value={hour}>
+                                  {hour}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveSlot(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="text-center p-4 border border-dashed rounded-lg">

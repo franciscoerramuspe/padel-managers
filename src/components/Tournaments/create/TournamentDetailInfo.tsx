@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { TimeSlot, TournamentInfo } from "@/types/tournament"
+import {  TournamentInfo } from "@/types/tournament"
 import { useCourts } from "@/hooks/useCourts"
 import { Command, CommandGroup, CommandInput } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -17,7 +17,22 @@ import { Calendar } from "@/components/ui/calendar"
 import { es } from "date-fns/locale"
 import { TimeSlots } from "@/components/Tournaments/create/TimeSlots"
 import { toast } from "@/components/ui/use-toast"
-import { TournamentBase } from "@/types/tournament"
+
+interface TournamentBase {
+  tournament_info: TournamentInfo;
+  time_slots: TimeSlot[];
+  start_date: string;
+  end_date: string;
+  // ... otros campos necesarios
+}
+
+interface TimeSlot {
+  start: string;
+  end: string;
+  day: string;
+  date: string;
+  error?: string;
+}
 
 interface TournamentDetailInfoProps {
   tournament: TournamentBase & {
@@ -52,6 +67,11 @@ export function TournamentDetailInfo({
     time_slots: false
   })
 
+  const [tournamentState, setTournamentState] = useState<TournamentBase>({
+    ...tournament,
+    time_slots: tournament.time_slots || [],
+  });
+
   const handleCourtToggle = (courtId: string) => {
     const newSelectedCourts = selectedCourts.includes(courtId)
       ? selectedCourts.filter(id => id !== courtId)
@@ -68,14 +88,14 @@ export function TournamentDetailInfo({
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
-      setTournament({ 
-        ...tournament, 
-        tournament_info: { ...tournament.tournament_info, signup_limit_date: format(date, 'yyyy-MM-dd') }
+      setTournamentState({ 
+        ...tournamentState, 
+        tournament_info: { ...tournamentState.tournament_info, signup_limit_date: format(date, 'yyyy-MM-dd') }
       })
     } else {
-      setTournament({ 
-        ...tournament, 
-        tournament_info: { ...tournament.tournament_info, signup_limit_date: '' }
+      setTournamentState({ 
+        ...tournamentState, 
+        tournament_info: { ...tournamentState.tournament_info, signup_limit_date: '' }
       })
     }
   }
@@ -94,13 +114,15 @@ export function TournamentDetailInfo({
         return;
       }
 
-      const formattedTimeSlots = tournament.time_slots.map(slot => [
-        parseInt(slot[0].toString()),
-        parseInt(slot[1].toString())
-      ]);
+      // Convertir los time_slots al formato que espera el backend
+      const formattedTimeSlots = tournamentState.time_slots.map(slot => {
+        const startHour = parseInt(slot.start.split(':')[0]);
+        const endHour = parseInt(slot.end.split(':')[0]);
+        return [startHour, endHour];
+      });
 
       onSubmit({
-        ...tournament,
+        ...tournamentState,
         time_slots: formattedTimeSlots,
         courts_available: selectedCourts.length
       });
@@ -118,16 +140,16 @@ export function TournamentDetailInfo({
     e.preventDefault()
     
     const newErrors = {
-      rules: !tournament.tournament_info.rules?.trim(),
-      tournament_club_name: !tournament.tournament_info.tournament_club_name?.trim(),
-      tournament_location: !tournament.tournament_info.tournament_location?.trim(),
-      tournament_address: !tournament.tournament_info.tournament_address?.trim(),
-      signup_limit_date: !tournament.tournament_info.signup_limit_date?.trim(),
-      description: !tournament.tournament_info.description?.trim(),
-      inscription_cost: !tournament.tournament_info.inscription_cost,
-      first_place_prize: !tournament.tournament_info.first_place_prize?.trim(),
+      rules: !tournamentState.tournament_info.rules?.trim(),
+      tournament_club_name: !tournamentState.tournament_info.tournament_club_name?.trim(),
+      tournament_location: !tournamentState.tournament_info.tournament_location?.trim(),
+      tournament_address: !tournamentState.tournament_info.tournament_address?.trim(),
+      signup_limit_date: !tournamentState.tournament_info.signup_limit_date?.trim(),
+      description: !tournamentState.tournament_info.description?.trim(),
+      inscription_cost: !tournamentState.tournament_info.inscription_cost,
+      first_place_prize: !tournamentState.tournament_info.first_place_prize?.trim(),
       selectedCourts: selectedCourts.length === 0,
-      time_slots: tournament.time_slots.length === 0
+      time_slots: tournamentState.time_slots.length === 0
     }
 
     setErrors(newErrors)
@@ -142,6 +164,9 @@ export function TournamentDetailInfo({
       })
     }
   }
+
+  // Primero, asegúrate de que tournament.time_slots esté inicializado
+  const timeSlots = tournamentState.time_slots || [];
 
   return (
     <form onSubmit={validateForm} className="p-6">
@@ -251,20 +276,18 @@ export function TournamentDetailInfo({
           </div>
 
           <TimeSlots
-            timeSlots={tournament.time_slots.map(slot => ({
-              start: slot[0].toString(),
-              end: slot[1].toString(),
-              day: 'viernes',
-              date: tournament.start_date
-            }))} 
+            timeSlots={timeSlots}
             onChange={(slots) => {
-              setTournament({
-                ...tournament,
-                time_slots: slots.map(slot => [Number(slot.start), Number(slot.end)])
-              })
+              setTournamentState((prevTournament) => ({
+                ...prevTournament,
+                tournament_info: prevTournament.tournament_info,
+                time_slots: slots,
+                start_date: prevTournament.start_date,
+                end_date: prevTournament.end_date
+              }));
             }}
-            startDate={tournament.start_date}
-            endDate={tournament.end_date}
+            startDate={tournamentState.start_date}
+            endDate={tournamentState.end_date}
           />
           {errors.time_slots && (
             <p className="text-sm text-red-500 mt-2">
@@ -294,10 +317,10 @@ export function TournamentDetailInfo({
               </Label>
               <Input
                 type="number"
-                value={tournament.tournament_info.inscription_cost}
-                onChange={(e) => setTournament({ 
-                  ...tournament, 
-                  tournament_info: { ...tournament.tournament_info, inscription_cost: Number(e.target.value) }
+                value={tournamentState.tournament_info.inscription_cost}
+                onChange={(e) => setTournamentState({ 
+                  ...tournamentState, 
+                  tournament_info: { ...tournamentState.tournament_info, inscription_cost: Number(e.target.value) }
                 })}
                 placeholder="0.00"
                 className="bg-white border-purple-200 focus-visible:ring-purple-500"
@@ -314,12 +337,12 @@ export function TournamentDetailInfo({
                     className={cn(
                       "w-full justify-start text-left font-normal bg-white",
                       errors.signup_limit_date ? "border-red-500" : "border-purple-200 hover:bg-purple-50/50",
-                      !tournament.tournament_info.signup_limit_date && "text-muted-foreground"
+                      !tournamentState.tournament_info.signup_limit_date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {tournament.tournament_info.signup_limit_date ? (
-                      format(new Date(tournament.tournament_info.signup_limit_date + 'T12:00:00'), "PPP", { locale: es })
+                    {tournamentState.tournament_info.signup_limit_date ? (
+                      format(new Date(tournamentState.tournament_info.signup_limit_date + 'T12:00:00'), "PPP", { locale: es })
                     ) : (
                       <span>Seleccionar fecha</span>
                     )}
@@ -328,7 +351,7 @@ export function TournamentDetailInfo({
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={tournament.tournament_info.signup_limit_date ? new Date(tournament.tournament_info.signup_limit_date + 'T12:00:00') : undefined}
+                    selected={tournamentState.tournament_info.signup_limit_date ? new Date(tournamentState.tournament_info.signup_limit_date + 'T12:00:00') : undefined}
                     onSelect={handleDateSelect}
                     initialFocus
                     locale={es}
@@ -363,10 +386,10 @@ export function TournamentDetailInfo({
               <Label htmlFor="first_place_prize">Premio para primer lugar</Label>
               <Input
                 id="first_place_prize"
-                value={tournament.tournament_info.first_place_prize}
-                onChange={(e) => setTournament({ 
-                  ...tournament, 
-                  tournament_info: { ...tournament.tournament_info, first_place_prize: e.target.value }
+                value={tournamentState.tournament_info.first_place_prize}
+                onChange={(e) => setTournamentState({ 
+                  ...tournamentState, 
+                  tournament_info: { ...tournamentState.tournament_info, first_place_prize: e.target.value }
                 })}
                 placeholder="Premio"
                 className="mt-2"
@@ -376,10 +399,10 @@ export function TournamentDetailInfo({
               <Label htmlFor="second_place_prize">Premio para segundo lugar</Label>
               <Input
                 id="second_place_prize"
-                value={tournament.tournament_info.second_place_prize}
-                onChange={(e) => setTournament({ 
-                  ...tournament, 
-                  tournament_info: { ...tournament.tournament_info, second_place_prize: e.target.value }
+                value={tournamentState.tournament_info.second_place_prize}
+                onChange={(e) => setTournamentState({ 
+                  ...tournamentState, 
+                  tournament_info: { ...tournamentState.tournament_info, second_place_prize: e.target.value }
                 })}
                 placeholder="Premio"
                 className="mt-2"
@@ -389,10 +412,10 @@ export function TournamentDetailInfo({
               <Label htmlFor="third_place_prize">Premio para tercer lugar</Label>
               <Input
                 id="third_place_prize"
-                value={tournament.tournament_info.third_place_prize}
-                onChange={(e) => setTournament({ 
-                  ...tournament, 
-                  tournament_info: { ...tournament.tournament_info, third_place_prize: e.target.value }
+                value={tournamentState.tournament_info.third_place_prize}
+                onChange={(e) => setTournamentState({ 
+                  ...tournamentState, 
+                  tournament_info: { ...tournamentState.tournament_info, third_place_prize: e.target.value }
                 })}
                 placeholder="Premio"
                 className="mt-2"
@@ -420,8 +443,8 @@ export function TournamentDetailInfo({
             <Label htmlFor="description">Descripción del Torneo</Label>
             <Textarea
               id="description"
-              value={tournament.tournament_info.description}
-              onChange={(e) => setTournament({ ...tournament, tournament_info: { ...tournament.tournament_info, description: e.target.value } })}
+              value={tournamentState.tournament_info.description}
+              onChange={(e) => setTournamentState({ ...tournamentState, tournament_info: { ...tournamentState.tournament_info, description: e.target.value } })}
               placeholder="Ingrese una descripción detallada del torneo"
               className="mt-2"
               rows={4}
@@ -433,8 +456,8 @@ export function TournamentDetailInfo({
             <Label htmlFor="rules">Reglas del Torneo</Label>
             <Textarea
               id="rules"
-              value={tournament.tournament_info.rules}
-              onChange={(e) => setTournament({ ...tournament, tournament_info: { ...tournament.tournament_info, rules: e.target.value } })}
+              value={tournamentState.tournament_info.rules}
+              onChange={(e) => setTournamentState({ ...tournamentState, tournament_info: { ...tournamentState.tournament_info, rules: e.target.value } })}
               placeholder="Ingrese las reglas del torneo"
               className={cn(
                 "mt-2",
@@ -454,8 +477,8 @@ export function TournamentDetailInfo({
               <Label htmlFor="tournament_club_name">Club</Label>
               <Input
                 id="tournament_club_name"
-                value={tournament.tournament_info.tournament_club_name}
-                onChange={(e) => setTournament({ ...tournament, tournament_info: { ...tournament.tournament_info, tournament_club_name: e.target.value } })}
+                value={tournamentState.tournament_info.tournament_club_name}
+                onChange={(e) => setTournamentState({ ...tournamentState, tournament_info: { ...tournamentState.tournament_info, tournament_club_name: e.target.value } })}
                 placeholder="Nombre del club"
                 className={cn(
                   "mt-2",
@@ -472,8 +495,8 @@ export function TournamentDetailInfo({
               <Label htmlFor="tournament_location">Ubicación</Label>
               <Input
                 id="tournament_location"
-                value={tournament.tournament_info.tournament_location}
-                onChange={(e) => setTournament({ ...tournament, tournament_info: { ...tournament.tournament_info, tournament_location: e.target.value } })}
+                value={tournamentState.tournament_info.tournament_location}
+                onChange={(e) => setTournamentState({ ...tournamentState, tournament_info: { ...tournamentState.tournament_info, tournament_location: e.target.value } })}
                 placeholder="Departamento"
                 className={cn(
                   "mt-2",
@@ -493,8 +516,8 @@ export function TournamentDetailInfo({
             <Label htmlFor="tournament_address">Dirección</Label>
             <Input
               id="tournament_address"
-              value={tournament.tournament_info.tournament_address}
-              onChange={(e) => setTournament({ ...tournament, tournament_info: { ...tournament.tournament_info, tournament_address: e.target.value }   })}
+              value={tournamentState.tournament_info.tournament_address}
+              onChange={(e) => setTournamentState({ ...tournamentState, tournament_info: { ...tournamentState.tournament_info, tournament_address: e.target.value }   })}
               placeholder="Dirección completa"
               className={cn(
                 "mt-2",

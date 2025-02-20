@@ -56,8 +56,11 @@ export interface TournamentTeam extends Team {
 }
 
 export interface TimeSlot {
-  start: number;
-  end: number;
+  start: string;
+  end: string;
+  day: string;
+  date: string;
+  error?: string;
 }
 
 export interface TournamentBase {
@@ -67,7 +70,7 @@ export interface TournamentBase {
   end_date: string;
   status: 'draft' | 'upcoming' | 'in_progress' | 'finished';
   courts_available: number;
-  time_slots: [number, number][];
+  time_slots: TimeSlot[];
 }
 
 export interface TournamentInfo {
@@ -79,9 +82,9 @@ export interface TournamentInfo {
   signup_limit_date: string;
   inscription_cost: number;
   first_place_prize: string;
-  second_place_prize?: string;
-  third_place_prize?: string;
-  tournament_thumbnail?: string;
+  second_place_prize: string;
+  third_place_prize: string;
+  tournament_thumbnail: string;
 }
 
 export interface Category {
@@ -91,8 +94,8 @@ export interface Category {
 
 export interface TournamentFormData {
   name: string;
-  category_ids: string[];  
-  categories: Category[]; 
+  category_ids: string[];
+  categories: Category[];
   start_date: string;
   end_date: string;
   status: string;
