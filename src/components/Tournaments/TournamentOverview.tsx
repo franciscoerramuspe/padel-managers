@@ -14,7 +14,7 @@ export function TournamentOverview({ tournament }: TournamentOverviewProps) {
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Información General</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Fechas y Horarios */}
+          {/* Fechas */}
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="bg-blue-50 rounded-lg p-3">
@@ -30,23 +30,9 @@ export function TournamentOverview({ tournament }: TournamentOverviewProps) {
                 </p>
               </div>
             </div>
-
-            <div className="flex items-start gap-4">
-              <div className="bg-purple-50 rounded-lg p-3">
-                <Clock className="h-6 w-6 text-purple-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Horarios</h3>
-                <p className="text-gray-600">
-                  {tournament.time_slots?.map(([start, end]: number[]) => 
-                    `${start}:00 - ${end}:00`
-                  ).join(', ')}
-                </p>
-              </div>
-            </div>
           </div>
 
-          {/* Ubicación y Detalles */}
+          {/* Ubicación */}
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="bg-green-50 rounded-lg p-3">
@@ -57,19 +43,6 @@ export function TournamentOverview({ tournament }: TournamentOverviewProps) {
                 <p className="text-gray-900">{tournamentInfo?.tournament_location}</p>
                 <p className="text-gray-600">{tournamentInfo?.tournament_address}</p>
                 <p className="text-sm text-gray-500 mt-1">{tournamentInfo?.tournament_club_name}</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="bg-amber-50 rounded-lg p-3">
-                <DollarSign className="h-6 w-6 text-amber-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-900">Inscripción</h3>
-                <p className="text-2xl font-bold text-amber-600">
-                  ${tournamentInfo?.inscription_cost}
-                </p>
-                <p className="text-sm text-gray-500">por equipo</p>
               </div>
             </div>
           </div>
