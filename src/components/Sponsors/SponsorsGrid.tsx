@@ -46,43 +46,41 @@ export default function SponsorsGrid() {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {sponsors.map((sponsor) => (
           <div 
-            key={sponsor.id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            key={sponsor.id} 
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 
+                     border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
           >
-            <div className="relative h-40 w-full mb-4">
+            <div className="aspect-square relative bg-gray-50 dark:bg-gray-700 rounded-lg mb-3 overflow-hidden 
+                          max-w-[200px] mx-auto">
               <Image
                 src={sponsor.logo_url}
                 alt={sponsor.name}
                 fill
-                unoptimized
-                className="object-contain rounded-lg"
+                className="object-contain p-3"
               />
             </div>
-            
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
+              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
                 {sponsor.name}
               </h3>
-              <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:text-blue-600"
+              <div className="flex gap-1">
+                <button 
+                  className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 
+                           rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => setSponsorToEdit(sponsor)}
                 >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:text-red-600"
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button 
+                  className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 
+                           rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => setSponsorToDelete(sponsor.id)}
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                  <Trash2 className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>

@@ -2,24 +2,36 @@ import React from 'react';
 
 interface HeaderProps {
   title: string;
-  description: string;
+  description?: string;
   icon?: React.ReactNode;
   button?: React.ReactNode;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, description, icon, button }) => {
+export default function Header({ title, description, icon, button }: HeaderProps) {
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 mb-6 flex items-center justify-between">
-      <div className="flex items-center">
-        {icon && <div className="mr-4 text-blue-600">{icon}</div>}
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex items-start gap-3">
+        {icon && (
+          <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+            {icon}
+          </div>
+        )}
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">{title}</h1>
-          <p className="text-gray-500">{description}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            {title}
+          </h1>
+          {description && (
+            <p className="text-gray-600 dark:text-gray-400 mt-1">
+              {description}
+            </p>
+          )}
         </div>
       </div>
-      {button && <div>{button}</div>}
+      {button && (
+        <div className="flex-shrink-0">
+          {button}
+        </div>
+      )}
     </div>
   );
-};
-
-export default Header; 
+} 

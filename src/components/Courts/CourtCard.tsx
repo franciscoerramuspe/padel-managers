@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Pencil } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 
 interface CourtCardProps {
   id: string;
@@ -24,36 +25,39 @@ function getImageUrl(photoUrl: string | null) {
 
 export default function CourtCard({ id, name, photo_url, onDelete, onEdit }: CourtCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
       <div className="relative h-48">
-        <Image
-          src={photo_url}
-          alt={name}
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover transition-all duration-300 group-hover:scale-105"
-        />
+        {photo_url ? (
+          <Image
+            src={photo_url}
+            alt={name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+            <ImageIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+          </div>
+        )}
       </div>
+      
       <div className="p-4">
-        <h3 className="text-lg font-semibold">{name}</h3>
-        <div className="mt-4 flex justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onEdit({ id, name, photo_url })}
-            className="h-8 w-8"
-          >
-            <Edit2 className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onDelete({ id, name })}
-            className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{name}</h3>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => onEdit({ id, name, photo_url })}
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+            >
+              <Pencil className="h-5 w-5" />
+            </button>
+            <button
+              onClick={() => onDelete({ id, name })}
+              className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+            >
+              <Trash2 className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

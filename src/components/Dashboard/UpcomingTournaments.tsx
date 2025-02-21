@@ -6,32 +6,31 @@ interface UpcomingTournamentsProps {
   tournaments: Tournament[];
 }
 
-export const UpcomingTournaments = ({ tournaments }: UpcomingTournamentsProps) => {
+export function UpcomingTournaments({ tournaments }: UpcomingTournamentsProps) {
   const upcomingTournaments = tournaments.filter(t => t.status === 'upcoming').slice(0, 3);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Próximos Torneos</h2>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+          Próximos Torneos
+        </h2>
         <Link 
-          href="/tournaments" 
-          className="text-sm font-medium text-blue-600 hover:text-blue-700"
+          href="/tournaments"
+          className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
         >
           Ver todos
         </Link>
       </div>
-
-      {upcomingTournaments.length === 0 ? (
-        <div className="text-center text-gray-500 py-8">
-          No hay torneos próximos
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {upcomingTournaments.map((tournament) => (
-            <TournamentCard key={tournament.id} tournament={tournament} />
-          ))}
-        </div>
-      )}
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {tournaments.map((tournament) => (
+          <TournamentCard 
+            key={tournament.id}
+            tournament={tournament}
+          />
+        ))}
+      </div>
     </div>
   );
-}; 
+} 

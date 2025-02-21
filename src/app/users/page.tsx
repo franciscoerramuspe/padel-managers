@@ -64,21 +64,21 @@ export default function UsersPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-8">
+      <div className="min-h-screen bg-slate-50 dark:bg-gray-900 p-8">
         <div className="max-w-7xl mx-auto">
-          <div className="animate-pulse bg-gray-100 h-64 rounded-xl"></div>
+          <div className="animate-pulse bg-gray-100 dark:bg-gray-800 h-64 rounded-xl"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-900 p-8">
       <div className="max-w-7xl mx-auto space-y-6">
         <Header 
           title="Usuarios"
           description="Administra y visualiza todos los usuarios."
-          icon={<UsersIcon className="w-6 h-6" />}
+          icon={<UsersIcon className="w-6 h-6 text-gray-900 dark:text-gray-100" />}
         />
 
         <div className="mb-8">

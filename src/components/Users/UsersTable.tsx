@@ -45,74 +45,51 @@ export default function UsersTable({ users }: UsersTableProps) {
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Usuario
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Teléfono
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Rol
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estado
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Último acceso
-              </th>
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-200 dark:border-gray-700">
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">USUARIO</th>
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">EMAIL</th>
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">TELÉFONO</th>
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">ROL</th>
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">ESTADO</th>
+              <th className="text-left px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white">ÚLTIMO ACCESO</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {paginatedUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10 relative">
+              <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
                       <Image
                         src={user.avatar}
                         alt={user.name}
-                        fill
-                        priority
-                        sizes="128px"
-                        className="rounded-full object-cover"
+                        width={40}
+                        height={40}
+                        className="object-cover"
                       />
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                    </div>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.phone}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    user.role === 'admin' 
-                      ? 'bg-purple-100 text-purple-800' 
-                      : 'bg-blue-100 text-blue-800'
-                  }`}>
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{user.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{user.phone}</td>
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300">
                     {user.role}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300">
                     {user.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {user.lastLogin}
-                </td>
+                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{user.lastLogin}</td>
               </tr>
             ))}
           </tbody>
@@ -120,9 +97,9 @@ export default function UsersTable({ users }: UsersTableProps) {
       </div>
 
       {/* Paginación */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200 sm:px-6">
+      <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 sm:px-6">
         <div className="flex justify-between w-full">
-          <div className="text-sm text-gray-700">
+          <div className="text-sm text-gray-700 dark:text-gray-300">
             Mostrando <span className="font-medium">{((currentPage - 1) * USERS_PER_PAGE) + 1}</span> a{' '}
             <span className="font-medium">
               {Math.min(currentPage * USERS_PER_PAGE, users.length)}
@@ -135,8 +112,8 @@ export default function UsersTable({ users }: UsersTableProps) {
               disabled={currentPage === 1}
               className={`px-3 py-1 rounded-md ${
                 currentPage === 1
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
               }`}
             >
               <FaChevronLeft className="w-4 h-4" />
@@ -146,8 +123,8 @@ export default function UsersTable({ users }: UsersTableProps) {
               disabled={currentPage === totalPages}
               className={`px-3 py-1 rounded-md ${
                 currentPage === totalPages
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-500 text-white hover:bg-blue-600'
+                  ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-500 dark:bg-blue-600 text-white hover:bg-blue-600 dark:hover:bg-blue-700'
               }`}
             >
               <FaChevronRight className="w-4 h-4" />

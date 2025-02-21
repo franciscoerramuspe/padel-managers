@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
+import { Dialog } from '@headlessui/react';
 
 interface WhatsAppConfigModalProps {
   isOpen: boolean;
@@ -10,102 +11,127 @@ interface WhatsAppConfigModalProps {
 }
 
 export default function WhatsAppConfigModal({ isOpen, onClose, onSave, initialPhoneNumber = '' }: WhatsAppConfigModalProps) {
-  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
-
-  if (!isOpen) return null;
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber || '');
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
-    
-    // Eliminar cualquier caracter que no sea número
-    const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
-    
-    // Validar que el número tenga 8 o 9 dígitos
-    if (cleanNumber.length < 8 || cleanNumber.length > 9) {
-      alert('El número debe tener 8 o 9 dígitos');
-      return;
-    }
-    
-    onSave(cleanNumber);
+    e.preventDefault();
+    onSave(phoneNumber);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-800 flex items-center">
-            <Image src="/assets/whatsapp_logo.png" alt="WhatsApp" width={24} height={24} className="mr-2" />
-            Configurar WhatsApp
-          </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <FaTimes className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="mb-6 bg-gray-50 p-4 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-900 mb-2">¿Para qué sirve esto?</h4>
-          <p className="text-sm text-gray-600">
-            Este número de WhatsApp Business aparecerá en el portal de jugadores, 
-            permitiéndoles contactarte directamente para consultas sobre reservas, 
-            torneos o cualquier otra información del club.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Número de WhatsApp Business
-          </label>
-          <div className="flex rounded-md mb-4">
-            <span className="inline-flex items-center px-4 rounded-l-md border border-r-0 border-gray-300 bg-gray-100 text-gray-500 sm:text-sm">
-              +598 🇺🇾
-            </span>
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="92033831"
-              className="flex-1 min-w-0 block w-full px-4 py-3 rounded-none rounded-r-md border-2 border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-300"
-            />
-          </div>
-          <p className="mt-2 text-sm text-gray-500">
-            Ingresa el número sin el código de país
-          </p>
-
-          <div className="flex flex-col space-y-3 mt-4">
-            <button
-              type="submit"
-              className="w-full inline-flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300"
-            >
-              <Image src="/assets/whatsapp_logo.png" alt="WhatsApp" width={20} height={20} className="mr-2" />
-              Guardar número
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-full inline-flex justify-center items-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-300"
-            >
-              Cancelar
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <div className="flex items-center space-x-2">
-            <div className="flex-shrink-0 h-10 w-10 relative">
+    <Dialog open={isOpen} onClose={onClose}>
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" aria-hidden="true" />
+      
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <Dialog.Panel className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+          <div className="relative">
+            {/* Banner superior con imagen de WhatsApp */}
+            <div className="h-32 bg-gradient-to-r from-green-400 to-green-600 dark:from-green-600 dark:to-green-800 rounded-t-xl overflow-hidden relative">
               <Image
                 src="/assets/whatsapp_logo.png"
-                alt="WhatsApp Business"
+                alt="WhatsApp Business Banner"
                 fill
-                className="object-contain"
+                className="object-cover opacity-20"
               />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Image
+                  src="/assets/whatsapp_logo.png"
+                  alt="WhatsApp Business"
+                  width={90}
+                  height={60}
+                  className="dark:brightness-100"
+                />
+              </div>
             </div>
-            <p className="text-xs text-gray-500">
-              Asegúrate de usar un número de WhatsApp Business verificado para 
-              una mejor experiencia de comunicación con tus jugadores.
-            </p>
+
+            {/* Botón de cerrar */}
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 rounded-full bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 transition-colors"
+            >
+              <FaTimes className="w-4 h-4 text-white" />
+            </button>
           </div>
-        </div>
+
+          <div className="p-6">
+            <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              Configurar WhatsApp Business
+            </Dialog.Title>
+            <Dialog.Description className="text-gray-600 dark:text-gray-400">
+              Conecta tu número de WhatsApp Business para enviar notificaciones automáticas a tus clientes sobre inscripciones, recordatorios y actualizaciones de torneos.
+            </Dialog.Description>
+
+            <div className="mt-6 bg-green-50 dark:bg-green-900/30 rounded-lg p-4 border border-green-100 dark:border-green-800">
+              <div className="flex gap-3">
+                <div className="flex-shrink-0">
+                  <Image
+                    src="/assets/whatsapp_logo.png"
+                    alt="WhatsApp Features"
+                    width={48}
+                    height={48}
+                    className="dark:brightness-50"
+                  />
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">
+                    Beneficios de WhatsApp Business
+                  </h4>
+                  <ul className="text-sm text-green-700 dark:text-green-400 space-y-1">
+                    <li>• Notificaciones automáticas de inscripción</li>
+                    <li>• Recordatorios de partidos y eventos</li>
+                    <li>• Comunicación directa con participantes</li>
+                    <li>• Mensajes personalizados y masivos</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Número de WhatsApp Business
+                </label>
+                <div className="flex items-center">
+                  <span className="inline-flex items-center px-4 py-2.5 rounded-l-lg border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-sm">
+                    +598
+                  </span>
+                  <input
+                    type="text"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="flex-1 px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-r-lg 
+                             text-gray-900 dark:text-white bg-white dark:bg-gray-700
+                             focus:ring-2 focus:ring-green-500 dark:focus:ring-green-400 focus:border-transparent
+                             text-sm"
+                    placeholder="91234567"
+                  />
+                </div>
+                <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Ingresa el número que utilizas en WhatsApp Business
+                </p>
+              </div>
+
+              <div className="mt-8 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 
+                           hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2.5 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 
+                           text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                  Guardar configuración
+                </button>
+              </div>
+            </form>
+          </div>
+        </Dialog.Panel>
       </div>
-    </div>
+    </Dialog>
   );
 } 

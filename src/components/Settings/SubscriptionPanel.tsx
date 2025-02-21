@@ -24,25 +24,27 @@ const subscriptionData = {
 
 export default function SubscriptionPanel() {
   return (
-    <div className="min-h-screen bg-gray-50 w-full">
-      <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Suscripción</h2>
-            <p className="text-gray-600">Estado de tu membresía</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+              Suscripción
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400">Estado de tu membresía</p>
           </div>
-          <div className="flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full">
-            <CheckCircleIcon className="h-5 w-5 text-green-600" />
-            <span className="text-green-700 font-medium">Activa</span>
+          <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/50 px-4 py-2 rounded-full">
+            <CheckCircleIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
+            <span className="text-green-700 dark:text-green-300 font-medium">Activa</span>
           </div>
         </div>
 
-        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+        <div className="mt-6 bg-blue-50 dark:bg-blue-900/50 border border-blue-100 dark:border-blue-800 rounded-xl p-4">
           <div className="flex gap-3">
-            <InformationCircleIcon className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <InformationCircleIcon className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-sm font-medium text-blue-800">Contrato Anual</h3>
-              <p className="text-sm text-blue-600">
+              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">Contrato Anual</h3>
+              <p className="text-sm text-blue-600 dark:text-blue-300">
                 Tu suscripción tiene un compromiso mínimo de 12 meses. Este período garantiza la continuidad 
                 del servicio y el acceso a todas las funcionalidades de la plataforma.
               </p>
@@ -50,26 +52,47 @@ export default function SubscriptionPanel() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <CreditCardIcon className="h-6 w-6 text-blue-600" />
-              <div>
-                <p className="text-sm text-gray-600">Próximo pago</p>
-                <p className="font-semibold text-gray-800">$99.99</p>
-                <p className="text-sm text-gray-500">15 de Abril, 2024</p>
-              </div>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <CreditCardIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <h3 className="font-medium text-gray-900 dark:text-white">Plan Premium</h3>
             </div>
-
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <CalendarIcon className="h-6 w-6 text-blue-600" />
-              <div>
-                <p className="text-sm text-gray-600">Vencimiento</p>
-                <p className="font-semibold text-gray-800">15 de Mayo, 2024</p>
-                <p className="text-sm text-gray-500">Renovación automática</p>
-              </div>
-            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">$99.99</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">por mes</p>
           </div>
+
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <CalendarIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <h3 className="font-medium text-gray-900 dark:text-white">Próximo cobro</h3>
+            </div>
+            <p className="text-gray-900 dark:text-white">15 de Mayo, 2024</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Visa terminada en 4242</p>
+          </div>
+
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <ChartBarIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <h3 className="font-medium text-gray-900 dark:text-white">Uso actual</h3>
+            </div>
+            <p className="text-gray-900 dark:text-white">12 torneos activos</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">150 usuarios registrados</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Características incluidas
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {subscriptionData.features.map((feature, index) => (
+            <div key={index} className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+              <CheckCircleIcon className="h-5 w-5 text-green-500 dark:text-green-400" />
+              <span>{feature}</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
