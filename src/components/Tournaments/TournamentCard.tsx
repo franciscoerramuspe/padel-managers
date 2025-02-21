@@ -11,7 +11,7 @@ interface TournamentCardProps {
 }
 
 export const TournamentCard = ({ tournament, categories }: TournamentCardProps) => {
-  const MAX_TEAMS = 8;
+  const MAX_TEAMS = 12;
   const teamsCount = tournament.tournament_teams?.length || 0;
   const progressPercentage = (teamsCount / MAX_TEAMS) * 100;
 

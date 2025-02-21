@@ -11,6 +11,7 @@ import { TournamentRules } from '@/components/Tournaments/TournamentRules';
 import { TournamentStats } from '@/components/Tournaments/TournamentStats';
 import { SocialMediaGenerator } from '@/components/Tournaments/SocialMediaGenerator';
 import { RulesDownloader } from '@/components/Tournaments/RulesDownloader';
+import { TournamentSchedule } from '@/components/Tournaments/TournamentSchedule';
 
 export default function TournamentDetailsPage() {
   const params = useParams();
@@ -27,16 +28,17 @@ export default function TournamentDetailsPage() {
         onBack={() => router.push('/tournaments')}
       />
 
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto px-4 -mt-16 relative z-10 sm:px-6 lg:px-8">
+        {/* Primera fila: Información General y Estadísticas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
-            <div className="h-full bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
               <TournamentOverview tournament={tournament} />
             </div>
           </div>
-
-          <div className="h-full">
-            <div className="h-full bg-white rounded-xl shadow-sm p-6">
+          
+          <div>
+            <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
               <TournamentStats 
                 tournament={tournament}
                 teams={teams}
@@ -46,16 +48,38 @@ export default function TournamentDetailsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <TournamentTeams teams={teams} />
-          <div className="space-y-8">
+        {/* Segunda fila: Horarios (horizontal) */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <TournamentSchedule tournament={tournament} />
+          </div>
+        </div>
+
+        {/* Tercera fila: Premios */}
+        <div className="mb-8">
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl shadow-sm p-6 border border-yellow-200">
             <TournamentPrizes tournament={tournament} />
+          </div>
+        </div>
+
+        {/* Cuarta fila: Equipos (ancho completo) */}
+        <div className="mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <TournamentTeams teams={teams} />
+          </div>
+        </div>
+
+        {/* Quinta fila: Utilidades */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <div className="bg-white rounded-xl shadow-sm p-6">
             <RulesDownloader 
               tournament={tournament}
-              tournamentInfo={tournament.tournament_info?.[0] || {
-                time_slots: [],
+              tournamentInfo={{
+                rules: tournament.tournament_info?.[0]?.rules || ''
               }}
             />
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-6">
             <SocialMediaGenerator 
               tournament={tournament}
               tournamentInfo={tournament.tournament_info?.[0]}
@@ -63,7 +87,8 @@ export default function TournamentDetailsPage() {
           </div>
         </div>
 
-        <div className="space-y-8">
+        {/* Sexta fila: Reglas */}
+        <div className="bg-white rounded-xl shadow-sm p-6">
           <TournamentRules tournament={tournament} />
         </div>
       </main>

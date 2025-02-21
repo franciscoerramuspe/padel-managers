@@ -6,7 +6,7 @@ import { TournamentInfo } from '@/types/tournament';
 
 interface RulesDownloaderProps {
   tournament: Tournament;
-  tournamentInfo: TournamentInfo;
+  tournamentInfo?: Partial<TournamentInfo>;
 }
 
 export function RulesDownloader({ tournament, tournamentInfo }: RulesDownloaderProps) {
@@ -48,7 +48,7 @@ export function RulesDownloader({ tournament, tournamentInfo }: RulesDownloaderP
           <div>
             <RulesGenerator 
               tournament={tournament}
-              tournamentInfo={tournamentInfo}
+              tournamentInfo={tournamentInfo as TournamentInfo}
             />
           </div>
         </div>

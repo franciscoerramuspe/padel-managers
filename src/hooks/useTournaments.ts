@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Tournament } from '@/types/tournament';
+import { TimeSlot, Tournament } from '@/types/tournament';
 import useSWR from 'swr';
 import { Team } from '@/types/team';
 import { Player } from '@/types/player';
@@ -10,6 +10,7 @@ interface TournamentData {
   matches: any[];
   tournaments: Tournament[];
   categories: any[];
+  time_slots: TimeSlot[];
 }
 
 interface TournamentTeam {
@@ -34,7 +35,8 @@ export const useTournaments = (tournamentId?: string) => {
     teams: [],
     matches: [],
     tournaments: [],
-    categories: []
+    categories: [],
+    time_slots: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +58,8 @@ export const useTournaments = (tournamentId?: string) => {
           teams: [],
           matches: [],
           tournaments: tournamentsData,
-          categories: []
+          categories: [],
+          time_slots: []
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -116,7 +119,8 @@ export const useTournaments = (tournamentId?: string) => {
         teams: teamsWithPlayers,
         matches: matchesData.matches || [],
         tournaments: data.tournaments,
-        categories: categoriesData
+        categories: categoriesData,
+        time_slots: tournamentData.time_slots || []
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -174,6 +178,7 @@ export const useTournaments = (tournamentId?: string) => {
     matches: data.matches,
     tournaments: data.tournaments,
     categories: data.categories,
+    time_slots: data.time_slots,
     loading,
     error,
     refetch: fetchTournamentData,

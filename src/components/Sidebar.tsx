@@ -16,6 +16,7 @@ import {
   PhotoIcon as ImageIcon,
   BanknotesIcon,
   PlusIcon,
+  TableCellsIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -80,6 +81,28 @@ const MENU_ITEMS: MenuItem[] = [
     ]
   },
   { 
+    name: 'Ligas', 
+    href: '/leagues', 
+    icon: TableCellsIcon,
+    iconColor: 'text-purple-500',
+    hoverColor: 'hover:bg-purple-50',
+    submenu: [
+      { 
+        name: 'Ver ligas', 
+        href: '/leagues', 
+        icon: TableCellsIcon,
+        iconColor: 'text-purple-500' 
+      },
+      { 
+        name: 'Crear liga', 
+        href: '/leagues/create', 
+        icon: PlusIcon,
+        iconColor: 'text-emerald-500',
+        textColor: 'text-emerald-600 font-medium'
+      }
+    ]
+  },
+  { 
     name: 'Usuarios', 
     href: '/users', 
     icon: UsersIcon,
@@ -107,6 +130,7 @@ const MENU_ITEMS: MenuItem[] = [
     iconColor: 'text-gray-500',
     hoverColor: 'hover:bg-gray-50'
   },
+
 ];
 
 const MenuItem = ({ 

@@ -140,6 +140,16 @@ export interface Tournament {
   tournament_info: Array<{
     tournament_club_name?: string;
     inscription_cost?: number;
+    rules?: string;
+    tournament_location?: string;
+    tournament_address?: string;
+    signup_limit_date?: string;
+    tournament_thumbnail?: string;
+    sponsors?: string[];
+    description?: string;
+    first_place_prize?: string;
+    second_place_prize?: string;
+    third_place_prize?: string;
   }>;
   created_at?: string;
   updated_at?: string;

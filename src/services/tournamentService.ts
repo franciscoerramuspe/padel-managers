@@ -1,3 +1,5 @@
+import { TimeSlot } from '@/types/tournament';
+
 export const createTournament = async (tournamentData: {
   name: string;
   category_id: string;
@@ -45,6 +47,7 @@ export const setTournamentRequiredInfo = async (
     third_place_prize?: string;
     tournament_thumbnail?: string;
     sponsors?: string[];
+    time_slots?: TimeSlot[];
   }
 ) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
