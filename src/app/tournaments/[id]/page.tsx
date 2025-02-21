@@ -31,7 +31,7 @@ export default function TournamentDetailsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
             <div className="h-full bg-white rounded-xl shadow-sm p-6">
-              <TournamentOverview tournament={tournament} />
+              <TournamentOverview tournament={tournament} />  
             </div>
           </div>
 
@@ -52,8 +52,8 @@ export default function TournamentDetailsPage() {
             <TournamentPrizes tournament={tournament} />
             <RulesDownloader 
               tournament={tournament}
-              tournamentInfo={tournament.tournament_info?.[0] || {
-                time_slots: [],
+              tournamentInfo={{
+                rules: tournament.tournament_info?.[0]?.rules || ''
               }}
             />
             <SocialMediaGenerator 
