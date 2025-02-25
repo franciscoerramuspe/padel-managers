@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-
-interface Court {
-  id: string;
-  name: string;
-  photo_url: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Court } from '@/types/court';
 
 interface CreateCourtData {
   name: string;

@@ -128,12 +128,12 @@ export function TournamentBasicInfo({
       {/* Sección de Información Básica */}
       <div className="space-y-6">
         <div className="flex items-start gap-3 mb-6">
-          <div className="p-2 bg-blue-500 rounded-full">
+          <div className="p-2 bg-blue-500 dark:bg-blue-600 rounded-full">
             <Trophy className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">Información Básica</h3>
-            <p className="text-sm text-gray-500 mt-1">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Información Básica</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Ingrese los detalles principales del torneo.
             </p>
           </div>
@@ -142,7 +142,7 @@ export function TournamentBasicInfo({
         <div className="grid gap-6 md:grid-cols-2">
           {/* Nombre del Torneo */}
           <div className="col-span-2">
-            <Label htmlFor="name" className="text-base font-medium">
+            <Label htmlFor="name" className="text-base font-medium text-gray-700 dark:text-gray-300">
               Nombre del Torneo
             </Label>
             <Input
@@ -151,12 +151,12 @@ export function TournamentBasicInfo({
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Ingrese el nombre del torneo"
               className={cn(
-                "mt-2",
+                "mt-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600",
                 errors.name && "border-red-500 focus-visible:ring-red-500"
               )}
             />
             {errors.name && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                 El nombre del torneo es requerido
               </p>
             )}
@@ -164,7 +164,7 @@ export function TournamentBasicInfo({
 
           {/* Categorías con single select */}
           <div className="col-span-2">
-            <Label htmlFor="categories" className="text-base font-medium">
+            <Label htmlFor="categories" className="text-base font-medium text-gray-700 dark:text-gray-300">
               Categoría
             </Label>
             <Popover>
@@ -173,7 +173,7 @@ export function TournamentBasicInfo({
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    "w-full justify-between mt-2",
+                    "w-full justify-between mt-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600",
                     errors.category_id && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
@@ -181,31 +181,31 @@ export function TournamentBasicInfo({
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
-                <Command>
+              <PopoverContent className="w-full p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
+                <Command className="bg-transparent">
                   <CommandGroup>
                     <div 
-                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
+                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
                       onClick={handleSelectAllCategories}
                     >
                       <Checkbox
                         checked={formData.categories?.length === categories.length}
                         className="border-primary data-[state=checked]:bg-primary"
                       />
-                      <span className="text-xs font-medium">Seleccionar todas</span>
+                      <span className="text-xs font-medium text-gray-900 dark:text-gray-200">Seleccionar todas</span>
                     </div>
                     <div className="py-2">
                       {filteredCategories.map((category) => (
                         <div
                           key={category.id}
-                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10"
+                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
                           onClick={() => handleCategoryToggle(category.id)}
                         >
                           <Checkbox
                             checked={formData.categories?.some(cat => cat.id === category.id)}
                             className="border-primary data-[state=checked]:bg-primary"
                           />
-                          <span className="text-xs">{category.name}</span>
+                          <span className="text-xs text-gray-900 dark:text-gray-200">{category.name}</span>
                         </div>
                       ))}
                     </div>
@@ -214,7 +214,7 @@ export function TournamentBasicInfo({
               </PopoverContent>
             </Popover>
             {errors.category_id && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                 Debe seleccionar una categoría
               </p>
             )}
@@ -222,7 +222,7 @@ export function TournamentBasicInfo({
 
           {/* Fechas - Manteniendo la lógica original */}
           <div className="space-y-2">
-            <Label htmlFor="start_date" className="text-base font-medium">
+            <Label htmlFor="start_date" className="text-base font-medium text-gray-700 dark:text-gray-300">
               Fecha de Inicio
             </Label>
             <Popover>
@@ -230,8 +230,8 @@ export function TournamentBasicInfo({
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal mt-2",
-                    !formData.start_date && "text-muted-foreground",
+                    "w-full justify-start text-left font-normal mt-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600",
+                    !formData.start_date && "text-muted-foreground dark:text-gray-400",
                     errors.start_date && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
@@ -243,25 +243,26 @@ export function TournamentBasicInfo({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
                 <Calendar
                   mode="single"
                   selected={formData.start_date ? new Date(formData.start_date + 'T12:00:00') : undefined}
                   onSelect={handleStartDateSelect}
                   initialFocus
                   locale={es}
+                  className="dark:bg-gray-800"
                 />
               </PopoverContent>
             </Popover>
             {errors.start_date && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                 La fecha de inicio es requerida
               </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="end_date" className="text-base font-medium">
+            <Label htmlFor="end_date" className="text-base font-medium text-gray-700 dark:text-gray-300">
               Fecha de Finalización
             </Label>
             <Popover>
@@ -269,8 +270,8 @@ export function TournamentBasicInfo({
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal mt-2",
-                    !formData.end_date && "text-muted-foreground",
+                    "w-full justify-start text-left font-normal mt-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600",
+                    !formData.end_date && "text-muted-foreground dark:text-gray-400",
                     errors.end_date && "border-red-500 focus-visible:ring-red-500"
                   )}
                 >
@@ -282,18 +283,19 @@ export function TournamentBasicInfo({
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
                 <Calendar
                   mode="single"
                   selected={formData.end_date ? new Date(formData.end_date + 'T12:00:00') : undefined}
                   onSelect={handleEndDateSelect}
                   initialFocus
                   locale={es}
+                  className="dark:bg-gray-800"
                 />
               </PopoverContent>
             </Popover>
             {errors.end_date && (
-              <p className="text-xs text-red-500 mt-1">
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                 La fecha de finalización es requerida
               </p>
             )}
@@ -302,10 +304,10 @@ export function TournamentBasicInfo({
       </div>
 
       {/* Botón de Siguiente */}
-      <div className="pt-6 border-t">
+      <div className="pt-6 border-t dark:border-gray-700">
         <Button 
           type="submit" 
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+          className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
           size="lg"
         >
           <ArrowRight className="w-4 h-4 mr-2" />

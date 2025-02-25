@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Home() {
@@ -37,7 +37,6 @@ export default function Home() {
           localStorage.setItem('userName', data.user.user_metadata.first_name);
         }
         
-        // Agregamos un pequeño delay para mostrar la animación
         await new Promise(resolve => setTimeout(resolve, 1500));
         router.push("/dashboard");
       } else {
@@ -51,10 +50,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Check if we have a valid token
     const token = localStorage.getItem('adminToken');
     if (token) {
-      // Verify token validity with backend
       fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -63,7 +60,6 @@ export default function Home() {
         if (response.ok) {
           router.push("/dashboard");
         } else {
-          // If token is invalid, clear it
           localStorage.removeItem('adminToken');
           localStorage.removeItem('isAdmin');
         }
@@ -74,133 +70,101 @@ export default function Home() {
     }
   }, [router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle login logic here
-    console.log('Login attempt with:', formData);
-  };
-
   return (
-    <div className="min-h-screen relative">
-      {isLoading && <LoadingScreen />}
-      <div className="absolute inset-0 w-full h-full">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="/assets/intro.mp4" type="video/mp4" />
-        </video>
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-blue-900/40"></div>
-      </div>
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+      {/* Video de fondo */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/assets/intro.mp4" type="video/mp4" />
+      </video>
 
-      {/* Content Container */}
-      <div className="relative min-h-screen flex flex-col md:flex-row">
-        {/* Form Section */}
-        <div className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-8 bg-white/5 md:bg-slate-50">
-          <div className="w-full max-w-md space-y-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-semibold md:text-gray-800 text-white mb-8">¡Bienvenido!</h3>
-              <p className="text-white md:text-gray-800 mb-8">Por favor, inicia sesión en tu cuenta.</p>
+      {/* Overlay para mejorar la legibilidad */}
+      <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
+
+      {isLoading && <LoadingScreen />}
+      
+      <div className="w-full max-w-md relative z-10">
+        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-xl p-8">
+          {/* Logo y Título */}
+          <div className="text-center mb-8">
+            <div className="relative w-24 h-24 mx-auto mb-4 bg-white dark:bg-gray-800 rounded-full shadow-lg ring-4 ring-blue-50 dark:ring-blue-900">
+              <Image
+                src="/assets/recrealogo.jpeg"
+                alt="Recrea Padel Club"
+                fill
+                priority
+                sizes="96px"
+                className="object-contain p-2 rounded-full"
+              />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Rackets Calendar</h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
+              Sistema integral para la creacion de ligas, torneos, partidos y usuarios para tu club deportivo.
+            </p>
+            <div className="mt-4 inline-block px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+              <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Portal Administrativo</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleLoginSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Correo electrónico
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg text-gray-600 dark:text-gray-200 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                placeholder="admin@ejemplo.com"
+                required
+              />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium md:text-gray-800 text-white mb-1">
-                  Correo electrónico
-                </label>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Contraseña
+              </label>
+              <div className="relative">
                 <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg text-sm text-gray-600 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="Ingresa tu correo electrónico"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="w-full px-4 py-3 rounded-lg text-gray-600 dark:text-gray-200 border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
                   required
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium md:text-gray-800 text-white mb-1">
-                  Contraseña
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg text-sm border text-gray-600 border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Ingresa tu contraseña"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-700"
-                  >
-                    {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-                onClick={handleLoginSubmit}
-              >
-                Iniciar sesión
-              </button>
-            </form>
-
-            <div className="relative my-8">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-blue-500 rounded-md text-white">O continúa con</span>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
               </div>
             </div>
 
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2 font-semibold"
+            >
+              <FaLock size={16} />
+              <span>Iniciar sesión</span>
+            </button>
+          </form>
 
-            <p className="text-center text-sm md:text-gray-800 text-white mt-8">
-              ¿Tienes alguna consulta?
-              <br />
-              <a href="" className="font-medium md:text-blue-600 text-white font-bold hover:text-blue-500">
-                Contactate con soporte.
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              ¿Necesitas ayuda?{' '}
+              <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                Contacta a soporte
               </a>
             </p>
-          </div>
-        </div>
-
-        {/* Right Content - Hidden on mobile */}
-        <div className="hidden md:flex md:w-1/2 relative items-center justify-center">
-          <div className="relative z-10 flex flex-col justify-center items-center p-8 w-full">
-            <div className="text-center text-white max-w-lg mx-auto">
-              <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-xl">
-                <div className="relative w-32 h-32 mx-auto mb-8 bg-white rounded-full p-2 shadow-lg ring-4 ring-white/30">
-                  <Image
-                    src="/assets/recrealogo.jpeg"
-                    alt="Recrea Padel Club"
-                    fill
-                    priority
-                    sizes="128px"
-                    className="object-contain p-2 rounded-full relative z-10"
-                    style={{ 
-                      objectFit: 'contain',
-                      background: 'white',
-                    }}
-                  />
-                </div>
-                <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-                  Gestiona tu club de pádel
-                </h1>
-                <p className="text-lg mb-4 text-white/90">
-                  Sistema integral para la gestión de canchas, reservas, usuarios y creación de torneos para tu club deportivo.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>

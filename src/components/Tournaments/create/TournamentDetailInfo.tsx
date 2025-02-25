@@ -162,16 +162,16 @@ export function TournamentDetailInfo({
       <div className="space-y-8">
         {/* Sección de Canchas */}
         <div className={cn(
-          "bg-blue-50/50 p-6 rounded-lg border shadow-sm",
-          errors.selectedCourts ? "border-red-300" : "border-blue-100"
+          "bg-blue-50/50 dark:bg-blue-900/20 p-6 rounded-lg border shadow-sm",
+          errors.selectedCourts ? "border-red-300 dark:border-red-700" : "border-blue-100 dark:border-blue-800"
         )}>
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-blue-100 rounded-full">
-              <MapPin className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-blue-100 dark:bg-blue-800/50 rounded-full">
+              <MapPin className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-blue-900">Canchas Disponibles</h3>
-              <p className="text-sm text-blue-700 mt-1">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">Canchas Disponibles</h3>
+              <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">
                 Selecciona las canchas que estarán disponibles para este torneo. 
                 Este paso es obligatorio para la creación del torneo.
               </p>
@@ -184,8 +184,8 @@ export function TournamentDetailInfo({
                 variant="outline"
                 role="combobox"
                 className={cn(
-                  "w-full justify-between mt-2 bg-white",
-                  errors.selectedCourts ? "border-red-500 hover:bg-red-50/50" : "border-blue-200 hover:bg-blue-50/50"
+                  "w-full justify-between mt-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white",
+                  errors.selectedCourts ? "border-red-500 dark:border-red-700 hover:bg-red-50/50 dark:hover:bg-red-900/20" : "border-blue-200 dark:border-blue-800 hover:bg-blue-50/50 dark:hover:bg-blue-900/20"
                 )}
               >
                 {selectedCourts?.length && selectedCourts.length > 0
@@ -194,31 +194,31 @@ export function TournamentDetailInfo({
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-full p-0" align="start">
+            <PopoverContent className="w-full p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
               <Command className="border-none">
                 <CommandGroup>
                   <div 
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
+                    className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20"
                     onClick={handleSelectAllCourts}
                   >
                     <Checkbox
                       checked={selectedCourts?.length === courts.length}
-                      className="border-blue-400 data-[state=checked]:bg-blue-600"
+                      className="border-blue-400 dark:border-blue-500 data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-500"
                     />
-                    <span className="text-xs font-medium">Seleccionar todas</span>
+                    <span className="text-xs font-medium dark:text-gray-300">Seleccionar todas</span>
                   </div>
                   <div className="py-2">
                     {courts.map((court) => (
                       <div
                         key={court.id}
-                        className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50"
+                        className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/20"
                         onClick={() => handleCourtToggle(court.id)}
                       >
                         <Checkbox
                           checked={selectedCourts?.includes(court.id)}
-                          className="border-blue-400 data-[state=checked]:bg-blue-600"
+                          className="border-blue-400 dark:border-blue-500 data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-500"
                         />
-                        <span className="text-xs">{court.name}</span>
+                        <span className="text-xs dark:text-gray-300">{court.name}</span>
                       </div>
                     ))}
                   </div>
@@ -227,7 +227,7 @@ export function TournamentDetailInfo({
             </PopoverContent>
           </Popover>
           {errors.selectedCourts && (
-            <p className="text-sm text-red-500 mt-2">
+            <p className="text-sm text-red-500 dark:text-red-400 mt-2">
               Debe seleccionar al menos una cancha
             </p>
           )}
@@ -235,16 +235,16 @@ export function TournamentDetailInfo({
 
         {/* Sección de Time Slots */}
         <div className={cn(
-          "bg-blue-50/50 p-6 rounded-lg border shadow-sm",
-          errors.time_slots ? "border-red-300" : "border-blue-100"
+          "bg-blue-50/50 dark:bg-blue-900/20 p-6 rounded-lg border shadow-sm",
+          errors.time_slots ? "border-red-300 dark:border-red-700" : "border-blue-100 dark:border-blue-800"
         )}>
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-blue-100 rounded-full">
-              <Clock className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-blue-100 dark:bg-blue-800/50 rounded-full">
+              <Clock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-blue-900">Horarios del Torneo</h3>
-              <p className="text-sm text-blue-700 mt-1">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">Horarios del Torneo</h3>
+              <p className="text-sm text-blue-700 dark:text-blue-400 mt-1">
                 Configura los horarios para cada día del torneo (viernes a domingo). Puedes asignar un horario diferente para cada día.
               </p>
             </div>
@@ -257,21 +257,21 @@ export function TournamentDetailInfo({
             endDate={tournamentState.end_date}
           />
           {errors.time_slots && (
-            <p className="text-sm text-red-500 mt-2">
+            <p className="text-sm text-red-500 dark:text-red-400 mt-2">
               Debe agregar al menos un horario disponible
             </p>
           )}
         </div>
 
         {/* Sección de Fechas y Costos */}
-        <div className="bg-purple-50/50 p-6 rounded-lg border border-purple-100 shadow-sm">
+        <div className="bg-purple-50/50 dark:bg-purple-900/20 p-6 rounded-lg border border-purple-100 dark:border-purple-800 shadow-sm">
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-purple-100 rounded-full">
-              <CalendarIcon className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-800/50 rounded-full">
+              <CalendarIcon className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-purple-900">Fechas y Costos</h3>
-              <p className="text-sm text-purple-700 mt-1">
+              <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300">Fechas y Costos</h3>
+              <p className="text-sm text-purple-700 dark:text-purple-400 mt-1">
                 Establece los costos de inscripción y las fechas límite para el torneo.
               </p>
             </div>
@@ -279,7 +279,7 @@ export function TournamentDetailInfo({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label className="text-purple-900 font-medium">
+              <Label className="text-purple-900 dark:text-purple-300 font-medium">
                 Costo de Inscripción
               </Label>
               <Input
@@ -287,11 +287,11 @@ export function TournamentDetailInfo({
                 value={tournamentState.tournament_info.inscription_cost}
                 onChange={(e) => handleInputChange('inscription_cost', Number(e.target.value))}
                 placeholder="0.00"
-                className="bg-white border-purple-200 focus-visible:ring-purple-500"
+                className="bg-white dark:bg-gray-800 border-purple-200 dark:border-purple-700 focus-visible:ring-purple-500 dark:text-white"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-purple-900 font-medium">
+              <Label className="text-purple-900 dark:text-purple-300 font-medium">
                 Fecha Límite de Inscripción
               </Label>
               <Popover>
@@ -299,9 +299,9 @@ export function TournamentDetailInfo({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal bg-white",
-                      errors.signup_limit_date ? "border-red-500" : "border-purple-200 hover:bg-purple-50/50",
-                      !tournamentState.tournament_info.signup_limit_date && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal bg-white dark:bg-gray-800",
+                      errors.signup_limit_date ? "border-red-500 dark:border-red-700" : "border-purple-200 dark:border-purple-700 hover:bg-purple-50/50 dark:hover:bg-purple-900/20",
+                      !tournamentState.tournament_info.signup_limit_date && "text-muted-foreground dark:text-gray-400"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -312,7 +312,7 @@ export function TournamentDetailInfo({
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
                   <Calendar
                     mode="single"
                     selected={tournamentState.tournament_info.signup_limit_date ? new Date(tournamentState.tournament_info.signup_limit_date) : undefined}
@@ -322,11 +322,12 @@ export function TournamentDetailInfo({
                     toDate={new Date(tournamentState.start_date)}
                     initialFocus
                     locale={es}
+                    className="dark:bg-gray-800"
                   />
                 </PopoverContent>
               </Popover>
               {errors.signup_limit_date && (
-                <p className="text-sm text-red-500 mt-1">
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
                   La fecha límite de inscripción es requerida
                 </p>
               )}
@@ -335,14 +336,14 @@ export function TournamentDetailInfo({
         </div>
 
         {/* Sección de Premios */}
-        <div className="bg-green-50 p-6 rounded-lg border border-green-100">
+        <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800">
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-green-100 rounded-full">
-              <Trophy className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-green-100 dark:bg-green-800/50 rounded-full">
+              <Trophy className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-green-900">Premios del Torneo</h3>
-              <p className="text-sm text-green-700 mt-1">
+              <h3 className="text-lg font-semibold text-green-900 dark:text-green-300">Premios del Torneo</h3>
+              <p className="text-sm text-green-700 dark:text-green-400 mt-1">
                 Define los premios para los primeros lugares del torneo.
               </p>
             </div>
@@ -350,47 +351,55 @@ export function TournamentDetailInfo({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="first_place_prize">Premio para primer lugar</Label>
+              <Label htmlFor="first_place_prize" className="text-green-900 dark:text-green-300">Premio para primer lugar</Label>
               <Input
                 id="first_place_prize"
                 value={tournamentState.tournament_info.first_place_prize}
                 onChange={(e) => handleInputChange('first_place_prize', e.target.value)}
                 placeholder="Premio"
-                className="mt-2"
+                className={cn(
+                  "mt-2 bg-white dark:bg-gray-800 border-green-200 dark:border-green-700 dark:text-white",
+                  errors.first_place_prize && "border-red-500 dark:border-red-700"
+                )}
               />
+              {errors.first_place_prize && (
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
+                  El premio para el primer lugar es requerido
+                </p>
+              )}
             </div>
             <div>
-              <Label htmlFor="second_place_prize">Premio para segundo lugar</Label>
+              <Label htmlFor="second_place_prize" className="text-green-900 dark:text-green-300">Premio para segundo lugar</Label>
               <Input
                 id="second_place_prize"
                 value={tournamentState.tournament_info.second_place_prize}
                 onChange={(e) => handleInputChange('second_place_prize', e.target.value)}
                 placeholder="Premio"
-                className="mt-2"
+                className="mt-2 bg-white dark:bg-gray-800 border-green-200 dark:border-green-700 dark:text-white"
               />
             </div>
             <div>
-              <Label htmlFor="third_place_prize">Premio para tercer lugar</Label>
+              <Label htmlFor="third_place_prize" className="text-green-900 dark:text-green-300">Premio para tercer lugar</Label>
               <Input
                 id="third_place_prize"
                 value={tournamentState.tournament_info.third_place_prize}
                 onChange={(e) => handleInputChange('third_place_prize', e.target.value)}
                 placeholder="Premio"
-                className="mt-2"
+                className="mt-2 bg-white dark:bg-gray-800 border-green-200 dark:border-green-700 dark:text-white"
               />
             </div>
           </div>
         </div>
 
         {/* Sección de Información General */}
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-gray-100 rounded-full">
-              <Info className="h-5 w-5 text-gray-600" />
+            <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-full">
+              <Info className="h-5 w-5 text-gray-600 dark:text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Información Adicional</h3>
-              <p className="text-sm text-gray-700 mt-1">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-200">Información Adicional</h3>
+              <p className="text-sm text-gray-700 dark:text-gray-400 mt-1">
                 Completa la información general del torneo.
               </p>
             </div>
@@ -398,32 +407,32 @@ export function TournamentDetailInfo({
 
           {/* Descripción */}
           <div>
-            <Label htmlFor="description">Descripción del Torneo</Label>
+            <Label htmlFor="description" className="text-gray-700 dark:text-gray-300">Descripción del Torneo</Label>
             <Textarea
               id="description"
               value={tournamentState.tournament_info.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Ingrese una descripción detallada del torneo"
-              className="mt-2"
+              className="mt-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white"
               rows={4}
             />
           </div>
 
           {/* Reglas */}
-          <div className="space-y-2">
-            <Label htmlFor="rules">Reglas del Torneo</Label>
+          <div className="space-y-2 mt-4">
+            <Label htmlFor="rules" className="text-gray-700 dark:text-gray-300">Reglas del Torneo</Label>
             <Textarea
               id="rules"
               value={tournamentState.tournament_info.rules}
               onChange={(e) => handleInputChange('rules', e.target.value)}
               placeholder="Ingrese las reglas del torneo"
               className={cn(
-                "mt-2",
-                errors.rules && "border-red-500 focus-visible:ring-red-500"
+                "mt-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white",
+                errors.rules && "border-red-500 dark:border-red-700 focus-visible:ring-red-500"
               )}
             />
             {errors.rules && (
-              <p className="text-sm text-red-500">
+              <p className="text-sm text-red-500 dark:text-red-400">
                 Las reglas del torneo son requeridas
               </p>
             )}
@@ -432,37 +441,37 @@ export function TournamentDetailInfo({
           {/* Ubicación */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <div>
-              <Label htmlFor="tournament_club_name">Club</Label>
+              <Label htmlFor="tournament_club_name" className="text-gray-700 dark:text-gray-300">Club</Label>
               <Input
                 id="tournament_club_name"
                 value={tournamentState.tournament_info.tournament_club_name}
                 onChange={(e) => handleInputChange('tournament_club_name', e.target.value)}
                 placeholder="Nombre del club"
                 className={cn(
-                  "mt-2",
-                  errors.tournament_club_name && "border-red-500 focus-visible:ring-red-500"
+                  "mt-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white",
+                  errors.tournament_club_name && "border-red-500 dark:border-red-700 focus-visible:ring-red-500"
                 )}
               />
               {errors.tournament_club_name && (
-                <p className="text-sm text-red-500 mt-1">
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
                   El nombre del club es requerido
                 </p>
               )}
             </div>
             <div>
-              <Label htmlFor="tournament_location">Ubicación</Label>
+              <Label htmlFor="tournament_location" className="text-gray-700 dark:text-gray-300">Ubicación</Label>
               <Input
                 id="tournament_location"
                 value={tournamentState.tournament_info.tournament_location}
                 onChange={(e) => handleInputChange('tournament_location', e.target.value)}
                 placeholder="Departamento"
                 className={cn(
-                  "mt-2",
-                  errors.tournament_location && "border-red-500 focus-visible:ring-red-500"
+                  "mt-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white",
+                  errors.tournament_location && "border-red-500 dark:border-red-700 focus-visible:ring-red-500"
                 )}
               />
               {errors.tournament_location && (
-                <p className="text-sm text-red-500 mt-1">
+                <p className="text-sm text-red-500 dark:text-red-400 mt-1">
                   La ubicación es requerida
                 </p>
               )}
@@ -471,19 +480,19 @@ export function TournamentDetailInfo({
 
           {/* Dirección */}
           <div className="mt-4">
-            <Label htmlFor="tournament_address">Dirección</Label>
+            <Label htmlFor="tournament_address" className="text-gray-700 dark:text-gray-300">Dirección</Label>
             <Input
               id="tournament_address"
               value={tournamentState.tournament_info.tournament_address}
               onChange={(e) => handleInputChange('tournament_address', e.target.value)}
               placeholder="Dirección completa"
               className={cn(
-                "mt-2",
-                errors.tournament_address && "border-red-500 focus-visible:ring-red-500"
+                "mt-2 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 dark:text-white",
+                errors.tournament_address && "border-red-500 dark:border-red-700 focus-visible:ring-red-500"
               )}
             />
             {errors.tournament_address && (
-              <p className="text-sm text-red-500 mt-1">
+              <p className="text-sm text-red-500 dark:text-red-400 mt-1">
                 La dirección es requerida
               </p>
             )}
@@ -491,30 +500,23 @@ export function TournamentDetailInfo({
         </div>
 
         {/* Sección de botones */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
-            <Button 
-              type="button" 
-              variant="outline"
-              onClick={onBack}
-              size="lg"
-              className="flex-1 text-base font-medium border-2 hover:bg-gray-50"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Volver al paso anterior
-            </Button>
-            <Button 
-              type="submit" 
-              size="lg"
-              className="flex-1 text-base font-medium bg-blue-500 hover:bg-blue-600 text-white"
-            >
-              Crear Torneo
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-          <p className="text-center text-sm text-gray-500 mt-4">
-            Revisa todos los datos antes de crear el torneo
-          </p>
+        <div className="flex justify-between mt-8 pt-6 border-t dark:border-gray-700">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onBack}
+            className="border-gray-300 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver
+          </Button>
+          <Button 
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white"
+          >
+            <ArrowRight className="w-4 h-4 mr-2" />
+            Crear Torneo
+          </Button>
         </div>
       </div>
     </form>

@@ -22,7 +22,7 @@ export default function TournamentDetailsPage() {
   if (!tournament) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <TournamentHeader 
         tournament={tournament}
         onBack={() => router.push('/tournaments')}
@@ -32,13 +32,15 @@ export default function TournamentDetailsPage() {
         {/* Primera fila: Información General y Estadísticas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 backdrop-blur-sm
+                          border border-gray-200 dark:border-gray-700">
               <TournamentOverview tournament={tournament} />
             </div>
           </div>
           
           <div>
-            <div className="bg-white rounded-xl shadow-sm p-6 backdrop-blur-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 backdrop-blur-sm
+                          border border-gray-200 dark:border-gray-700">
               <TournamentStats 
                 tournament={tournament}
                 teams={teams}
@@ -48,30 +50,36 @@ export default function TournamentDetailsPage() {
           </div>
         </div>
 
-        {/* Segunda fila: Horarios (horizontal) */}
+        {/* Segunda fila: Horarios */}
         <div className="mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <TournamentSchedule tournament={tournament} />
           </div>
         </div>
 
         {/* Tercera fila: Premios */}
         <div className="mb-8">
-          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl shadow-sm p-6 border border-yellow-200">
+          <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 
+                        dark:from-yellow-900/20 dark:to-yellow-800/20
+                        rounded-xl shadow-sm p-6 
+                        border border-yellow-200 dark:border-yellow-700">
             <TournamentPrizes tournament={tournament} />
           </div>
         </div>
 
-        {/* Cuarta fila: Equipos (ancho completo) */}
+        {/* Cuarta fila: Equipos */}
         <div className="mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <TournamentTeams teams={teams} />
           </div>
         </div>
 
         {/* Quinta fila: Utilidades */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <RulesDownloader 
               tournament={tournament}
               tournamentInfo={{
@@ -79,7 +87,8 @@ export default function TournamentDetailsPage() {
               }}
             />
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <SocialMediaGenerator 
               tournament={tournament}
               tournamentInfo={tournament.tournament_info?.[0]}
@@ -88,7 +97,8 @@ export default function TournamentDetailsPage() {
         </div>
 
         {/* Sexta fila: Reglas */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                      border border-gray-200 dark:border-gray-700">
           <TournamentRules tournament={tournament} />
         </div>
       </main>

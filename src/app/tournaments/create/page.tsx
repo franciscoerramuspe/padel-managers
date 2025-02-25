@@ -96,16 +96,16 @@ export default function CreateTournamentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
       <div className="max-w-6xl mx-auto">
         <Header 
           title="Crear Nuevo Torneo"
-          icon={<Trophy className="w-6 h-6" />}
+          icon={<Trophy className="w-6 h-6 text-gray-900 dark:text-gray-100" />}
           description="Configure todos los detalles de su nuevo torneo."
         />
         
         <div className="mt-8">
-          <div className="bg-white rounded-xl shadow-lg">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             {step === 1 ? (
               <TournamentBasicInfo
                 formData={formData}

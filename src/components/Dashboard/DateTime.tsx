@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CalendarIcon } from '@heroicons/react/24/outline';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export function DateTime() {
   const [date, setDate] = useState(new Date());
@@ -19,20 +21,16 @@ export function DateTime() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
-      <div className="p-6">
-        <div className="flex items-center gap-4">
-          <div className="bg-blue-50 p-3 rounded-xl">
-            <CalendarIcon className="w-6 h-6 text-blue-500" />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-gray-500">Fecha actual</p>
-            <p className="text-lg font-semibold text-gray-900 capitalize">
-              {formatDate(date)}
-            </p>
-          </div>
-        </div>
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="flex items-center space-x-2">
+        <CalendarIcon className="w-5 h-5 text-blue-500 dark:text-blue-400" />
+        <h2 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+          Fecha actual
+        </h2>
       </div>
+      <p className="mt-2 text-xl font-semibold text-gray-900 dark:text-white">
+        {format(date, "EEEE, d 'De' MMMM 'De' yyyy", { locale: es })}
+      </p>
     </div>
   );
 } 

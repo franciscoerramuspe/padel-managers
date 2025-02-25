@@ -38,15 +38,15 @@ export function TournamentSchedule({ tournament }: TournamentScheduleProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm overflow-hidden mt-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mt-6">
       <div className="p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="bg-purple-50 rounded-full p-3">
-            <Clock className="h-6 w-6 text-purple-600" />
+          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-full p-3">
+            <Clock className="h-6 w-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Horarios del Torneo</h2>
-            <p className="text-sm text-gray-500">Horarios disponibles por día</p>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Horarios del Torneo</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Horarios disponibles por día</p>
           </div>
         </div>
 
@@ -54,20 +54,20 @@ export function TournamentSchedule({ tournament }: TournamentScheduleProps) {
           {Object.entries(groupedSlots).map(([day, slots]: [string, any]) => (
             <div key={day} className="space-y-4">
               <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-blue-600" />
-                <h3 className="font-medium text-gray-900">{day}</h3>
+                <Calendar className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <h3 className="font-medium text-gray-900 dark:text-white">{day}</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {slots.map(({ start, end }: { start: number, end: number }, index: number) => (
                   <div 
                     key={index}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+                    className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-100 dark:border-gray-700"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-gray-400" />
-                        <p className="text-gray-700 font-medium">
+                        <Clock className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">
                           {start.toString().padStart(2, '0')}:00 - {end.toString().padStart(2, '0')}:00
                         </p>
                       </div>
