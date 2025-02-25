@@ -26,7 +26,7 @@ interface TimeSlotsProps {
 export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: TimeSlotsProps) {
   if (!startDate || !endDate) {
     return (
-      <div className="text-center p-4 border border-dashed rounded-lg">
+      <div className="text-center p-4 border border-dashed rounded-lg dark:border-gray-700 dark:text-gray-400">
         <p className="text-muted-foreground text-sm">
           Por favor, selecciona las fechas de inicio y fin del torneo primero
         </p>
@@ -213,16 +213,17 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
         {days.map((day) => {
           const daySlots = getSlotsByDay(day.id)
           return (
-            <Card key={day.id}>
+            <Card key={day.id} className="dark:bg-gray-800/50 dark:border-gray-700">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <Label className="text-base font-semibold">{day.label}</Label>
+                  <Label className="text-base font-semibold dark:text-gray-200">{day.label}</Label>
                   {daySlots.length < 3 && (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => handleAddSlot(day)}
+                      className="dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Agregar Horario
@@ -240,10 +241,10 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                             value={slot.start}
                             onValueChange={(value) => handleChangeTime(index, 'start', value)}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full dark:bg-gray-800 dark:border-gray-600 dark:text-white">
                               <SelectValue placeholder="Hora inicio" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                               {hours.map((hour) => {
                                 const isDisabled = !isHourAvailable(hour, day.id, index, 'start');
                                 return (
@@ -267,10 +268,10 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                             value={slot.end}
                             onValueChange={(value) => handleChangeTime(index, 'end', value)}
                           >
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full dark:bg-gray-800 dark:border-gray-600 dark:text-white">
                               <SelectValue placeholder="Hora fin" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="dark:bg-gray-800 dark:border-gray-700">
                               {hours.map((hour) => {
                                 const isDisabled = !isHourAvailable(hour, day.id, index, 'end');
                                 return (
@@ -294,6 +295,7 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                           variant="ghost"
                           size="icon"
                           onClick={() => handleRemoveSlot(index)}
+                          className="dark:text-gray-400 dark:hover:text-red-400"
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -301,8 +303,8 @@ export function TimeSlots({ timeSlots = [], onChange, startDate, endDate }: Time
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center p-4 border border-dashed rounded-lg">
-                    <p className="text-muted-foreground text-sm">
+                  <div className="text-center p-4 border border-dashed rounded-lg dark:border-gray-700">
+                    <p className="text-muted-foreground text-sm dark:text-gray-400">
                       No hay horarios configurados para {day.label.toLowerCase()}
                     </p>
                   </div>
