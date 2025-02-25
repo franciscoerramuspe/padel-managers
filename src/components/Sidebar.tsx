@@ -22,7 +22,6 @@ import { ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Image from 'next/image';
 import LoadingScreen from './LoadingScreen';
-import { ThemeToggle } from './theme-toggle';
 
 interface MenuItem {
   name: string;
@@ -116,13 +115,6 @@ const MENU_ITEMS: MenuItem[] = [
     icon: ImageIcon,
     iconColor: 'text-pink-500',
     hoverColor: 'hover:bg-pink-50'
-  },
-  { 
-    name: 'Estadisticas', 
-    href: '/incomes', 
-    icon: ChartBarIcon,
-    iconColor: 'text-orange-500',
-    hoverColor: 'hover:bg-orange-50'
   },
   { 
     name: 'Configuraciones', 

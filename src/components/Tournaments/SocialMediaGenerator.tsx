@@ -61,31 +61,31 @@ export function SocialMediaGenerator({ tournament, tournamentInfo }: SocialMedia
   };
 
   return (
-    <div className="bg-white rounded-xl p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-blue-100 rounded-full p-3">
-          <Share2 className="h-6 w-6 text-blue-600" />
+        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-full p-3">
+          <Share2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Contenido Social</h2>
-          <p className="text-sm text-gray-500">Genera imágenes para redes sociales</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Contenido Social</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Genera imágenes para redes sociales</p>
         </div>
       </div>
 
       {/* Plataformas */}
       <div className="grid grid-cols-3 gap-4 mb-6">
-        <div className="flex items-center gap-2 bg-pink-50 rounded-lg p-3">
-          <Instagram className="h-5 w-5 text-pink-600" />
-          <span className="text-sm font-medium text-pink-700">Instagram</span>
+        <div className="flex items-center gap-2 bg-pink-50 dark:bg-pink-900/20 rounded-lg p-3">
+          <Instagram className="h-5 w-5 text-pink-600 dark:text-pink-400" />
+          <span className="text-sm font-medium text-pink-700 dark:text-pink-300">Instagram</span>
         </div>
-        <div className="flex items-center gap-2 bg-blue-50 rounded-lg p-3">
-          <Facebook className="h-5 w-5 text-blue-600" />
-          <span className="text-sm font-medium text-blue-700">Facebook</span>
+        <div className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+          <Facebook className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Facebook</span>
         </div>
-        <div className="flex items-center gap-2 bg-sky-50 rounded-lg p-3">
-          <Twitter className="h-5 w-5 text-sky-500" />
-          <span className="text-sm font-medium text-sky-700">Twitter</span>
+        <div className="flex items-center gap-2 bg-sky-50 dark:bg-sky-900/20 rounded-lg p-3">
+          <Twitter className="h-5 w-5 text-sky-500 dark:text-sky-400" />
+          <span className="text-sm font-medium text-sky-700 dark:text-sky-300">Twitter</span>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export function SocialMediaGenerator({ tournament, tournamentInfo }: SocialMedia
       <Button
         onClick={generateImage}
         disabled={isGenerating}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2 h-11 rounded-lg"
+        className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white flex items-center justify-center gap-2 h-11 rounded-lg"
       >
         {isGenerating ? (
           <>

@@ -78,7 +78,8 @@ export default function TournamentDetailsPage() {
 
         {/* Quinta fila: Utilidades */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <RulesDownloader 
               tournament={tournament}
               tournamentInfo={{
@@ -86,7 +87,8 @@ export default function TournamentDetailsPage() {
               }}
             />
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                        border border-gray-200 dark:border-gray-700">
             <SocialMediaGenerator 
               tournament={tournament}
               tournamentInfo={tournament.tournament_info?.[0]}
@@ -95,7 +97,8 @@ export default function TournamentDetailsPage() {
         </div>
 
         {/* Sexta fila: Reglas */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
+                      border border-gray-200 dark:border-gray-700">
           <TournamentRules tournament={tournament} />
         </div>
       </main>
