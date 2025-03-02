@@ -1,42 +1,45 @@
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  courtName: string;
+  itemName: string;
+  itemType?: string;
 }
 
-const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+export default function DeleteConfirmationModal({
   isOpen,
   onClose,
   onConfirm,
-  courtName
-}) => {
-  if (!isOpen) return null;
-
+  itemName,
+  itemType = 'elemento'
+}: DeleteConfirmationModalProps) {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full shadow-2xl">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Confirmar eliminación</h2>
-        <p className="text-gray-600 mb-6">
-          ¿Estás seguro que deseas eliminar la cancha "{courtName}"? Esta acción no se puede deshacer.
-        </p>
-        <div className="flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
-          >
-            Cancelar
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
-          >
-            Eliminar
-          </button>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmar Eliminación</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p>
+            ¿Estás seguro que deseas eliminar {itemType} "{itemName}"?
+            Esta acción no se puede deshacer.
+          </p>
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={onConfirm}
+            >
+              Eliminar
+            </Button>
+          </div>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
-};
-
-export default DeleteConfirmationModal;
+}
