@@ -62,10 +62,13 @@ export function TournamentBasicInfo({
       ...formData,
       categories: allCategories,
       category_ids: allCategories.map(cat => cat.id)
-    });
+    }); 
+    
   };
 
-  const filteredCategories = categories;
+  const filteredCategories = categories.filter(category => 
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const validateForm = (e: React.FormEvent) => {
     e.preventDefault()
@@ -183,31 +186,49 @@ export function TournamentBasicInfo({
               </PopoverTrigger>
               <PopoverContent className="w-full p-0 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700" align="start">
                 <Command className="bg-transparent">
+                  <CommandInput
+                    placeholder="Buscar categoría..."
+                    value={searchQuery}
+                    onValueChange={setSearchQuery}
+                    className="border-none focus:ring-0"
+                  />
                   <CommandGroup>
-                    <div 
-                      className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
-                      onClick={handleSelectAllCategories}
-                    >
-                      <Checkbox
-                        checked={formData.categories?.length === categories.length}
-                        className="border-primary data-[state=checked]:bg-primary"
-                      />
-                      <span className="text-xs font-medium text-gray-900 dark:text-gray-200">Seleccionar todas</span>
-                    </div>
+                    {categories.length > 0 && (
+                      <div 
+                        className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
+                        onClick={handleSelectAllCategories}
+                      >
+                        <Checkbox
+                          checked={formData.categories?.length === categories.length}
+                          className="border-primary data-[state=checked]:bg-primary"
+                        />
+                        <span className="text-xs font-medium text-gray-900 dark:text-gray-200">
+                          Seleccionar todas
+                        </span>
+                      </div>
+                    )}
                     <div className="py-2">
-                      {filteredCategories.map((category) => (
-                        <div
-                          key={category.id}
-                          className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
-                          onClick={() => handleCategoryToggle(category.id)}
-                        >
-                          <Checkbox
-                            checked={formData.categories?.some(cat => cat.id === category.id)}
-                            className="border-primary data-[state=checked]:bg-primary"
-                          />
-                          <span className="text-xs text-gray-900 dark:text-gray-200">{category.name}</span>
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category) => (
+                          <div
+                            key={category.id}
+                            className="flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20"
+                            onClick={() => handleCategoryToggle(category.id)}
+                          >
+                            <Checkbox
+                              checked={formData.categories?.some(cat => cat.id === category.id)}
+                              className="border-primary data-[state=checked]:bg-primary"
+                            />
+                            <span className="text-xs text-gray-900 dark:text-gray-200">
+                              {category.name}
+                            </span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
+                          {searchQuery ? 'No se encontraron categorías' : 'No hay categorías disponibles'}
                         </div>
-                      ))}
+                      )}
                     </div>
                   </CommandGroup>
                 </Command>

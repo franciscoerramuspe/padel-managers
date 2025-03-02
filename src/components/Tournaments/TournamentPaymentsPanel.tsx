@@ -1,22 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Player } from '@/types/player';
+import { TeamPayment } from '@/hooks/usePayments';
 
 interface TournamentPaymentsPanelProps {
-  teams: Array<{
-    teams: {
-      id: string;
-      player1_id: string;
-      player2_id: string;
-      player1?: Player;
-      player2?: Player;
-    };
-    team_id: string;
-    payment_status: 'pending' | 'paid' | 'completed';
-    payment_date?: string;
-    payment_reference?: string;
-  }>;
+  teams: TeamPayment[];
   inscriptionCost: number;
   category?: string;
   onMarkAsPaid: (teamId: string, paymentMethod: string) => Promise<void>;
@@ -91,8 +79,8 @@ export function TournamentPaymentsPanel({
               <tr key={teamEntry.team_id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900 dark:text-gray-100">
-                    {`${teamEntry.teams.player1?.first_name} ${teamEntry.teams.player1?.last_name} / 
-                      ${teamEntry.teams.player2?.first_name} ${teamEntry.teams.player2?.last_name}`}
+                    {`${teamEntry.teams.player1?.first_name || ''} ${teamEntry.teams.player1?.last_name || ''} / 
+                      ${teamEntry.teams.player2?.first_name || ''} ${teamEntry.teams.player2?.last_name || ''}`}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">

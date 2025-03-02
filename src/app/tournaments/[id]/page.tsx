@@ -12,6 +12,9 @@ import { TournamentStats } from '@/components/Tournaments/TournamentStats';
 import { SocialMediaGenerator } from '@/components/Tournaments/SocialMediaGenerator';
 import { RulesDownloader } from '@/components/Tournaments/RulesDownloader';
 import { TournamentSchedule } from '@/components/Tournaments/TournamentSchedule';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function TournamentDetailsPage() {
   const params = useParams();
@@ -100,6 +103,23 @@ export default function TournamentDetailsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6
                       border border-gray-200 dark:border-gray-700">
           <TournamentRules tournament={tournament} />
+        </div>
+
+        <div className="bg-gray-800 dark:bg-gray-900 rounded-xl p-6">
+          <h2 className="text-xl font-semibold text-white mb-4">Estadísticas del Torneo</h2>
+          
+          <Link 
+            href={`/tournaments/${tournament.id}/groups`} 
+            className="w-full mt-4"
+          >
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center gap-2"
+              variant="default"
+            >
+              Ver parejas inscritas
+              <ChevronRightIcon className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </main>
     </div>
