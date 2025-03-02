@@ -64,7 +64,7 @@ export function TournamentStats({ tournament, teams, tournamentId }: TournamentS
 
           {/* Botón de Ver Parejas */}
           <button
-            onClick={() => router.push(`/tournaments/${tournamentId}/teams`)}
+            onClick={() => router.push(`/tournaments/${tournamentId}/groups`)}
             className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
           >
             Ver parejas inscritas

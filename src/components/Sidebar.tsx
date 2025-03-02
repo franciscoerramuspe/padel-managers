@@ -67,6 +67,12 @@ const MENU_ITEMS: MenuItem[] = [
         textColor: 'text-emerald-600 font-medium'
       },
       { 
+        name: 'Categorías', 
+        href: '/categories', 
+        icon: TrophyIcon,
+        iconColor: 'text-purple-500'
+      },
+      { 
         name: 'Inscripciones', 
         href: '/payments', 
         icon: BanknotesIcon,

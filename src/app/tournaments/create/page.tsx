@@ -15,6 +15,7 @@ import { createTournament, setTournamentRequiredInfo } from "@/services/tourname
 export default function CreateTournamentPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
+  const { categories, isLoading } = useCategories()
   const [formData, setFormData] = useState<TournamentFormData>({
     name: '',
     category_ids: [],
@@ -39,7 +40,6 @@ export default function CreateTournamentPage() {
     }
   })
 
-  const { categories, loading: categoriesLoading } = useCategories()
   const { courts, isLoading: courtsLoading } = useCourts()
 
   const handleFirstStep = (e: React.FormEvent) => {
@@ -94,6 +94,10 @@ export default function CreateTournamentPage() {
       });
     }
   };
+
+  if (isLoading) {
+    return <div>Cargando categorías...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
