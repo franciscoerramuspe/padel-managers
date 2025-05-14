@@ -1,8 +1,17 @@
 import { Calendar, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { League } from '@/types/league';
+import { Category } from '@/hooks/useCategories';
+import { getCategoryName } from '@/utils/category';
 
-export function LeagueCard({ league }: { league: League }) {
+interface LeagueCardProps {
+  league: League;
+  categories: Category[];
+}
+
+export function LeagueCard({ league, categories }: LeagueCardProps) {
+  const categoryName = getCategoryName(league.category_id, categories);
+
   return (
     <Link href={`/leagues/${league.id}`}>
       <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6 border border-gray-200">
@@ -10,7 +19,7 @@ export function LeagueCard({ league }: { league: League }) {
           <div>
             <h3 className="text-lg font-semibold text-gray-900">{league.name}</h3>
             <span className="inline-block mt-1 px-2 py-1 bg-purple-100 text-purple-800 text-sm rounded-md">
-              {league.category}
+              {categoryName}
             </span>
           </div>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -31,11 +40,11 @@ export function LeagueCard({ league }: { league: League }) {
           </div>
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            <span>Equipos: {league.teams_count}/{league.max_teams}</span>
+            <span>Equipos: {league.team_size || 0}</span>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            <span>{league.schedule} ({league.frequency})</span>
+            <span>{league.frequency}</span>
           </div>
         </div>
       </div>

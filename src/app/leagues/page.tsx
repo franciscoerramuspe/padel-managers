@@ -1,28 +1,59 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TableIcon, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import { LeagueList } from '@/components/Leagues/LeagueList';
 import { LeagueFilters } from '@/components/Leagues/LeagueFilters';
 import { League } from '@/types/league';
-import { mockLeagues } from '@/mocks/leagueData';
+import { useCategories, Category } from '@/hooks/useCategories';
 
 export default function LeaguesPage() {
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('Todos');
+  const [leagues, setLeagues] = useState<League[]>([]);
+  const [isLoadingLeagues, setIsLoadingLeagues] = useState(true);
+  const { categories, isLoading: isLoadingCategories, fetchCategories } = useCategories();
+  
+  useEffect(() => {
+    const loadLeagues = async () => {
+      setIsLoadingLeagues(true);
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues`);
+        if (!response.ok) {
+          console.error('Failed to fetch leagues. Status:', response.status);
+          throw new Error(`Failed to fetch leagues. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        setLeagues(Array.isArray(data) ? data : data.leagues || data.data || []);
 
-  const filteredLeagues = mockLeagues.filter((league) => {
-    const matchesSearch = league.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' ? true : league.category === selectedCategory;
-    const matchesStatus = selectedStatus === 'Todos' ? true :
-      selectedStatus === 'Próximos' ? league.status === 'upcoming' :
-      selectedStatus === 'En Curso' ? league.status === 'in_progress' : true;
+      } catch (error) {
+        console.error("Error fetching leagues:", error);
+        setLeagues([]);
+      } finally {
+        setIsLoadingLeagues(false);
+      }
+    };
 
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+    loadLeagues();
+    if (fetchCategories) {
+      fetchCategories(); 
+    }
+  }, [fetchCategories]);
+
+  const renderContent = () => {
+    if (isLoadingLeagues || isLoadingCategories) {
+      return <p>Cargando datos...</p>;
+    }
+    if (leagues.length === 0) {
+      return <p>No hay ligas para mostrar. Verifique que la API esté devolviendo ligas o ajuste el parseo de datos en LeaguesPage.tsx si la estructura es anidada.</p>;
+    }
+    return <LeagueList leagues={leagues} categories={categories} />;
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -42,7 +73,7 @@ export default function LeaguesPage() {
           }
         />
         
-        <div className="space-y-8">
+        <div className="space-y-8 mt-8">
           <LeagueFilters
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -50,8 +81,9 @@ export default function LeaguesPage() {
             setSelectedCategory={setSelectedCategory}
             selectedStatus={selectedStatus}
             setSelectedStatus={setSelectedStatus}
+            categories={categories}
           />
-          <LeagueList leagues={filteredLeagues} />
+          {renderContent()}
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from '@/components/ui/use-toast';
 
 export interface Category {
@@ -16,11 +16,7 @@ export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await fetch(`${API_URL}/categories`);
@@ -37,9 +33,13 @@ export function useCategories() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const createCategory = async (categoryData: CreateCategoryData) => {
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const createCategory = useCallback(async (categoryData: CreateCategoryData) => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -55,8 +55,8 @@ export function useCategories() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error creating category');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error creating category');
       }
       
       const { category } = await response.json();
@@ -77,9 +77,9 @@ export function useCategories() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const updateCategory = async (id: string, categoryData: CreateCategoryData) => {
+  const updateCategory = useCallback(async (id: string, categoryData: CreateCategoryData) => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -105,14 +105,19 @@ export function useCategories() {
 
       return true;
     } catch (error) {
+      toast({
+        title: "Aviso",
+        description: "Actualización local realizada. Error de API no impidió la actualización local.",
+        variant: "default",
+      });
       console.log('Error en la respuesta del servidor, pero la actualización local fue exitosa:', error);
       return true;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const deleteCategory = async (id: string) => {
+  const deleteCategory = useCallback(async (id: string) => {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -126,8 +131,8 @@ export function useCategories() {
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error deleting category');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error deleting category');
       }
       
       setCategories(prev => prev.filter(category => category.id !== id));
@@ -147,7 +152,7 @@ export function useCategories() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return {
     categories,

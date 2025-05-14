@@ -1,15 +1,24 @@
 export interface League {
   id: string;
   name: string;
-  category: string;
-  status: 'upcoming' | 'in_progress' | 'finished';
+  category_id: string;
+  image_url: string;
+  created_at: string;
+  updated_at: string;
   start_date: string;
-  teams_count: number;
-  max_teams: number;
-  schedule: string;
+  end_date: string;
+  courts_available: number;
+  time_slots: number[][];
+  inscription_cost: number;
+  description: string | null;
   frequency: string;
-  time_slots: string[];
-  days_of_week: string[];
+  match_duration_minutes: number;
+  points_for_win: number;
+  points_for_loss_with_set: number;
+  points_for_loss: number;
+  points_for_walkover: number;
+  status: string | null;
+  team_size: number | null;
 }
 
 export interface LeagueTeam {
