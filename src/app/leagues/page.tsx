@@ -22,13 +22,23 @@ export default function LeaguesPage() {
     const loadLeagues = async () => {
       setIsLoadingLeagues(true);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues`);
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          console.error('No authentication token found');
+          throw new Error('No authentication token found');
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/all?page=1&pageSize=10`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (!response.ok) {
           console.error('Failed to fetch leagues. Status:', response.status);
           throw new Error(`Failed to fetch leagues. Status: ${response.status}`);
         }
         const data = await response.json();
-        
+        console.log(data);
         setLeagues(Array.isArray(data) ? data : data.leagues || data.data || []);
 
       } catch (error) {
