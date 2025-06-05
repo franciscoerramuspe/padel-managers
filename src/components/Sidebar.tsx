@@ -47,44 +47,10 @@ const MENU_ITEMS: MenuItem[] = [
     hoverColor: 'hover:bg-blue-50'
   },
   { 
-    name: 'Torneos', 
-    href: '/tournaments', 
+    name: 'Categorías', 
+    href: '/categories', 
     icon: TrophyIcon,
-    iconColor: 'text-indigo-500',
-    hoverColor: 'hover:bg-indigo-50',
-    submenu: [
-      { 
-        name: 'Ver torneos', 
-        href: '/tournaments', 
-        icon: TrophyIcon,
-        iconColor: 'text-indigo-500' 
-      },
-      { 
-        name: 'Crear torneo', 
-        href: '/tournaments/create', 
-        icon: PlusIcon,
-        iconColor: 'text-emerald-500',
-        textColor: 'text-emerald-600 font-medium'
-      },
-      { 
-        name: 'Categorías', 
-        href: '/categories', 
-        icon: TrophyIcon,
-        iconColor: 'text-purple-500'
-      },
-      { 
-        name: 'Inscripciones', 
-        href: '/payments', 
-        icon: BanknotesIcon,
-        iconColor: 'text-amber-500'
-      },
-      { 
-        name: 'Canchas', 
-        href: '/courts', 
-        icon: TrophyIcon,
-        iconColor: 'text-purple-500'
-      },
-    ]
+    iconColor: 'text-purple-500'
   },
   { 
     name: 'Ligas', 

@@ -57,25 +57,25 @@ export default function LeaguesPage() {
 
   const renderContent = () => {
     if (isLoadingLeagues || isLoadingCategories) {
-      return <p>Cargando datos...</p>;
+      return <p className="text-gray-900 dark:text-gray-100">Cargando datos...</p>;
     }
     if (leagues.length === 0) {
-      return <p>No hay ligas para mostrar. Verifique que la API esté devolviendo ligas o ajuste el parseo de datos en LeaguesPage.tsx si la estructura es anidada.</p>;
+      return <p className="text-gray-600 dark:text-gray-400">No hay ligas para mostrar. Verifique que la API esté devolviendo ligas o ajuste el parseo de datos en LeaguesPage.tsx si la estructura es anidada.</p>;
     }
     return <LeagueList leagues={leagues} categories={categories} />;
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-slate-100 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto p-8">
         <Header 
           title="Ligas"
-          icon={<TableIcon className="w-6 h-6" />}
+          icon={<TableIcon className="w-6 h-6 text-gray-900 dark:text-gray-100" />}
           description="Administra y visualiza todas las ligas."
           button={
             <Link 
               href="/leagues/create" 
-              className="bg-[#6B8AFF] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#5A75E6] transition-colors duration-300 flex items-center"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors duration-300 flex items-center"
             >
               <PlusCircle className="mr-2" size={20} />
               Crear Liga
