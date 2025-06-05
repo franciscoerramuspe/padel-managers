@@ -24,9 +24,9 @@ export function LeagueScheduleCard({ matches }: LeagueScheduleCardProps) {
   const displayMatches = matches.slice(0, 8);
 
   return (
-    <div className="bg-slate-800/50 rounded-lg border border-gray-700">
-      <div className="p-4 border-b border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-100">
+    <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           Próximos Partidos
         </h2>
       </div>
@@ -34,21 +34,21 @@ export function LeagueScheduleCard({ matches }: LeagueScheduleCardProps) {
         {displayMatches.map((match) => (
           <div 
             key={match.id}
-            className="bg-slate-700/30 rounded-lg p-4 hover:bg-slate-700/50 transition-colors"
+            className="bg-gray-50 dark:bg-slate-700/30 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
+              <span className="text-sm font-medium text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-400/10 px-2 py-1 rounded">
                 {match.category}
               </span>
-              <span className="text-sm text-gray-400 bg-gray-400/10 px-2 py-1 rounded">
+              <span className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-400/10 px-2 py-1 rounded">
                 {match.court}
               </span>
             </div>
             <div className="space-y-2">
-              <p className="text-base font-medium text-gray-100">
+              <p className="text-base font-medium text-gray-900 dark:text-gray-100">
                 {match.team1} vs {match.team2}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 {formatDateTime(match.dateTime)}
               </p>
             </div>

@@ -41,16 +41,16 @@ export default function CreateLeaguePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8">
       <div className="max-w-6xl mx-auto">
         <Header 
           title="Crear Nueva Liga"
-          icon={<TableIcon className="w-6 h-6" />}
+          icon={<TableIcon className="w-6 h-6 text-foreground dark:text-foreground" />}
           description="Configure los detalles de su nueva liga."
         />
         
         <div className="mt-8">
-          <div className="bg-white rounded-xl shadow-lg">
+          <div className="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-700">
             {step === 1 ? (
               <LeagueBasicInfo
                 formData={formData}
