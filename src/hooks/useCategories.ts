@@ -19,17 +19,28 @@ export function useCategories() {
   const fetchCategories = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_URL}/categories`);
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch(`${API_URL}/categories`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
       if (!response.ok) throw new Error('Error fetching categories');
       const data = await response.json();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error al cargar las categorías",
+        description: error instanceof Error ? error.message : "Error al cargar las categorías",
         variant: "destructive",
       });
       console.error('Error fetching categories:', error);
+      setCategories([]);
     } finally {
       setIsLoading(false);
     }
