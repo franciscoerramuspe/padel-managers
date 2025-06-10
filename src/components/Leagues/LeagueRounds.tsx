@@ -21,7 +21,7 @@ export function LeagueRounds({ leagueId, totalRounds, onSelectRound }: LeagueRou
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">Fechas de la Liga</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Fechas de la Liga</h3>
 
       <div className="flex flex-wrap gap-2 mb-6">
         {Array.from({ length: totalRounds }, (_, i) => i + 1).map((round) => (
@@ -31,35 +31,39 @@ export function LeagueRounds({ leagueId, totalRounds, onSelectRound }: LeagueRou
             onClick={() => handleRoundSelect(round)}
             className={`${
               selectedRound === round
-                ? "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 border-none shadow-md"
-                : "border-gray-300 hover:border-purple-300 hover:bg-purple-50"
-            } transition-all duration-200 rounded-lg px-4 py-2`}
+                ? "bg-purple-600 hover:bg-purple-700 text-white shadow-lg"
+                : "border-gray-200 dark:border-[#1D283A] hover:border-purple-500 dark:hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-[#1D283A] text-gray-700 dark:text-gray-300"
+            } transition-all duration-200`}
           >
             Fecha {round}
           </Button>
         ))}
       </div>
 
-      <Card className="p-6 border border-gray-200 shadow-sm bg-gradient-to-br from-white to-purple-50">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="bg-purple-100 p-2 rounded-full">
-            <CalendarDays className="w-5 h-5 text-purple-600" />
+      <Card className="border-gray-200 dark:border-[#1D283A] bg-white dark:bg-[#1D283A]/30">
+        <div className="p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-50 dark:bg-[#0E1629] p-2 rounded-full">
+              <CalendarDays className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <span className="text-sm text-gray-700 dark:text-gray-300">Próxima fecha: 15 de Abril, 2025</span>
           </div>
-          <span className="text-sm font-medium text-gray-700">Próxima fecha: 15 de Abril, 2025</span>
-        </div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="bg-purple-100 p-2 rounded-full">
-            <Clock className="w-5 h-5 text-purple-600" />
+          
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-50 dark:bg-[#0E1629] p-2 rounded-full">
+              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            </div>
+            <span className="text-sm text-gray-700 dark:text-gray-300">22:30 - 00:00</span>
           </div>
-          <span className="text-sm font-medium text-gray-700">22:30 - 00:00</span>
-        </div>
-        <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-200">
-          <div className="bg-yellow-100 p-2 rounded-full">
-            <Trophy className="w-5 h-5 text-yellow-600" />
+          
+          <div className="flex items-center gap-3 pt-4 border-t border-gray-200 dark:border-[#1D283A]">
+            <div className="bg-amber-50 dark:bg-[#0E1629] p-2 rounded-full">
+              <Trophy className="w-5 h-5 text-amber-600 dark:text-yellow-400" />
+            </div>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Fecha {selectedRound} de {totalRounds} del torneo
+            </span>
           </div>
-          <span className="text-sm font-medium text-gray-700">
-            Fecha {selectedRound} de {totalRounds} del torneo
-          </span>
         </div>
       </Card>
     </div>

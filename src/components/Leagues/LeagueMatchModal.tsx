@@ -22,6 +22,7 @@ interface LeagueMatchModalProps {
   onClose: () => void;
   match: LeagueMatch;
   onSubmit: (matchId: string, result: any) => void;
+  isLoading?: boolean;
 }
 
 export function LeagueMatchModal({
@@ -29,6 +30,7 @@ export function LeagueMatchModal({
   onClose,
   match,
   onSubmit,
+  isLoading = false,
 }: LeagueMatchModalProps) {
   const [set1, setSet1] = useState<SetScore>({ team1: null, team2: null, tiebreak: null });
   const [set2, setSet2] = useState<SetScore>({ team1: null, team2: null, tiebreak: null });
@@ -76,8 +78,8 @@ export function LeagueMatchModal({
         superTiebreak: showSuperTiebreak ? superTiebreak : null
       },
       winner_id: set1Winner === set2Winner ? 
-        (set1Winner === 1 ? match.team1 : match.team2) :
-        (superTiebreak!.team1 > superTiebreak!.team2 ? match.team1 : match.team2)
+        (set1Winner === 1 ? match.league_team1_id : match.league_team2_id) :
+        (superTiebreak!.team1 > superTiebreak!.team2 ? match.league_team1_id : match.league_team2_id)
     };
 
     onSubmit(match.id, result);
@@ -112,6 +114,7 @@ export function LeagueMatchModal({
                     team1: e.target.value === '' ? null : Math.min(7, parseInt(e.target.value))
                   }))}
                   placeholder={match.team1}
+                  disabled={isLoading}
                 />
               </div>
               <div className="text-center text-sm text-gray-500">vs</div>
@@ -126,6 +129,7 @@ export function LeagueMatchModal({
                     team2: e.target.value === '' ? null : Math.min(7, parseInt(e.target.value))
                   }))}
                   placeholder={match.team2}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -146,6 +150,7 @@ export function LeagueMatchModal({
                           team2: prev.tiebreak?.team2 || 0
                         }
                       }))}
+                      disabled={isLoading}
                     />
                   </div>
                   <div className="text-center text-sm text-gray-500">-</div>
@@ -161,6 +166,7 @@ export function LeagueMatchModal({
                           team2: parseInt(e.target.value) || 0
                         }
                       }))}
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -183,6 +189,7 @@ export function LeagueMatchModal({
                     team1: e.target.value === '' ? null : Math.min(7, parseInt(e.target.value))
                   }))}
                   placeholder={match.team1}
+                  disabled={isLoading}
                 />
               </div>
               <div className="text-center text-sm text-gray-500">vs</div>
@@ -197,6 +204,7 @@ export function LeagueMatchModal({
                     team2: e.target.value === '' ? null : Math.min(7, parseInt(e.target.value))
                   }))}
                   placeholder={match.team2}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -217,6 +225,7 @@ export function LeagueMatchModal({
                           team2: prev.tiebreak?.team2 || 0
                         }
                       }))}
+                      disabled={isLoading}
                     />
                   </div>
                   <div className="text-center text-sm text-gray-500">-</div>
@@ -232,6 +241,7 @@ export function LeagueMatchModal({
                           team2: parseInt(e.target.value) || 0
                         }
                       }))}
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -253,7 +263,7 @@ export function LeagueMatchModal({
                       team1: parseInt(e.target.value) || 0,
                       team2: prev?.team2 || 0
                     }))}
-                    placeholder={match.team1}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="text-center text-sm text-gray-500">-</div>
@@ -266,21 +276,21 @@ export function LeagueMatchModal({
                       team1: prev?.team1 || 0,
                       team2: parseInt(e.target.value) || 0
                     }))}
-                    placeholder={match.team2}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
             </div>
           )}
-        </div>
 
-        <div className="flex justify-end gap-3 mt-6">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSubmit}>
-            Guardar Resultado
-          </Button>
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={onClose} disabled={isLoading}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? "Guardando..." : "Guardar Resultado"}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
