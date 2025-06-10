@@ -39,7 +39,7 @@ export default function Dashboard() {
           {/* Stats Cards */}
           <div className="grid grid-cols-4 gap-6">
             <LeagueStatsCard 
-              title="Ligas Activas"
+              title="Categorías activas"
               value={isLoadingLeagues ? 0 : leagues.length}
               type="active"
             />
