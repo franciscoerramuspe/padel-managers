@@ -1091,10 +1091,18 @@ export async function getMatchesByLeague(req, res) {
   const { leagueId } = req.params;
 
   try {
-    const { data: matches, error } = await supabase
+    console.log('Getting matches for league:', leagueId);
+
+    let query = supabase
       .from('league_matches')
       .select(`
         *,
+        category:category_id (
+          id,
+          name,
+          play_day,
+          play_time
+        ),
         team1:league_team1_id (
           team:team_id (
             player1:player1_id (
@@ -1123,34 +1131,65 @@ export async function getMatchesByLeague(req, res) {
             )
           )
         )
-      `)
-      .eq('league_id', leagueId)
-      .order('match_date', { ascending: true });
+      `);
+
+    if (leagueId && leagueId !== 'all') {
+      query = query.eq('league_id', leagueId);
+    }
+
+    query = query.order('match_date', { ascending: true });
+
+    const { data: matches, error } = await query;
 
     if (error) {
-      console.error('Error obteniendo partidos:', error);
+      console.error('Error fetching matches:', error);
       return res.status(500).json({ message: error.message });
     }
 
-    // Formatear los nombres de los equipos
-    const formattedMatches = matches.map(match => ({
-      ...match,
-      team1: `${match.team1.team.player1.first_name} ${match.team1.team.player1.last_name} - ${match.team1.team.player2.first_name} ${match.team1.team.player2.last_name}`,
-      team2: `${match.team2.team.player1.first_name} ${match.team2.team.player1.last_name} - ${match.team2.team.player2.first_name} ${match.team2.team.player2.last_name}`
-    }));
+    if (!matches) {
+      return res.status(200).json({
+        completed: [],
+        pending: [],
+        total: 0
+      });
+    }
+
+    // Formatear los nombres de los equipos con manejo seguro de nulos
+    const formattedMatches = matches.map(match => {
+      const formatTeamName = (teamData) => {
+        if (!teamData?.team?.player1 || !teamData?.team?.player2) {
+          return 'Equipo no disponible';
+        }
+        const { player1, player2 } = teamData.team;
+        return `${player1.first_name || ''} ${player1.last_name || ''} - ${player2.first_name || ''} ${player2.last_name || ''}`.trim();
+      };
+
+      return {
+        ...match,
+        category_name: match.category?.name || 'Categoría no disponible',
+        team1: formatTeamName(match.team1),
+        team2: formatTeamName(match.team2)
+      };
+    });
 
     // Separar los partidos por estado
     const completedMatches = formattedMatches.filter(match => match.status === 'COMPLETED');
-    const pendingMatches = formattedMatches.filter(match => match.status !== 'COMPLETED');
+    const pendingMatches = formattedMatches.filter(match => match.status === 'SCHEDULED');
 
-    res.status(200).json({
+    console.log('Completed matches:', completedMatches?.length);
+    console.log('Pending matches:', pendingMatches?.length);
+
+    return res.status(200).json({
       completed: completedMatches,
       pending: pendingMatches,
       total: formattedMatches.length
     });
 
   } catch (error) {
-    console.error('Error procesando partidos:', error);
-    res.status(500).json({ message: 'Error al procesar los partidos de la liga' });
+    console.error('Error processing matches:', error);
+    return res.status(500).json({ 
+      message: 'Error al procesar los partidos de la liga',
+      error: error.message 
+    });
   }
 }

@@ -1,7 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+/* Estilos para el marcador digital deportivo */
+.glow {
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.5),
+               0 0 20px rgba(74, 222, 128, 0.3),
+               0 0 30px rgba(74, 222, 128, 0.1);
+  animation: pulse 2s infinite;
+}
 
-/* Existing styles below */ 
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5),
+                 0 0 20px rgba(74, 222, 128, 0.3),
+                 0 0 30px rgba(74, 222, 128, 0.1);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(74, 222, 128, 0.6),
+                 0 0 25px rgba(74, 222, 128, 0.4),
+                 0 0 35px rgba(74, 222, 128, 0.2);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(74, 222, 128, 0.5),
+                 0 0 20px rgba(74, 222, 128, 0.3),
+                 0 0 30px rgba(74, 222, 128, 0.1);
+  }
+} 

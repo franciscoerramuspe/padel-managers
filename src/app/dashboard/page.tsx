@@ -8,62 +8,28 @@ import { LeagueStatsCard } from '@/components/Dashboard/LeagueStatsCard';
 import { LeagueScheduleCard } from '@/components/Dashboard/LeagueScheduleCard';
 import { CategoryStandings } from '@/components/Dashboard/CategoryStandings';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockUpcomingMatches } from '@/mocks/matchesData';
 import { useUsers } from '@/hooks/useUsers';
 import { useLeagues } from '@/hooks/useLeagues';
 import { useCategories } from '@/hooks/useCategories';
 import { useStandings } from '@/hooks/useStandings';
 
 export default function Dashboard() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedLeague, setSelectedLeague] = useState<string | null>(null);
-  
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const { users, isLoading: isLoadingUsers } = useUsers();
   const { leagues, isLoading: isLoadingLeagues } = useLeagues();
-  const { categories } = useCategories();
-  const { standings, isLoading: isLoadingStandings, getStandingsByLeague } = useStandings();
-  
-  // Memoizar el total de usuarios para evitar recálculos innecesarios
-  const totalUsers = useMemo(() => 
-    users?.filter(user => user.role === 'user').length || 0,
-    [users]
-  );
+  const { categories, isLoading: isLoadingCategories } = useCategories();
+  const { standings, isLoading: isLoadingStandings } = useStandings(selectedCategory);
 
-  // Memoizar las ligas por categoría
-  const leaguesByCategory = useMemo(() => {
-    if (!leagues.length || !selectedCategory) return [];
-    
-    return leagues
-      .filter(l => l.category_id === selectedCategory)
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-  }, [leagues, selectedCategory]);
+  const totalUsers = useMemo(() => {
+    if (!users) return 0;
+    return users.length;
+  }, [users]);
 
-  // Callback para cambio de categoría
-  const handleCategoryChange = useCallback((value: string) => {
-    setSelectedCategory(value);
-  }, []);
-
-  // Efecto para cargar la primera categoría por defecto
   useEffect(() => {
-    if (categories.length > 0 && !selectedCategory) {
+    if (!isLoadingCategories && categories.length > 0 && !selectedCategory) {
       setSelectedCategory(categories[0].id);
     }
-  }, [categories, selectedCategory]);
-
-  // Efecto para encontrar la liga correspondiente a la categoría seleccionada
-  useEffect(() => {
-    if (leaguesByCategory.length > 0) {
-      const activeLeague = leaguesByCategory.find(l => l.status === 'Activa') || leaguesByCategory[0];
-      setSelectedLeague(activeLeague?.id || null);
-    }
-  }, [leaguesByCategory]);
-
-  // Efecto para cargar los standings cuando cambia la liga seleccionada
-  useEffect(() => {
-    if (selectedLeague) {
-      getStandingsByLeague(selectedLeague);
-    }
-  }, [selectedLeague, getStandingsByLeague]);
+  }, [categories, isLoadingCategories, selectedCategory]);
 
   // Memoizar el nombre de la categoría seleccionada
   const selectedCategoryName = useMemo(() => 
@@ -111,35 +77,34 @@ export default function Dashboard() {
 
           {/* Próximos Partidos */}
           <div className="w-full">
-            <LeagueScheduleCard matches={mockUpcomingMatches} />
+            <LeagueScheduleCard />
           </div>
 
           {/* Tabla de Posiciones con Tabs */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-            <div className="flex flex-col space-y-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <div className="w-full bg-white dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50 p-4">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 Tabla de Posiciones
               </h2>
-              <Tabs 
-                defaultValue={selectedCategory || ''} 
-                value={selectedCategory || ''} 
-                onValueChange={handleCategoryChange}
-                className="w-full"
-              >
-                <TabsList className="mb-6">
-                  {categories.map((category) => (
-                    <TabsTrigger key={category.id} value={category.id}>
-                      {category.name}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                <CategoryStandings 
-                  category={selectedCategoryName}
-                  standings={standings}
-                  isLoading={isLoadingStandings}
-                />
-              </Tabs>
             </div>
+            <Tabs defaultValue={selectedCategory} onValueChange={setSelectedCategory}>
+              <TabsList className="mb-4">
+                {categories.map((category) => (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id}
+                    className="text-sm"
+                  >
+                    {category.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              <CategoryStandings
+                category={selectedCategoryName}
+                standings={standings}
+                isLoading={isLoadingStandings}
+              />
+            </Tabs>
           </div>
         </div>
       </div>
