@@ -6,68 +6,27 @@ import type { LeagueMatch } from "@/types/league"
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
 import { LeagueHeader } from "@/components/Leagues/LeagueHeader"
 import { LeagueStandings } from "@/components/Leagues/LeagueStandings"
-import { LeagueRounds } from "@/components/Leagues/LeagueRounds"
-import { LeagueRoundMatches } from "@/components/Leagues/LeagueRoundMatches"
+import { LeagueScheduleCard } from "@/components/Dashboard/LeagueScheduleCard"
 import { useCategories } from "@/hooks/useCategories"
 import { useLeague } from "@/hooks/useLeague"
+import { useStandings } from "@/hooks/useStandings"
 import { toast } from "@/components/ui/use-toast"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { ArrowLeft } from "lucide-react"
+import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
 
 export default function LeagueDetailsPage() {
   const params = useParams()
   const router = useRouter()
   const leagueId = params.id as string
-  const [selectedRound, setSelectedRound] = useState(1)
-  const [matches, setMatches] = useState<LeagueMatch[]>([])
-  const [isLoadingMatches, setIsLoadingMatches] = useState(false)
 
-  const { league, isLoading: isLoadingLeague, error } = useLeague(leagueId)
+  const { league, isLoading: isLoadingLeague, error: leagueError } = useLeague(leagueId)
   const { categories, isLoading: isLoadingCategories } = useCategories()
+  const { standings, isLoading: isLoadingStandings, error: standingsError } = useStandings(
+    league?.category_id // Usar el category_id de la liga
+  )
 
-  // Cargar partidos cuando cambia la fecha seleccionada
-  useEffect(() => {
-    const fetchMatches = async () => {
-      setIsLoadingMatches(true)
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/leagues/matches/${leagueId}?round=${selectedRound}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            }
-          }
-        )
-        if (!response.ok) {
-          throw new Error('Error al cargar los partidos')
-        }
-        const data = await response.json()
-        setMatches(data.matches)
-      } catch (error) {
-        console.error('Error:', error)
-        toast({
-          title: "Error",
-          description: "No se pudieron cargar los partidos",
-          variant: "destructive",
-        })
-      } finally {
-        setIsLoadingMatches(false)
-      }
-    }
-
-    if (leagueId && selectedRound) {
-      fetchMatches()
-    }
-  }, [leagueId, selectedRound])
-
-  const handleMatchUpdate = (updatedMatch: LeagueMatch) => {
-    setMatches(currentMatches =>
-      currentMatches.map(match =>
-        match.id === updatedMatch.id ? updatedMatch : match
-      )
-    )
-  }
-
-  if (isLoadingLeague || isLoadingCategories) {
+  if (isLoadingLeague || isLoadingCategories || isLoadingStandings) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
         <Card className="w-[300px]">
@@ -81,7 +40,7 @@ export default function LeagueDetailsPage() {
     )
   }
 
-  if (error || !league) {
+  if (leagueError || !league) {
     return (
       <div className="flex justify-center items-center min-h-[50vh] p-4">
         <Card className="w-full max-w-md">
@@ -117,51 +76,57 @@ export default function LeagueDetailsPage() {
     )
   }
 
+  const category = categories?.find(cat => cat.id === league.category_id)
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120]">
-      <LeagueHeader
-        league={league}
-        categories={categories}
-        onBack={() => router.push("/leagues")}
-      />
+      {/* Header */}
+      <div className="bg-white dark:bg-[#0E1629] border-b border-gray-200 dark:border-gray-700/50">
+        <div className="container mx-auto px-4 py-6">
+          <button
+            onClick={() => router.push("/leagues")}
+            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Volver a ligas</span>
+          </button>
+          
+          <div className="flex flex-col gap-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {league.name}
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
+                {category?.name || 'Categoría no disponible'}
+              </span>
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-700/30 text-gray-700 dark:text-gray-400">
+                {league.status}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
           {/* Tabla de Posiciones */}
-          <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-[#1D283A] shadow-sm dark:shadow-lg">
-            <CardContent className="p-6">
-              <LeagueStandings leagueId={leagueId} />
-            </CardContent>
-          </Card>
-
-          {/* Gestión de Resultados */}
-          <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-[#1D283A] shadow-sm dark:shadow-lg">
-            <CardHeader className="border-b border-gray-200 dark:border-[#1D283A]">
-              <CardTitle className="text-gray-900 dark:text-white text-xl">Gestión de Resultados</CardTitle>
+          <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700/50">
+              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                Tabla de Posiciones
+              </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
-              <LeagueRounds
-                leagueId={leagueId}
-                totalRounds={7}
-                onSelectRound={setSelectedRound}
+              <CategoryStandings
+                category={category?.name || ''}
+                standings={standings}
+                isLoading={isLoadingStandings}
               />
-
-              {isLoadingMatches ? (
-                <div className="flex justify-center items-center py-12">
-                  <LoadingSpinner size="md" />
-                </div>
-              ) : (
-                <div className="mt-8">
-                  <LeagueRoundMatches
-                    matches={matches}
-                    roundNumber={selectedRound}
-                    totalRounds={7}
-                    onMatchUpdate={handleMatchUpdate}
-                  />
-                </div>
-              )}
             </CardContent>
           </Card>
+
+          {/* Próximos Partidos */}
+          <LeagueScheduleCard leagueId={leagueId} />
         </div>
       </main>
     </div>

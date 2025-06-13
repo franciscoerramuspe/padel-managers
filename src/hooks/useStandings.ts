@@ -28,16 +28,19 @@ export interface Standing {
 export function useStandings(categoryId?: string) {
   const [standings, setStandings] = useState<Standing[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const fetchStandings = async () => {
       if (!categoryId) {
         setStandings([]);
+        setError(null);
         return;
       }
 
       try {
         setIsLoading(true);
+        setError(null);
         
         // Primero obtenemos las ligas de la categoría
         const { data: leagues, error: leaguesError } = await supabase
@@ -77,6 +80,7 @@ export function useStandings(categoryId?: string) {
       } catch (error: any) {
         console.error('Error fetching standings:', error);
         toast.error('Error al cargar la tabla de posiciones');
+        setError(new Error(error.message || 'Error al cargar la tabla de posiciones'));
         setStandings([]);
       } finally {
         setIsLoading(false);
@@ -88,6 +92,7 @@ export function useStandings(categoryId?: string) {
 
   return {
     standings,
-    isLoading
+    isLoading,
+    error
   };
 } 
