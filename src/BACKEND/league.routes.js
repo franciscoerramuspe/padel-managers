@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createLeague, joinLeague, getLeaguesByUser, getLeagueById, getAllLeagues, generateStandings, getStandings, getStandingById, updateMatchResult, updateMatchSchedule, getMatchesByUserId, getMatchesByRound } from '../controllers/league.controller.js'
+import { createLeague, joinLeague, getLeaguesByUser, getLeagueById, getAllLeagues, generateStandings, getStandings, getStandingById, updateMatchResult, updateMatchSchedule, getMatchesByUserId, getMatchesByRound, getMatchesByLeague } from '../controllers/league.controller.js'
 import { verifyToken } from '../middlewares/auth.middleware.js'
 import { verifyAdmin } from '../middlewares/admin.middleware.js'
 
@@ -10,7 +10,8 @@ router.get('/all', verifyToken, getAllLeagues);
 router.get('/byId/:id', verifyToken, getLeagueById);
 router.get('/user/:userId', verifyToken, getLeaguesByUser);
 router.get('/matches/user/:userId', verifyToken, getMatchesByUserId);
-router.get('/matches/:leagueId', verifyToken, getMatchesByRound);
+router.get('/matches/round/:leagueId', verifyToken, getMatchesByRound);
+router.get('/matches/league/:leagueId', getMatchesByLeague);
 router.post('/join', verifyToken, joinLeague);
 router.post('/generateStandings/:uuid', generateStandings);
 router.get('/standings/:league_id', verifyToken, getStandings);

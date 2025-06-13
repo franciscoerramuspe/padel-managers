@@ -1,21 +1,20 @@
-interface Standing {
-  position: number;
-  name: string;
-  played: number;
-  won: number;
-  lost: number;
-  setsWon: number;
-  setsLost: number;
-  setsDiff: number;
-  points: number;
-}
+import { Standing } from '@/hooks/useStandings';
 
 interface CategoryStandingsProps {
   category: string;
   standings: Standing[];
+  isLoading: boolean;
 }
 
-export function CategoryStandings({ category, standings }: CategoryStandingsProps) {
+export function CategoryStandings({ category, standings, isLoading }: CategoryStandingsProps) {
+  if (isLoading) {
+    return <div className="text-center py-4">Cargando tabla de posiciones...</div>;
+  }
+
+  if (!standings.length) {
+    return <div className="text-center py-4">No hay datos disponibles para esta categoría.</div>;
+  }
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
@@ -55,37 +54,40 @@ export function CategoryStandings({ category, standings }: CategoryStandingsProp
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {standings.map((team) => (
+            {standings.map((standing, index) => (
               <tr 
-                key={team.name}
+                key={standing.id}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {team.position}
+                  {index + 1}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {team.name}
+                  {standing.team ? 
+                    `${standing.team.player1.first_name} ${standing.team.player1.last_name} - 
+                     ${standing.team.player2.first_name} ${standing.team.player2.last_name}` : 
+                    'Equipo no disponible'}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-gray-100">
-                  {team.played}
+                  {standing.games_played}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center font-medium text-green-600 dark:text-green-400">
-                  {team.won}
+                  {standing.wins}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center font-medium text-red-600 dark:text-red-400">
-                  {team.lost}
+                  {standing.losses}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-gray-100">
-                  {team.setsWon}
+                  {standing.sets_won}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-gray-100">
-                  {team.setsLost}
+                  {standing.sets_lost}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-gray-100">
-                  {team.setsDiff}
+                  {standing.sets_difference}
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap text-sm text-center font-semibold text-blue-600 dark:text-blue-400">
-                  {team.points}
+                  {standing.points}
                 </td>
               </tr>
             ))}

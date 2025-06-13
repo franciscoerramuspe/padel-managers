@@ -340,12 +340,12 @@ export async function generateStandings(req, res) {
     return res.status(400).json({ message: 'El número de rondas debe ser 1 o 2' });
   }
 
-  // MODIFICACIÓN: Verificar si ya existen standings para esta liga
+  // Verificar si ya existen standings para esta liga
   const { data: existingStandings, error: checkStandingsError } = await supabase
     .from('league_standings')
     .select('id')
     .eq('league_id', league_id)
-    .limit(1); // Solo necesitamos verificar si existe al menos uno
+    .limit(1);
 
   if (checkStandingsError) {
     console.error('Error al verificar standings existentes:', checkStandingsError);
@@ -385,6 +385,7 @@ export async function generateStandings(req, res) {
 
   const teamIds = leagueTeams.map(lt => lt.team_id);
 
+  // Crear standings iniciales
   const standings = teamIds.map(team_id => ({
     league_id,
     team_id,
@@ -412,97 +413,129 @@ export async function generateStandings(req, res) {
   // Extraer play_day y play_time de league.category
   const playDay = league.category.play_day;
   const playTime = league.category.play_time;
-  const leagueStartDate = league.start_date; // Asumiendo formato YYYY-MM-DD
+  const leagueStartDate = league.start_date;
 
   if (!playDay || !playTime) {
     return res.status(400).json({ message: 'La categoría de la liga debe tener un día y hora de juego definidos.' });
   }
 
-  // Nueva función auxiliar para formatear la hora a HH:MM
+  // Función para formatear la hora
   function formatTime(timeStr) {
     const [hours, minutes] = timeStr.split(':').map(Number);
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
   }
 
-  let currentMatchDate = getNextDayOccurrence(leagueStartDate, playDay, false);
-  let currentMatchTime = formatTime(playTime); // MODIFICACIÓN: Usar la nueva función de formato
-  let matchesOnCurrentDay = 0;
-  const MAX_MATCHES_PER_DAY = teamIds.length / 2;
-  const TIME_INCREMENT_HOURS = 1;
+  // Implementación del algoritmo Round Robin
+  function generateRoundRobinSchedule(teams) {
+    const n = teams.length;
+    if (n % 2 !== 0) {
+      teams.push(null); // Añadir un equipo "fantasma" si el número es impar
+    }
+
+    const rounds = [];
+    const numRounds = n - 1;
+    const halfSize = n / 2;
+
+    for (let round = 0; round < numRounds; round++) {
+      const roundMatches = [];
+      for (let i = 0; i < halfSize; i++) {
+        const team1 = teams[i];
+        const team2 = teams[n - 1 - i];
+        if (team1 !== null && team2 !== null) {
+          roundMatches.push([team1, team2]);
+        }
+      }
+      rounds.push(roundMatches);
+
+      // Rotar los equipos (excepto el primero)
+      teams.splice(1, 0, teams.pop());
+    }
+
+    return rounds;
+  }
+
+  // Generar el calendario
+  const schedule = generateRoundRobinSchedule([...teamIds]);
   
+  // Preparar las fechas y horarios
+  let currentMatchDate = getNextDayOccurrence(leagueStartDate, playDay, false);
+  let currentMatchTime = formatTime(playTime);
+  const TIME_INCREMENT_HOURS = 1;
   const matches = [];
-  let matchNumber = 1; // Inicializar a 1
-  for (let i = 0; i < teamIds.length; i++) {
-    for (let j = i + 1; j < teamIds.length; j++) {
-      const team1ActualId = teamIds[i];
-      const team2ActualId = teamIds[j];
+  let matchNumber = 1;
 
-      const leagueTeam1Id = leagueTeamIdMap.get(team1ActualId);
-      const leagueTeam2Id = leagueTeamIdMap.get(team2ActualId);
-
-      console.log(`Generando partido: league_team1_id = ${leagueTeam1Id}, league_team2_id = ${leagueTeam2Id}`);
-      console.log(`Debug: Construcción de match_date - currentMatchDate: ${currentMatchDate}, currentMatchTime: ${currentMatchTime}`); // DEBUG
+  // Generar los partidos para cada ronda
+  schedule.forEach((round, roundIndex) => {
+    round.forEach(([team1Id, team2Id]) => {
+      const leagueTeam1Id = leagueTeamIdMap.get(team1Id);
+      const leagueTeam2Id = leagueTeamIdMap.get(team2Id);
 
       matches.push({
         league_id,
         league_team1_id: leagueTeam1Id,
         league_team2_id: leagueTeam2Id,
-        team1_sets_won: 0,
-        team2_sets_won: 0,
+        team1_sets1_won: 0,
+        team2_sets1_won: 0,
+        team1_sets2_won: 0,
+        team2_sets2_won: 0,
+        team1_tie1_won: 0,
+        team2_tie1_won: 0,
+        team1_tie2_won: 0,
+        team2_tie2_won: 0,
+        team1_tie3_won: 0,
+        team2_tie3_won: 0,
         winner_league_team_id: null,
         match_date: `${currentMatchDate}T${currentMatchTime}`,
         status: 'SCHEDULED',
         walkover: false,
         walkover_team_id: null,
-        match_number: matchNumber, // Usar el matchNumber actual
+        match_number: matchNumber,
         category_id: league.category_id
       });
-      matchesOnCurrentDay++;
 
-      // Actualizar la hora y fecha para el próximo partido
-      if (matchesOnCurrentDay < MAX_MATCHES_PER_DAY) {
-        currentMatchTime = addHoursToTime(currentMatchTime, TIME_INCREMENT_HOURS);
-      } else {
-        // Moverse al día de juego de la próxima semana y reiniciar la hora
-        currentMatchDate = getNextDayOccurrence(currentMatchDate, playDay, true);
-        currentMatchTime = formatTime(playTime); // MODIFICACIÓN: Usar la nueva función de formato
-        matchesOnCurrentDay = 0; // Resetear el contador
-        matchNumber++; // Incrementar matchNumber solo cuando se cambia de día
-      }
+      // Actualizar la hora para el próximo partido del mismo día
+      currentMatchTime = addHoursToTime(currentMatchTime, TIME_INCREMENT_HOURS);
+    });
 
-      console.log(`Generando partido de vuelta: league_team1_id = ${leagueTeam2Id}, league_team2_id = ${leagueTeam1Id}`);
-      console.log(`Debug: Construcción de match_date (vuelta) - currentMatchDate: ${currentMatchDate}, currentMatchTime: ${currentMatchTime}`); // DEBUG
-      if (rounds === 2) {
+    // Si es la segunda ronda, generar los partidos de vuelta
+    if (rounds === 2) {
+      round.forEach(([team1Id, team2Id]) => {
+        const leagueTeam1Id = leagueTeamIdMap.get(team1Id);
+        const leagueTeam2Id = leagueTeamIdMap.get(team2Id);
+
         matches.push({
           league_id,
-          league_team1_id: leagueTeam2Id,
+          league_team1_id: leagueTeam2Id, // Invertir el orden para la vuelta
           league_team2_id: leagueTeam1Id,
-          team1_sets_won: 0,
-          team2_sets_won: 0,
+          team1_sets1_won: 0,
+          team2_sets1_won: 0,
+          team1_sets2_won: 0,
+          team2_sets2_won: 0,
+          team1_tie1_won: 0,
+          team2_tie1_won: 0,
+          team1_tie2_won: 0,
+          team2_tie2_won: 0,
+          team1_tie3_won: 0,
+          team2_tie3_won: 0,
           winner_league_team_id: null,
           match_date: `${currentMatchDate}T${currentMatchTime}`,
           status: 'SCHEDULED',
           walkover: false,
           walkover_team_id: null,
-          match_number: matchNumber, // Usar el matchNumber actual
+          match_number: matchNumber,
           category_id: league.category_id
         });
-        matchesOnCurrentDay++;
 
-        // Actualizar la hora y fecha para el próximo partido (si es necesario para el partido de vuelta)
-        if (matchesOnCurrentDay < MAX_MATCHES_PER_DAY) {
-          currentMatchTime = addHoursToTime(currentMatchTime, TIME_INCREMENT_HOURS);
-        } else {
-          currentMatchDate = getNextDayOccurrence(currentMatchDate, playDay, true);
-          currentMatchTime = formatTime(playTime); // MODIFICACIÓN: Usar la nueva función de formato
-          matchesOnCurrentDay = 0;
-          matchNumber++; // Incrementar matchNumber solo cuando se cambia de día
-        }
-      }
+        currentMatchTime = addHoursToTime(currentMatchTime, TIME_INCREMENT_HOURS);
+      });
     }
-  }
 
-  console.log('Partidos a insertar:', matches); // DEBUG: Añadir este log
+    // Actualizar la fecha para la próxima ronda
+    currentMatchDate = getNextDayOccurrence(currentMatchDate, playDay, true);
+    currentMatchTime = formatTime(playTime);
+    matchNumber++;
+  });
+
   const { error: matchesError } = await supabase
     .from('league_matches')
     .insert(matches);
@@ -565,11 +598,47 @@ export async function getStandingById(req, res) {
 
 export async function updateMatchResult(req, res) {
   const match_id = req.params.id;
-  const { home_sets, away_sets } = req.body;
+  const { 
+    team1_sets1_won, 
+    team2_sets1_won,
+    team1_sets2_won,
+    team2_sets2_won,
+    team1_tie1_won,
+    team2_tie1_won,
+    team1_tie2_won,
+    team2_tie2_won,
+    team1_tie3_won,
+    team2_tie3_won
+  } = req.body;
+
+  // Validar que los sets sean obligatorios
+  if (typeof team1_sets1_won !== 'number' || typeof team2_sets1_won !== 'number' ||
+      typeof team1_sets2_won !== 'number' || typeof team2_sets2_won !== 'number') {
+    return res.status(400).json({ 
+      message: 'Los campos team1_sets1_won, team2_sets1_won, team1_sets2_won y team2_sets2_won son obligatorios y deben ser números' 
+    });
+  }
 
   // Validar que los sets sean números positivos
-  if (typeof home_sets !== 'number' || typeof away_sets !== 'number' || home_sets < 0 || away_sets < 0) {
+  if (team1_sets1_won < 0 || team2_sets1_won < 0 || team1_sets2_won < 0 || team2_sets2_won < 0) {
     return res.status(400).json({ message: 'Los sets deben ser números positivos' });
+  }
+
+  // Establecer valores por defecto para los ties si no vienen
+  const ties = {
+    team1_tie1_won: team1_tie1_won ?? 0,
+    team2_tie1_won: team2_tie1_won ?? 0,
+    team1_tie2_won: team1_tie2_won ?? 0,
+    team2_tie2_won: team2_tie2_won ?? 0,
+    team1_tie3_won: team1_tie3_won ?? 0,
+    team2_tie3_won: team2_tie3_won ?? 0
+  };
+
+  // Validar que los ties sean números positivos si vienen
+  for (const [key, value] of Object.entries(ties)) {
+    if (typeof value !== 'number' || value < 0) {
+      return res.status(400).json({ message: `El campo ${key} debe ser un número positivo` });
+    }
   }
 
   const { data: match, error: matchError } = await supabase
@@ -606,18 +675,32 @@ export async function updateMatchResult(req, res) {
     return res.status(500).json({ message: 'Error al obtener los equipos de la liga' });
   }
 
+  // Calcular el ganador basado en los sets
   let winnerLeagueTeamId = null;
-  if (home_sets > away_sets) {
+  const team1TotalSets = team1_sets1_won + team1_sets2_won;
+  const team2TotalSets = team2_sets1_won + team2_sets2_won;
+
+  if (team1TotalSets > team2TotalSets) {
     winnerLeagueTeamId = match.league_team1_id;
-  } else if (away_sets > home_sets) {
+  } else if (team2TotalSets > team1TotalSets) {
     winnerLeagueTeamId = match.league_team2_id;
+  } else { // Si los sets son iguales, decide por tie3
+    if (ties.team1_tie3_won > ties.team2_tie3_won) {
+      winnerLeagueTeamId = match.league_team1_id;
+    } else if (ties.team2_tie3_won > ties.team1_tie3_won) {
+      winnerLeagueTeamId = match.league_team2_id;
+    }
+    // Si tie3 también es igual, winnerLeagueTeamId permanece null
   }
 
   const { error: updateMatchError } = await supabase
     .from('league_matches')
     .update({
-      team1_sets_won: home_sets,
-      team2_sets_won: away_sets,
+      team1_sets1_won,
+      team2_sets1_won,
+      team1_sets2_won,
+      team2_sets2_won,
+      ...ties,
       winner_league_team_id: winnerLeagueTeamId,
       status: 'COMPLETED'
     })
@@ -654,40 +737,52 @@ export async function updateMatchResult(req, res) {
 
   const homeTeamUpdate = {
     games_played: currentHomeStanding.games_played + 1,
-    sets_in_favor: currentHomeStanding.sets_in_favor + home_sets,
-    sets_against: currentHomeStanding.sets_against + away_sets,
-    sets_difference: currentHomeStanding.sets_difference + (home_sets - away_sets)
+    sets_won: currentHomeStanding.sets_won + team1TotalSets,
+    sets_lost: currentHomeStanding.sets_lost + team2TotalSets,
+    sets_difference: currentHomeStanding.sets_difference + (team1TotalSets - team2TotalSets)
   };
 
-  if (home_sets > away_sets) {
+  if (team1TotalSets > team2TotalSets) {
     homeTeamUpdate.wins = currentHomeStanding.wins + 1;
-    homeTeamUpdate.points = currentHomeStanding.points + 3;
+    homeTeamUpdate.points = currentHomeStanding.points + 2;
     homeTeamUpdate.games_won = currentHomeStanding.games_won + 1;
-  } else if (home_sets === away_sets) {
-    homeTeamUpdate.draws = currentHomeStanding.draws + 1;
-    homeTeamUpdate.points = currentHomeStanding.points + 1;
-  } else {
+  } else if (team2TotalSets > team1TotalSets) { // team2 gana en sets
     homeTeamUpdate.losses = currentHomeStanding.losses + 1;
     homeTeamUpdate.games_lost = currentHomeStanding.games_lost + 1;
+  } else { // sets iguales, se decide por tie3
+    if (ties.team1_tie3_won > ties.team2_tie3_won) {
+      homeTeamUpdate.wins = currentHomeStanding.wins + 1;
+      homeTeamUpdate.points = currentHomeStanding.points + 2;
+      homeTeamUpdate.games_won = currentHomeStanding.games_won + 1;
+    } else {
+      homeTeamUpdate.losses = currentHomeStanding.losses + 1;
+      homeTeamUpdate.games_lost = currentHomeStanding.games_lost + 1;
+    }
   }
 
   const awayTeamUpdate = {
     games_played: currentAwayStanding.games_played + 1,
-    sets_in_favor: currentAwayStanding.sets_in_favor + away_sets,
-    sets_against: currentAwayStanding.sets_against + home_sets,
-    sets_difference: currentAwayStanding.sets_difference + (away_sets - home_sets)
+    sets_won: currentAwayStanding.sets_won + team2TotalSets,
+    sets_lost: currentAwayStanding.sets_lost + team1TotalSets,
+    sets_difference: currentAwayStanding.sets_difference + (team2TotalSets - team1TotalSets)
   };
 
-  if (away_sets > home_sets) {
+  if (team2TotalSets > team1TotalSets) {
     awayTeamUpdate.wins = currentAwayStanding.wins + 1;
-    awayTeamUpdate.points = currentAwayStanding.points + 3;
+    awayTeamUpdate.points = currentAwayStanding.points + 2;
     awayTeamUpdate.games_won = currentAwayStanding.games_won + 1;
-  } else if (away_sets === home_sets) {
-    awayTeamUpdate.draws = currentAwayStanding.draws + 1;
-    awayTeamUpdate.points = currentAwayStanding.points + 1;
-  } else {
+  } else if (team1TotalSets > team2TotalSets) { // team1 gana en sets
     awayTeamUpdate.losses = currentAwayStanding.losses + 1;
     awayTeamUpdate.games_lost = currentAwayStanding.games_lost + 1;
+  } else { // sets iguales, se decide por tie3
+    if (ties.team2_tie3_won > ties.team1_tie3_won) {
+      awayTeamUpdate.wins = currentAwayStanding.wins + 1;
+      awayTeamUpdate.points = currentAwayStanding.points + 2;
+      awayTeamUpdate.games_won = currentAwayStanding.games_won + 1;
+    } else {
+      awayTeamUpdate.losses = currentAwayStanding.losses + 1;
+      awayTeamUpdate.games_lost = currentAwayStanding.games_lost + 1;
+    }
   }
 
   const { error: homeUpdateError } = await supabase
@@ -700,6 +795,9 @@ export async function updateMatchResult(req, res) {
     .update(awayTeamUpdate)
     .eq('id', currentAwayStanding.id);
 
+    console.log(homeUpdateError);
+    console.log(awayUpdateError);
+    
   if (homeUpdateError || awayUpdateError) {
     return res.status(500).json({ message: 'Error al actualizar standings' });
   }
@@ -708,8 +806,11 @@ export async function updateMatchResult(req, res) {
     message: 'Resultado del partido actualizado exitosamente',
     match: { 
       ...match, 
-      team1_sets_won: home_sets, 
-      team2_sets_won: away_sets, 
+      team1_sets1_won,
+      team2_sets1_won,
+      team1_sets2_won,
+      team2_sets2_won,
+      ...ties,
       winner_league_team_id: winnerLeagueTeamId, 
       status: 'COMPLETED'
     }
@@ -984,4 +1085,72 @@ export async function getMatchesByRound(req, res) {
   res.status(200).json({
     matches: formattedMatches
   });
+}
+
+export async function getMatchesByLeague(req, res) {
+  const { leagueId } = req.params;
+
+  try {
+    const { data: matches, error } = await supabase
+      .from('league_matches')
+      .select(`
+        *,
+        team1:league_team1_id (
+          team:team_id (
+            player1:player1_id (
+              id,
+              first_name,
+              last_name
+            ),
+            player2:player2_id (
+              id,
+              first_name,
+              last_name
+            )
+          )
+        ),
+        team2:league_team2_id (
+          team:team_id (
+            player1:player1_id (
+              id,
+              first_name,
+              last_name
+            ),
+            player2:player2_id (
+              id,
+              first_name,
+              last_name
+            )
+          )
+        )
+      `)
+      .eq('league_id', leagueId)
+      .order('match_date', { ascending: true });
+
+    if (error) {
+      console.error('Error obteniendo partidos:', error);
+      return res.status(500).json({ message: error.message });
+    }
+
+    // Formatear los nombres de los equipos
+    const formattedMatches = matches.map(match => ({
+      ...match,
+      team1: `${match.team1.team.player1.first_name} ${match.team1.team.player1.last_name} - ${match.team1.team.player2.first_name} ${match.team1.team.player2.last_name}`,
+      team2: `${match.team2.team.player1.first_name} ${match.team2.team.player1.last_name} - ${match.team2.team.player2.first_name} ${match.team2.team.player2.last_name}`
+    }));
+
+    // Separar los partidos por estado
+    const completedMatches = formattedMatches.filter(match => match.status === 'COMPLETED');
+    const pendingMatches = formattedMatches.filter(match => match.status !== 'COMPLETED');
+
+    res.status(200).json({
+      completed: completedMatches,
+      pending: pendingMatches,
+      total: formattedMatches.length
+    });
+
+  } catch (error) {
+    console.error('Error procesando partidos:', error);
+    res.status(500).json({ message: 'Error al procesar los partidos de la liga' });
+  }
 }
