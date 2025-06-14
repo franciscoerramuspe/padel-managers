@@ -174,17 +174,19 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Próximos Partidos
         </h2>
-        <button
-          onClick={() => router.push(leagueId ? `/leagues/${leagueId}/matches` : '/matches')}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
-                   bg-gradient-to-r from-purple-500 to-purple-600 
-                   hover:from-purple-600 hover:to-purple-700
-                   rounded-lg transition-all duration-200
-                   shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
-        >
-          <ListFilter className="w-4 h-4" />
-          Ver todos los partidos
-        </button>
+        {leagueId && (
+          <button
+            onClick={() => router.push(`/leagues/${leagueId}/matches`)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
+                     bg-gradient-to-r from-purple-500 to-purple-600 
+                     hover:from-purple-600 hover:to-purple-700
+                     rounded-lg transition-all duration-200
+                     shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
+          >
+            <ListFilter className="w-4 h-4" />
+            Ver todos los partidos
+          </button>
+        )}
       </div>
       
       <div className="relative">

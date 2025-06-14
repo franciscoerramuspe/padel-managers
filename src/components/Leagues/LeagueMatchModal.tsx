@@ -400,30 +400,34 @@ export function LeagueMatchModal({
               <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
                 <div className="flex flex-col h-full">
                   {/* Top Navigation */}
-                  <TabsList className="w-full grid grid-cols-2">
+                  <TabsList className="w-full grid grid-cols-2 px-2 pt-2 pb-3 bg-gray-100/80 dark:bg-gray-800/50 rounded-lg mx-0 mt-0 border-b border-gray-200 dark:border-gray-700 h-[64px]">
                     <TabsTrigger
                       value="result"
                       className={cn(
-                        "flex items-center justify-center h-14",
-                        "data-[state=active]:bg-white/5",
-                        "text-gray-400 data-[state=active]:text-purple-600"
+                        "flex items-center justify-center h-[52px] rounded-md transition-all",
+                        "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700",
+                        "data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400",
+                        "data-[state=active]:shadow-sm",
+                        "text-gray-600 dark:text-gray-400"
                       )}
                     >
                       <div className="flex items-center gap-2">
-                        <Trophy className="w-5 h-5" />
+                        <Trophy className="w-4 h-4" />
                         <span>Resultado</span>
                       </div>
                     </TabsTrigger>
                     <TabsTrigger
                       value="schedule"
                       className={cn(
-                        "flex items-center justify-center h-14",
-                        "data-[state=active]:bg-white/5",
-                        "text-gray-400 data-[state=active]:text-purple-600"
+                        "flex items-center justify-center h-[52px] rounded-md transition-all",
+                        "data-[state=active]:bg-white dark:data-[state=active]:bg-gray-700",
+                        "data-[state=active]:text-purple-600 dark:data-[state=active]:text-purple-400",
+                        "data-[state=active]:shadow-sm",
+                        "text-gray-600 dark:text-gray-400"
                       )}
                     >
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-5 h-5" />
+                        <Calendar className="w-4 h-4" />
                         <span>Horario</span>
                       </div>
                     </TabsTrigger>
