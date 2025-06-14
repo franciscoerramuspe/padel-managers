@@ -278,84 +278,91 @@ export function LeagueMatchModal({
   const renderCompletedMatchView = () => {
     return (
       <div className="space-y-8">
-        <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-b from-[#1a2234] to-[#161d2b] rounded-xl border-2 border-[#2a3447] shadow-xl">
-          {/* Teams and Score */}
-          <div className="grid grid-cols-3 gap-8 items-center w-full mb-6">
-            {/* Team 1 */}
-            <div className="text-center">
-              <h3 className="text-xl font-medium text-white mb-6">{match.team1}</h3>
-              <div className="space-y-4">
-                <div className="font-orbitron text-6xl font-bold text-[#4ade80]">
-                  {match.team1_sets1_won}
-                </div>
-                <div className="font-orbitron text-6xl font-bold text-[#4ade80]">
-                  {match.team2_sets1_won}
-                </div>
-                {(match.team1_tie3_won ?? 0) > 0 && (
-                  <div className="font-orbitron text-6xl font-bold text-[#fbbf24]">
-                    {match.team1_tie3_won}
+        <div className="flex flex-col items-center justify-center p-8 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 opacity-80"></div>
+          
+          {/* Content */}
+          <div className="relative z-10 w-full">
+            {/* Teams and Score */}
+            <div className="grid grid-cols-3 gap-8 items-center w-full">
+              {/* Team 1 */}
+              <div className="text-center">
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-6">{match.team1}</h3>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <div className="font-orbitron text-6xl font-bold text-green-600 dark:text-[#4ade80]">
+                        {match.team1_sets1_won}
+                      </div>
+                    </div>
                   </div>
-                )}
+                  <div className="relative">
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <div className="font-orbitron text-6xl font-bold text-green-600 dark:text-[#4ade80]">
+                        {match.team1_sets2_won}
+                      </div>
+                    </div>
+                  </div>
+                  {(match.team1_tie3_won ?? 0) > 0 && (
+                    <div className="relative">
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <div className="font-orbitron text-6xl font-bold text-yellow-600 dark:text-[#fbbf24]">
+                          {match.team1_tie3_won}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Center - VS and Date */}
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="font-orbitron text-4xl font-bold text-purple-500 mb-2">VS</div>
-              <Badge className="bg-purple-600/20 text-purple-400 border border-purple-500/50 text-sm px-4 py-1.5">
-                {new Date(match.match_date).toLocaleDateString('es-ES', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                })}
-              </Badge>
-            </div>
+              {/* Center - VS and Date */}
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="font-orbitron text-4xl font-bold text-purple-600 dark:text-purple-400">
+                  VS
+                </div>
+                <div className="relative">
+                  <Badge className="bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/50 text-sm px-4 py-1.5 rounded-full">
+                    {new Date(match.match_date).toLocaleDateString('es-ES', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric'
+                    })}
+                  </Badge>
+                </div>
+              </div>
 
-            {/* Team 2 */}
-            <div className="text-center">
-              <h3 className="text-xl font-medium text-white mb-6">{match.team2}</h3>
-              <div className="space-y-4">
-                <div className="font-orbitron text-6xl font-bold text-[#4ade80]">
-                  {match.team2_sets1_won}
-                </div>
-                <div className="font-orbitron text-6xl font-bold text-[#4ade80]">
-                  {match.team2_sets2_won}
-                </div>
-                {(match.team2_tie3_won ?? 0) > 0 && (
-                  <div className="font-orbitron text-6xl font-bold text-[#fbbf24]">
-                    {match.team2_tie3_won}
+              {/* Team 2 */}
+              <div className="text-center">
+                <h3 className="text-xl font-medium text-gray-900 dark:text-white mb-6">{match.team2}</h3>
+                <div className="space-y-4">
+                  <div className="relative">
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <div className="font-orbitron text-6xl font-bold text-green-600 dark:text-[#4ade80]">
+                        {match.team2_sets1_won}
+                      </div>
+                    </div>
                   </div>
-                )}
+                  <div className="relative">
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                      <div className="font-orbitron text-6xl font-bold text-green-600 dark:text-[#4ade80]">
+                        {match.team2_sets2_won}
+                      </div>
+                    </div>
+                  </div>
+                  {(match.team2_tie3_won ?? 0) > 0 && (
+                    <div className="relative">
+                      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
+                        <div className="font-orbitron text-6xl font-bold text-yellow-600 dark:text-[#fbbf24]">
+                          {match.team2_tie3_won}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Winner Card */}
-          {getMatchWinner().winner && (
-            <div className="w-full mt-8 p-4 bg-gradient-to-r from-purple-500/10 to-purple-500/5 rounded-lg border border-purple-500/20">
-              <div className="flex items-center gap-3">
-                <Trophy className="w-6 h-6 text-purple-400" />
-                <div>
-                  <h3 className="font-semibold text-white">
-                    Ganador del Partido
-                  </h3>
-                  <p className="text-purple-400 font-medium mt-1">
-                    {getMatchWinner().winner} ({getMatchWinner().setsWon.team1}-{getMatchWinner().setsWon.team2})
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="flex justify-end">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="text-gray-300 hover:text-white border-gray-600 hover:bg-gray-800"
-          >
-            Cerrar
-          </Button>
         </div>
       </div>
     );
@@ -363,12 +370,12 @@ export function LeagueMatchModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => !isLoading && onClose()}>
-      <DialogContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 max-w-5xl p-0 gap-0">
+      <DialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 max-w-5xl p-0 gap-0">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
             <DialogHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center">
                 <div className="flex items-center gap-3">
                   <Trophy className="w-6 h-6 text-purple-500" />
                   <div>
@@ -385,34 +392,45 @@ export function LeagueMatchModal({
           </div>
 
           {/* Content */}
-          <div className="flex-1 p-6">
+          <div className="flex-1">
+          
             {match.status === 'COMPLETED' ? (
               renderCompletedMatchView()
             ) : (
               <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-                <div className="flex h-full">
-                  {/* Sidebar */}
-                  <div className="w-48 border-r border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800/50">
-                    <TabsList className="flex flex-col w-full gap-2">
-                      <TabsTrigger
-                        value="result"
-                        className="w-full justify-start gap-2 p-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800"
-                      >
-                        <Trophy className="w-4 h-4" />
-                        Resultado
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="schedule"
-                        className="w-full justify-start gap-2 p-3 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800"
-                      >
-                        <Calendar className="w-4 h-4" />
-                        Horario
-                      </TabsTrigger>
-                    </TabsList>
-                  </div>
+                <div className="flex flex-col h-full">
+                  {/* Top Navigation */}
+                  <TabsList className="w-full grid grid-cols-2">
+                    <TabsTrigger
+                      value="result"
+                      className={cn(
+                        "flex items-center justify-center h-14",
+                        "data-[state=active]:bg-white/5",
+                        "text-gray-400 data-[state=active]:text-purple-600"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Trophy className="w-5 h-5" />
+                        <span>Resultado</span>
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="schedule"
+                      className={cn(
+                        "flex items-center justify-center h-14",
+                        "data-[state=active]:bg-white/5",
+                        "text-gray-400 data-[state=active]:text-purple-600"
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-5 h-5" />
+                        <span>Horario</span>
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
 
-                  {/* Main Content */}
-                  <div className="flex-1 p-6">
+                  {/* Content */}
+                  <div className="flex-1 p-8">
                     <TabsContent value="result" className="mt-0 h-full">
                       <div className="space-y-6">
                         <div className="grid grid-cols-3 gap-6">
@@ -573,70 +591,68 @@ export function LeagueMatchModal({
                           </div>
 
                           {/* Super Tiebreak */}
-                          <div className="space-y-4">
-                            {showSuperTiebreak && (
-                              <>
-                                <div className="flex items-center gap-2">
-                                  <Trophy className="w-4 h-4 text-yellow-500" />
-                                  <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                                    Super Tiebreak
-                                    <TooltipProvider>
-                                      <Tooltip>
-                                        <TooltipTrigger asChild>
-                                          <Info className="w-4 h-4 text-yellow-500" />
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                          <p>El super tiebreak se juega cuando cada equipo ha ganado un set</p>
-                                        </TooltipContent>
-                                      </Tooltip>
-                                    </TooltipProvider>
-                                  </h3>
-                                </div>
-                                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                                  <div className="space-y-3">
-                                    <div className="space-y-2">
-                                      <Label className="text-sm text-gray-600 dark:text-gray-300">{match.team1}</Label>
-                                      <Input
-                                        type="number"
-                                        min="0"
-                                        value={superTiebreak?.team1 ?? ''}
-                                        onChange={(e) => {
-                                          const value = e.target.value === '' ? null : parseInt(e.target.value);
-                                          setSuperTiebreak(prev => ({
-                                            team1: value ?? 0,
-                                            team2: prev?.team2 ?? 0
-                                          }));
-                                        }}
-                                        className={cn(
-                                          "bg-white dark:bg-gray-800 border-yellow-200 dark:border-yellow-800 focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400",
-                                          "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                        )}
-                                      />
-                                    </div>
-                                    <div className="space-y-2">
-                                      <Label className="text-sm text-gray-600 dark:text-gray-300">{match.team2}</Label>
-                                      <Input
-                                        type="number"
-                                        min="0"
-                                        value={superTiebreak?.team2 ?? ''}
-                                        onChange={(e) => {
-                                          const value = e.target.value === '' ? null : parseInt(e.target.value);
-                                          setSuperTiebreak(prev => ({
-                                            team1: prev?.team1 ?? 0,
-                                            team2: value ?? 0
-                                          }));
-                                        }}
-                                        className={cn(
-                                          "bg-white dark:bg-gray-800 border-yellow-200 dark:border-yellow-800 focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400",
-                                          "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                        )}
-                                      />
-                                    </div>
+                          {showSuperTiebreak ? (
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-2">
+                                <Trophy className="w-4 h-4 text-yellow-500" />
+                                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                                  Super Tiebreak
+                                  <TooltipProvider>
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <Info className="w-4 h-4 text-yellow-500" />
+                                      </TooltipTrigger>
+                                      <TooltipContent>
+                                        <p>El super tiebreak se juega cuando cada equipo ha ganado un set</p>
+                                      </TooltipContent>
+                                    </Tooltip>
+                                  </TooltipProvider>
+                                </h3>
+                              </div>
+                              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                                <div className="space-y-3">
+                                  <div className="space-y-2">
+                                    <Label className="text-sm text-gray-600 dark:text-gray-300">{match.team1}</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      value={superTiebreak?.team1 ?? ''}
+                                      onChange={(e) => {
+                                        const value = e.target.value === '' ? null : parseInt(e.target.value);
+                                        setSuperTiebreak(prev => ({
+                                          team1: value ?? 0,
+                                          team2: prev?.team2 ?? 0
+                                        }));
+                                      }}
+                                      className={cn(
+                                        "bg-white dark:bg-gray-800 border-yellow-200 dark:border-yellow-800 focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400",
+                                        "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                      )}
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label className="text-sm text-gray-600 dark:text-gray-300">{match.team2}</Label>
+                                    <Input
+                                      type="number"
+                                      min="0"
+                                      value={superTiebreak?.team2 ?? ''}
+                                      onChange={(e) => {
+                                        const value = e.target.value === '' ? null : parseInt(e.target.value);
+                                        setSuperTiebreak(prev => ({
+                                          team1: prev?.team1 ?? 0,
+                                          team2: value ?? 0
+                                        }));
+                                      }}
+                                      className={cn(
+                                        "bg-white dark:bg-gray-800 border-yellow-200 dark:border-yellow-800 focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400",
+                                        "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                      )}
+                                    />
                                   </div>
                                 </div>
-                              </>
-                            )}
-                          </div>
+                              </div>
+                            </div>
+                          ) : <div />}
                         </div>
 
                         {error && (
