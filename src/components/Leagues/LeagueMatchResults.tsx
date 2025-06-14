@@ -38,6 +38,12 @@ export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResult
 
   const handleSaveResult = async (matchId: string, result: any) => {
     try {
+      console.log('Enviando resultado al backend:', {
+        matchId,
+        result,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/leagues/match/result/${matchId}`
+      });
+      
       setIsLoading(true)
       await updateMatchResult(matchId, result)
 

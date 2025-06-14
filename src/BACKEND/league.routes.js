@@ -16,7 +16,7 @@ router.post('/join', verifyToken, joinLeague);
 router.post('/generateStandings/:uuid', generateStandings);
 router.get('/standings/:league_id', verifyToken, getStandings);
 router.get('/standing/:id', verifyToken, getStandingById);
-router.post('/match/result/:id', updateMatchResult);
+router.post('/match/result/:id', verifyToken, updateMatchResult);
 router.put('/match/schedule/:id', verifyToken, verifyAdmin, updateMatchSchedule);
 
 export default router 

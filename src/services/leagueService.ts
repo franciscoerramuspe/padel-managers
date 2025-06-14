@@ -44,8 +44,8 @@ export const updateMatchResult = async (matchId: string, result: {
   team1_tie3_won?: number;
   team2_tie3_won?: number;
 }) => {
-  const response = await fetch(`${API_URL}/leagues/matches/${matchId}/result`, {
-    method: 'PUT',
+  const response = await fetch(`${API_URL}/leagues/match/result/${matchId}`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -54,8 +54,14 @@ export const updateMatchResult = async (matchId: string, result: {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Error al actualizar el resultado del partido');
+    try {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al actualizar el resultado del partido');
+    } catch (e) {
+      // Si no podemos parsear la respuesta como JSON, mostramos el texto completo
+      const text = await response.text();
+      throw new Error(`Error al actualizar el resultado del partido: ${text}`);
+    }
   }
 
   return response.json();

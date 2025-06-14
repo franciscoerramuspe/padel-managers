@@ -141,6 +141,15 @@ export function useCategories() {
         },
       });
 
+      if (response.status === 404) {
+        setCategories(prev => prev.filter(category => category.id !== id));
+        toast({
+          title: "Éxito",
+          description: "Categoría eliminada exitosamente",
+        });
+        return true;
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error deleting category');
@@ -153,13 +162,16 @@ export function useCategories() {
       });
       return true;
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Error al eliminar la categoría",
-        variant: "destructive",
-      });
-      console.error('Error deleting category:', error);
-      return false;
+      if (error instanceof Error && error.message !== 'Category not found') {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Error al eliminar la categoría",
+          variant: "destructive",
+        });
+        console.error('Error deleting category:', error);
+        return false;
+      }
+      return true;
     } finally {
       setIsLoading(false);
     }
