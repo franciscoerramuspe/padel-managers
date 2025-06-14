@@ -11,13 +11,9 @@ import {
   ArrowRightOnRectangleIcon as LogoutIcon,
   Bars3Icon,
   XMarkIcon,
-  UserIcon,
-  ChartBarIcon,
   PhotoIcon as ImageIcon,
-  BanknotesIcon,
   PlusIcon,
   TableCellsIcon,
-  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -48,23 +44,17 @@ const MENU_ITEMS: MenuItem[] = [
     hoverColor: 'hover:bg-blue-50'
   },
   { 
-    name: 'Categorías', 
-    href: '/categories', 
-    icon: TrophyIcon,
-    iconColor: 'text-purple-500'
-  },
-  { 
     name: 'Ligas', 
     href: '/leagues', 
     icon: TableCellsIcon,
-    iconColor: 'text-purple-500',
-    hoverColor: 'hover:bg-purple-50',
+    iconColor: 'text-green-500',
+    hoverColor: 'hover:bg-green-50',
     submenu: [
       { 
         name: 'Ver ligas', 
         href: '/leagues', 
         icon: TableCellsIcon,
-        iconColor: 'text-purple-500' 
+        iconColor: 'text-green-500' 
       },
       { 
         name: 'Crear liga', 
@@ -74,6 +64,18 @@ const MENU_ITEMS: MenuItem[] = [
         textColor: 'text-emerald-600 font-medium'
       },
     ]
+  },
+  { 
+    name: 'Categorías', 
+    href: '/categories', 
+    icon: TrophyIcon,
+    iconColor: 'text-blue-500'
+  },
+  { 
+    name: 'Canchas', 
+    href: '/courts', 
+    icon: TrophyIcon,
+    iconColor: 'text-purple-500'
   },
   { 
     name: 'Usuarios', 

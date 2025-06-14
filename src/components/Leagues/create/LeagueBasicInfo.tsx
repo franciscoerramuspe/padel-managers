@@ -129,6 +129,21 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
               label="Categorías"
               tooltip="Selecciona las categorías que participarán en la liga"
             />
+            <div className="flex justify-end mb-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const allSelected = categories.length === formData.categories.length;
+                  const newCategories = allSelected ? [] : categories.map(cat => cat.id);
+                  setFormData({ ...formData, categories: newCategories });
+                }}
+                className="text-sm"
+              >
+                {categories.length === formData.categories.length ? 'Desmarcar todas' : 'Seleccionar todas'}
+              </Button>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {categories.map((category) => (
                 <button

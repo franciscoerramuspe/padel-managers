@@ -10,10 +10,17 @@ import { LeagueScheduleCard } from "@/components/Dashboard/LeagueScheduleCard"
 import { useCategories } from "@/hooks/useCategories"
 import { useLeague } from "@/hooks/useLeague"
 import { useStandings } from "@/hooks/useStandings"
-import { toast } from "@/components/ui/use-toast"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
 import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
+import { 
+  CalendarDays, 
+  Clock, 
+  DollarSign, 
+  FileText, 
+  Trophy,
+  Users2
+} from 'lucide-react';
 
 export default function LeagueDetailsPage() {
   const params = useParams()
@@ -28,11 +35,12 @@ export default function LeagueDetailsPage() {
 
   if (isLoadingLeague || isLoadingCategories || isLoadingStandings) {
     return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <Card className="w-[300px]">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] flex justify-center items-center">
+        <Card className="w-[300px] bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center gap-4">
-              <LoadingSpinner size="lg" showText />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Cargando información de la liga...</p>
             </div>
           </CardContent>
         </Card>
@@ -109,6 +117,96 @@ export default function LeagueDetailsPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
+          {/* Información Detallada de la Liga */}
+          <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700/50">
+              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                Información de la Liga
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Descripción */}
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-6 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+                    <h3 className="font-medium text-slate-900 dark:text-slate-200">Descripción</h3>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-400">
+                    {league.description || 'Sin descripción'}
+                  </p>
+                </div>
+
+                {/* Costo de Inscripción */}
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-6 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    <h3 className="font-medium text-emerald-900 dark:text-emerald-200">Costo de Inscripción</h3>
+                  </div>
+                  <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                    ${league.inscription_cost || 0}
+                  </p>
+                </div>
+
+                {/* Fechas */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h3 className="font-medium text-blue-900 dark:text-blue-200">Fechas</h3>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                      <span className="text-sm text-blue-600 dark:text-blue-400">Inicio:</span>
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-200">
+                        {new Date(league.start_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                      <span className="text-sm text-blue-600 dark:text-blue-400">Fin:</span>
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-200">
+                        {new Date(league.end_date).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sistema de Puntuación */}
+                <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6 space-y-4 md:col-span-2 lg:col-span-3">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <h3 className="font-medium text-purple-900 dark:text-purple-200">Sistema de Puntuación</h3>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-white dark:bg-purple-900/30 rounded-lg p-4 text-center">
+                      <p className="text-sm text-purple-600 dark:text-purple-400">Victoria</p>
+                      <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{league.points_for_win}</p>
+                      <p className="text-xs text-purple-500 dark:text-purple-400">puntos</p>
+                    </div>
+                    <div className="bg-white dark:bg-purple-900/30 rounded-lg p-4 text-center">
+                      <p className="text-sm text-purple-600 dark:text-purple-400">Derrota con Set</p>
+                      <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{league.points_for_loss_with_set}</p>
+                      <p className="text-xs text-purple-500 dark:text-purple-400">puntos</p>
+                    </div>
+                    <div className="bg-white dark:bg-purple-900/30 rounded-lg p-4 text-center">
+                      <p className="text-sm text-purple-600 dark:text-purple-400">Derrota</p>
+                      <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{league.points_for_loss}</p>
+                      <p className="text-xs text-purple-500 dark:text-purple-400">puntos</p>
+                    </div>
+                    {league.points_for_walkover !== undefined && (
+                      <div className="bg-white dark:bg-purple-900/30 rounded-lg p-4 text-center">
+                        <p className="text-sm text-purple-600 dark:text-purple-400">W.O.</p>
+                        <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{league.points_for_walkover}</p>
+                        <p className="text-xs text-purple-500 dark:text-purple-400">puntos</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Tabla de Posiciones */}
           <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm">
             <CardHeader className="border-b border-gray-200 dark:border-gray-700/50">
@@ -132,3 +230,4 @@ export default function LeagueDetailsPage() {
     </div>
   )
 }
+

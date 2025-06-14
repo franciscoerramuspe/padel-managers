@@ -217,21 +217,91 @@ export default function LeagueMatchesPage() {
     setCurrentPage(page)
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] flex justify-center items-center">
+        <Card className="w-[300px] bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Cargando partidos de la liga...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] flex justify-center items-center p-4">
+        <Card className="w-full max-w-md bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center gap-6">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-destructive"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <p className="text-xl text-center text-gray-900 dark:text-white">{error}</p>
+              <button
+                onClick={() => router.push("/leagues")}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+              >
+                Volver a Ligas
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   if (isLoadingLeague || isLoadingCategories) {
     return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <LoadingSpinner size="lg" showText />
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] flex justify-center items-center">
+        <Card className="w-[300px] bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50">
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center gap-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Cargando información de la liga...</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   if (leagueError || !league) {
     return (
-      <div className="flex justify-center items-center min-h-[50vh] p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] flex justify-center items-center p-4">
+        <Card className="w-full max-w-md bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center gap-6">
-              <p className="text-xl text-center text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-16 w-16 text-destructive"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <p className="text-xl text-center text-gray-900 dark:text-white">
                 No se pudo cargar la información de la liga
               </p>
               <button
