@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans, Orbitron } from 'next/font/google';
 import './globals.css';
 import { UserProvider } from '@/components/UserProvider';
 import { Toaster } from "@/components/ui/toaster"
@@ -8,13 +8,18 @@ import { ThemeToggle } from "@/components/theme-toggle"
 
 const plusJakarta = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
   variable: '--font-plus-jakarta'
 });
 
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  variable: '--font-orbitron',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
-  title: 'Recrea Padel Club - Admin',
-  description: 'Panel de administración para ligas de pádel',
+  title: 'Recrea Rackets Calendar Admin',
+  description: 'Admin panel for Recrea Rackets Calendar',
 };
 
 export default function RootLayout({
@@ -24,7 +29,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={`${plusJakarta.variable} font-sans antialiased`}>
+      <head>
+        <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet" />
+      </head>
+      <body className={`${plusJakarta.variable} ${orbitron.variable} font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

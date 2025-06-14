@@ -1,6 +1,7 @@
-import { CalendarDays, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, Clock, ChevronLeft, ChevronRight, ListFilter } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/Spinner";
+import { useRouter } from "next/navigation";
 
 interface Match {
   id: string;
@@ -22,6 +23,7 @@ interface LeagueScheduleCardProps {
 }
 
 export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
+  const router = useRouter();
   const [matches, setMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,10 +170,21 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   return (
     <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700/50">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Próximos Partidos
         </h2>
+        <button
+          onClick={() => router.push(leagueId ? `/leagues/${leagueId}/matches` : '/matches')}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
+                   bg-gradient-to-r from-purple-500 to-purple-600 
+                   hover:from-purple-600 hover:to-purple-700
+                   rounded-lg transition-all duration-200
+                   shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
+        >
+          <ListFilter className="w-4 h-4" />
+          Ver todos los partidos
+        </button>
       </div>
       
       <div className="relative">

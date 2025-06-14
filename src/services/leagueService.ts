@@ -33,11 +33,19 @@ export const getLeagueById = async (id: string) => {
 };
 
 export const updateMatchResult = async (matchId: string, result: {
-  home_sets: number;
-  away_sets: number;
+  team1_sets1_won: number;
+  team2_sets1_won: number;
+  team1_sets2_won: number;
+  team2_sets2_won: number;
+  team1_tie1_won?: number;
+  team2_tie1_won?: number;
+  team1_tie2_won?: number;
+  team2_tie2_won?: number;
+  team1_tie3_won?: number;
+  team2_tie3_won?: number;
 }) => {
-  const response = await fetch(`${API_URL}/leagues/match/result/${matchId}`, {
-    method: 'POST',
+  const response = await fetch(`${API_URL}/leagues/matches/${matchId}/result`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -46,8 +54,8 @@ export const updateMatchResult = async (matchId: string, result: {
   });
 
   if (!response.ok) {
-    const errorData = await response.text();
-    throw new Error(`Error al actualizar el resultado: ${errorData}`);
+    const error = await response.json();
+    throw new Error(error.message || 'Error al actualizar el resultado del partido');
   }
 
   return response.json();
@@ -68,24 +76,24 @@ export const getLeagueStandings = async (leagueId: string) => {
   return response.json();
 };
 
-export const updateMatchSchedule = async (matchId: string, scheduleData: {
+export const updateMatchSchedule = async (matchId: string, schedule: {
   date: string;
   time: string;
   status?: string;
   court_id?: string;
 }) => {
-  const response = await fetch(`${API_URL}/leagues/match/schedule/${matchId}`, {
+  const response = await fetch(`${API_URL}/leagues/matches/${matchId}/schedule`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
     },
-    body: JSON.stringify(scheduleData)
+    body: JSON.stringify(schedule)
   });
 
   if (!response.ok) {
-    const errorData = await response.text();
-    throw new Error(`Error al actualizar el horario: ${errorData}`);
+    const error = await response.json();
+    throw new Error(error.message || 'Error al actualizar el horario del partido');
   }
 
   return response.json();

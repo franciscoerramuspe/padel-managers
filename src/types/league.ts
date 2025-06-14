@@ -44,33 +44,19 @@ export interface LeagueMatch {
   team2: string;
   match_date: string;
   match_number: number;
-  team1_sets_won: number;
-  team2_sets_won: number;
+  team1_sets1_won: number;
+  team2_sets1_won: number;
+  team1_sets2_won: number;
+  team2_sets2_won: number;
+  team1_tie1_won?: number;
+  team2_tie1_won?: number;
+  team1_tie2_won?: number;
+  team2_tie2_won?: number;
+  team1_tie3_won?: number;
+  team2_tie3_won?: number;
   winner_league_team_id: string | null;
   status: 'SCHEDULED' | 'COMPLETED' | 'WALKOVER';
   walkover: boolean;
   walkover_team_id: string | null;
   category_id: string;
-  score?: {
-    set1: {
-      team1: number;
-      team2: number;
-      tiebreak?: {
-        team1: number;
-        team2: number;
-      };
-    };
-    set2: {
-      team1: number;
-      team2: number;
-      tiebreak?: {
-        team1: number;
-        team2: number;
-      };
-    };
-    superTiebreak?: {
-      team1: number;
-      team2: number;
-    };
-  };
 } 

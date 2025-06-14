@@ -17,6 +17,7 @@ import {
   BanknotesIcon,
   PlusIcon,
   TableCellsIcon,
+  CalendarDaysIcon,
 } from '@heroicons/react/24/outline';
 import { ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -71,7 +72,7 @@ const MENU_ITEMS: MenuItem[] = [
         icon: PlusIcon,
         iconColor: 'text-emerald-500',
         textColor: 'text-emerald-600 font-medium'
-      }
+      },
     ]
   },
   { 
