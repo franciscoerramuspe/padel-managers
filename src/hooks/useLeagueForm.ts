@@ -18,6 +18,7 @@ export interface LeagueFormData {
   points_for_loss: number;
   points_for_walkover: number;
   status: string;
+  team_size: number;
 }
 
 const INITIAL_FORM_DATA: LeagueFormData = {
@@ -30,12 +31,13 @@ const INITIAL_FORM_DATA: LeagueFormData = {
   frequency: 'Quincenal',
   days_of_week: [],
   category_days: {},
-  courts_available: 1,
+  courts_available: 2,
   points_for_win: 2,
   points_for_loss_with_set: 1,
   points_for_loss: 0,
   points_for_walkover: 2,
-  status: 'Inscribiendo'
+  status: 'Inscribiendo',
+  team_size: 8
 };
 
 export function useLeagueForm() {
@@ -76,6 +78,15 @@ export function useLeagueForm() {
       toast({
         title: "Error de validación",
         description: "El costo de inscripción debe ser mayor a 0",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    if (data.team_size < 4 || data.team_size > 16) {
+      toast({
+        title: "Error de validación",
+        description: "El número de equipos debe estar entre 4 y 16",
         variant: "destructive"
       });
       return false;

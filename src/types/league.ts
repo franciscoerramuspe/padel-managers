@@ -2,7 +2,7 @@ export interface League {
   id: string;
   name: string;
   category_id: string;
-  image_url: string;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
   start_date: string;
@@ -17,8 +17,20 @@ export interface League {
   points_for_loss_with_set: number;
   points_for_loss: number;
   points_for_walkover: number;
-  status: string | null;
-  team_size: number | null;
+  status: string;
+  team_size: number;
+  registeredTeams: number;
+  teams?: {
+    id: string;
+    player1: {
+      id: string;
+      name: string;
+    };
+    player2: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
 
 export interface LeagueTeam {

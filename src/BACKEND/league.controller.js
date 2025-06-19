@@ -7,7 +7,16 @@ const LEAGUE_STATUS = {
 };
 
 export async function createLeague(req, res) {
-  const { name, categories, start_date, end_date, courts_available, time_slots, team_size, inscription_cost } = req.body;
+  const { 
+    name, 
+    categories, 
+    start_date, 
+    end_date, 
+    courts_available = 2,
+    time_slots, 
+    team_size, 
+    inscription_cost 
+  } = req.body;
 
   // Validaciones
   if (!name || !Array.isArray(categories) || categories.length === 0) {
@@ -136,6 +145,7 @@ export async function getAllLeagues(req, res) {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
+  // Primero obtenemos las ligas
   const { data, error, count } = await supabase
     .from('leagues')
     .select('*, category:category_id(*)', { count: 'exact' })
@@ -148,22 +158,25 @@ export async function getAllLeagues(req, res) {
 
   // Obtener la cantidad de equipos registrados por liga
   const leagueIds = data.map(l => l.id);
-  let teamsCount = {};
-  if (leagueIds.length > 0) {
-    const { data: teamsData, error: teamsError } = await supabase
-      .from('league_teams')
-      .select('league_id, count:id', { groupBy: 'league_id' })
-      .in('league_id', leagueIds);
-    if (!teamsError && teamsData) {
-      teamsData.forEach(row => {
-        teamsCount[row.league_id] = row.count;
-      });
-    }
+  const { data: teamsData, error: teamsError } = await supabase
+    .from('league_teams')
+    .select('league_id')
+    .in('league_id', leagueIds);
+
+  if (teamsError) {
+    return res.status(500).json({ message: teamsError.message });
   }
 
-  const leaguesWithRegistered = data.map(l => ({
-    ...l,
-    registeredTeams: teamsCount[l.id] || 0
+  // Contar equipos por liga
+  const teamsCount = teamsData.reduce((acc, team) => {
+    acc[team.league_id] = (acc[team.league_id] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Agregar el conteo a cada liga
+  const leaguesWithRegistered = data.map(league => ({
+    ...league,
+    registeredTeams: teamsCount[league.id] || 0
   }));
 
   res.status(200).json({
@@ -177,33 +190,62 @@ export async function getAllLeagues(req, res) {
 export async function getLeagueById(req, res) {
   const { id } = req.params;
 
-  const { data, error } = await supabase
+  // Obtener la información básica de la liga
+  const { data: league, error: leagueError } = await supabase
     .from('leagues')
     .select('*, category:category_id(*)')
     .eq('id', id)
     .single();
 
-  if (error) {
-    return res.status(500).json({ message: error.message });
+  if (leagueError) {
+    return res.status(500).json({ message: leagueError.message });
   }
-  if (!data) {
+  if (!league) {
     return res.status(404).json({ message: 'Liga no encontrada' });
   }
 
-  // Obtener la cantidad de equipos registrados para esta liga
-  let registeredTeams = 0;
-  const { count: teamCount, error: teamError } = await supabase
-  .from('league_teams')
-  .select('id', { count: 'exact', head: true })
-  .eq('league_id', id);
-    
-  if (!teamError && typeof teamCount === 'number') {
-    registeredTeams = teamCount;
+  // Obtener los equipos registrados y sus jugadores
+  const { data: leagueTeams, error: teamsError } = await supabase
+    .from('league_teams')
+    .select(`
+      id,
+      team:team_id (
+        id,
+        player1:player1_id (
+          id,
+          first_name,
+          last_name
+        ),
+        player2:player2_id (
+          id,
+          first_name,
+          last_name
+        )
+      )
+    `)
+    .eq('league_id', id);
+
+  if (teamsError) {
+    return res.status(500).json({ message: teamsError.message });
   }
 
+  // Formatear los equipos para una mejor respuesta
+  const registeredTeams = leagueTeams.map(lt => ({
+    id: lt.team.id,
+    player1: {
+      id: lt.team.player1.id,
+      name: `${lt.team.player1.first_name} ${lt.team.player1.last_name}`
+    },
+    player2: {
+      id: lt.team.player2.id,
+      name: `${lt.team.player2.first_name} ${lt.team.player2.last_name}`
+    }
+  }));
+
   res.status(200).json({
-    ...data,
-    registeredTeams
+    ...league,
+    registeredTeams: registeredTeams.length,
+    teams: registeredTeams
   });
 }
 

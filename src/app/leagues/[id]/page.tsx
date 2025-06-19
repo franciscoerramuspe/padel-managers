@@ -21,6 +21,7 @@ import {
   Trophy,
   Users2
 } from 'lucide-react';
+import { LeagueTeams } from '@/components/Leagues/LeagueTeams';
 
 export default function LeagueDetailsPage() {
   const params = useParams()
@@ -117,6 +118,22 @@ export default function LeagueDetailsPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
+          {/* Equipos Registrados */}
+          <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700/50">
+              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                Equipos Registrados
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <LeagueTeams
+                teams={league.teams || []}
+                maxTeams={league.team_size}
+                status={league.status}
+              />
+            </CardContent>
+          </Card>
+
           {/* Información Detallada de la Liga */}
           <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm">
             <CardHeader className="border-b border-gray-200 dark:border-gray-700/50">

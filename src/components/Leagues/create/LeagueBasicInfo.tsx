@@ -14,6 +14,7 @@ interface LeagueBasicInfoProps {
     categories: string[];
     description: string;
     inscription_cost: number;
+    team_size: number;
   };
   setFormData: (data: any) => void;
   categories: Category[];
@@ -51,7 +52,8 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
     name: false,
     description: false,
     cost: false,
-    categories: false
+    categories: false,
+    team_size: false
   });
 
   const handleSubmit = () => {
@@ -59,7 +61,8 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
       name: !formData.name.trim(),
       description: !formData.description.trim(),
       cost: formData.inscription_cost <= 0,
-      categories: !Array.isArray(formData.categories) || formData.categories.length < 3
+      categories: !Array.isArray(formData.categories) || formData.categories.length < 3,
+      team_size: formData.team_size < 4 || formData.team_size > 16
     };
 
     setErrors(newErrors);
@@ -217,6 +220,30 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
               />
               {errors.cost && (
                 <p className="text-sm text-red-500 mt-1">El costo debe ser mayor a 0</p>
+              )}
+            </div>
+
+            <div>
+              <LabelWithTooltip
+                htmlFor="team_size"
+                label="Número de equipos por categoría"
+                tooltip="Cantidad máxima de equipos que pueden participar en cada categoría (Recomendado: 8)"
+              />
+              <Input
+                id="team_size"
+                type="number"
+                min="4"
+                max="16"
+                value={formData.team_size}
+                onChange={(e) => setFormData({ ...formData, team_size: Number(e.target.value) })}
+                placeholder="Ingrese el numero de parejas por categoria"
+                className={cn(
+                  "bg-transparent dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus:border-primary",
+                  errors.team_size && "border-red-500"
+                )}
+              />
+              {errors.team_size && (
+                <p className="text-sm text-red-500 mt-1">El número de equipos debe estar entre 4 y 16</p>
               )}
             </div>
           </div>
