@@ -38,7 +38,10 @@ export default function UsersPage() {
           role: user.role === 'user' ? 'Jugador' : user.role,
           status: 'active', 
           lastLogin: new Date().toISOString().split('T')[0], 
-          avatar: user.profile_photo || '/assets/user.png',
+          avatar: user.profile_photo || 
+                 user.user_metadata?.avatar_url || 
+                 (user.raw_user_meta_data && user.raw_user_meta_data.avatar_url) || 
+                 '/assets/user.png',
           phone: user.phone || 'No disponible'
         }));
         setUsers(transformedUsers);

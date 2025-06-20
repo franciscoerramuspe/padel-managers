@@ -5,6 +5,7 @@ import { League } from '@/types/league';
 import { Category } from '@/hooks/useCategories';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
+import { EmptyLeagues } from './EmptyLeagues';
 
 interface LeagueRegistrationProgressProps {
   leagues: League[];
@@ -14,6 +15,11 @@ interface LeagueRegistrationProgressProps {
 export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegistrationProgressProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Si no hay ligas, mostrar el componente EmptyLeagues
+  if (!leagues || leagues.length === 0) {
+    return <EmptyLeagues />;
+  }
 
   // Agrupar ligas por categoría
   const leaguesByCategory = categories.reduce((acc, category) => {

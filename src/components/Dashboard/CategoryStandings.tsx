@@ -2,6 +2,7 @@ import { Standing } from '@/hooks/useStandings';
 import React from 'react';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { Spinner } from '@/components/ui/Spinner';
+import { EmptyStandings } from './EmptyStandings';
 
 interface CategoryStandingsProps {
   category: string;
@@ -43,13 +44,7 @@ export function CategoryStandings({ category, standings, isLoading }: CategorySt
   }
 
   if (!standings.length) {
-    return (
-      <div className="flex items-center justify-center p-8 bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          No hay datos disponibles para esta categoría.
-        </p>
-      </div>
-    );
+    return <EmptyStandings message={`No hay datos disponibles para la categoría ${category}.`} />;
   }
 
   return (

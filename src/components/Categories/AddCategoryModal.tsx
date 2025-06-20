@@ -46,21 +46,22 @@ export default function AddCategoryModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-gray-900 dark:text-gray-100">
             {isEditing ? 'Editar Categoría' : 'Añadir Nueva Categoría'}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nombre de la Categoría</Label>
+            <Label htmlFor="name" className="text-gray-900 dark:text-gray-100">Nombre de la Categoría</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ingresa el nombre de la categoría"
               required
+              className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
             />
           </div>
           <div className="flex justify-end space-x-2">
@@ -69,13 +70,14 @@ export default function AddCategoryModal({
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
+              className="border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting || !name.trim()}
-              className="bg-[#6B8AFF] text-white hover:bg-[#5A75E6]"
+              className="bg-[#6B8AFF] text-white hover:bg-[#5A75E6] dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               {isSubmitting ? 'Guardando...' : isEditing ? 'Actualizar' : 'Guardar'}
             </Button>
