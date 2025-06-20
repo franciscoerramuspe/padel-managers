@@ -67,14 +67,18 @@ export default function EditCourtModal({ isOpen, onClose, onSubmit, court }: Edi
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
         <DialogHeader>
-          <DialogTitle>Editar cancha</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            Editar cancha
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Nombre de la cancha</Label>
+            <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
+              Nombre de la cancha
+            </Label>
             <Input
               id="name"
               value={name}
@@ -82,12 +86,15 @@ export default function EditCourtModal({ isOpen, onClose, onSubmit, court }: Edi
               placeholder="Ingresa el nombre de la cancha"
               disabled={isSubmitting}
               required
+              className="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="photo">Foto de la cancha</Label>
-            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+            <Label htmlFor="photo" className="text-gray-700 dark:text-gray-300">
+              Foto de la cancha
+            </Label>
+            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md bg-gray-50 dark:bg-gray-900">
               <div className="space-y-1 text-center">
                 {previewUrl ? (
                   <div className="relative w-full h-40 mb-4">
@@ -98,12 +105,12 @@ export default function EditCourtModal({ isOpen, onClose, onSubmit, court }: Edi
                     />
                   </div>
                 ) : (
-                  <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
+                  <ImageIcon className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
                 )}
-                <div className="flex text-sm text-gray-600">
+                <div className="flex text-sm text-gray-600 dark:text-gray-400">
                   <label
                     htmlFor="photo-upload"
-                    className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                    className="relative cursor-pointer rounded-md font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 dark:focus-within:ring-offset-gray-800"
                   >
                     <span>Subir una foto</span>
                     <input
@@ -118,7 +125,7 @@ export default function EditCourtModal({ isOpen, onClose, onSubmit, court }: Edi
                   </label>
                   <p className="pl-1">o arrastra y suelta</p>
                 </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF hasta 10MB</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF hasta 10MB</p>
               </div>
             </div>
           </div>
@@ -129,13 +136,14 @@ export default function EditCourtModal({ isOpen, onClose, onSubmit, court }: Edi
               variant="outline"
               onClick={handleClose}
               disabled={isSubmitting}
+              className="bg-transparent dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-600"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#6B8AFF] text-white hover:bg-[#5A75E6]"
+              className="bg-[#6B8AFF] text-white hover:bg-[#5A75E6] dark:bg-blue-600 dark:hover:bg-blue-700"
             >
               Guardar cambios
             </Button>

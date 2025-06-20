@@ -85,13 +85,6 @@ const MENU_ITEMS: MenuItem[] = [
     hoverColor: 'hover:bg-cyan-50'
   },
   { 
-    name: 'Patrocinadores', 
-    href: '/sponsors', 
-    icon: ImageIcon,
-    iconColor: 'text-pink-500',
-    hoverColor: 'hover:bg-pink-50'
-  },
-  { 
     name: 'Configuraciones', 
     href: '/settings', 
     icon: CogIcon,

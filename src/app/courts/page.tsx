@@ -105,7 +105,8 @@ export default function CourtsPage() {
           isOpen={deleteModal.isOpen}
           onClose={() => setDeleteModal({ isOpen: false, courtId: null, courtName: '' })}
           onConfirm={handleDelete}
-          courtName={deleteModal.courtName}
+          itemName={deleteModal.courtName}
+          itemType="la"
         />
 
         <EditCourtModal
