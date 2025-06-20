@@ -18,6 +18,7 @@ export interface League {
   points_for_loss: number;
   points_for_walkover: number;
   status: string;
+  registration_status: 'open' | 'closed';
   team_size: number;
   registeredTeams: number;
   teams?: {

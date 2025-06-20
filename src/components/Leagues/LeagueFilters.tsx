@@ -19,7 +19,7 @@ interface LeagueFiltersProps {
   categories: Category[];
 }
 
-const STATUS = ['Todos', 'upcoming', 'in_progress', 'finished'];
+const STATUS = ['Todos', 'open', 'closed'];
 
 export function LeagueFilters({
   searchQuery,
@@ -58,10 +58,9 @@ export function LeagueFilters({
 
         <div className="flex gap-2">
           {STATUS.map((statusValue) => {
-            let statusLabel = statusValue.charAt(0).toUpperCase() + statusValue.slice(1);
-            if (statusValue === 'upcoming') statusLabel = 'Próximas';
-            if (statusValue === 'in_progress') statusLabel = 'En Curso';
-            if (statusValue === 'finished') statusLabel = 'Finalizadas';
+            let statusLabel = statusValue;
+            if (statusValue === 'open') statusLabel = 'Inscripciones Abiertas';
+            if (statusValue === 'closed') statusLabel = 'Inscripciones Cerradas';
             if (statusValue === 'Todos') statusLabel = 'Todos';
 
             return (

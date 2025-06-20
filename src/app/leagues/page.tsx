@@ -8,56 +8,20 @@ import { LeagueList } from '@/components/Leagues/LeagueList';
 import { LeagueFilters } from '@/components/Leagues/LeagueFilters';
 import { League } from '@/types/league';
 import { useCategories } from '@/hooks/useCategories';
+import { useLeagues } from '@/hooks/useLeagues';
 import { Button } from '@/components/ui/button';
 
 export default function LeaguesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('Todos');
-  const [leagues, setLeagues] = useState<League[]>([]);
-  const [isLoadingLeagues, setIsLoadingLeagues] = useState(true);
-  const { categories, isLoading: isLoadingCategories, fetchCategories } = useCategories();
+  const { categories, isLoading: isLoadingCategories } = useCategories();
+  const { leagues, isLoading: isLoadingLeagues } = useLeagues();
   
-  useEffect(() => {
-    const loadLeagues = async () => {
-      setIsLoadingLeagues(true);
-      try {
-        const token = localStorage.getItem('adminToken');
-        if (!token) {
-          console.error('No authentication token found');
-          throw new Error('No authentication token found');
-        }
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/all?page=1&pageSize=10`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (!response.ok) {
-          console.error('Failed to fetch leagues. Status:', response.status);
-          throw new Error(`Failed to fetch leagues. Status: ${response.status}`);
-        }
-        const data = await response.json();
-        setLeagues(Array.isArray(data) ? data : data.leagues || data.data || []);
-      } catch (error) {
-        console.error("Error fetching leagues:", error);
-        setLeagues([]);
-      } finally {
-        setIsLoadingLeagues(false);
-      }
-    };
-
-    loadLeagues();
-    if (fetchCategories) {
-      fetchCategories(); 
-    }
-  }, [fetchCategories]);
-
   const getStatusDisplayName = (status: string) => {
     const statusMap: { [key: string]: string } = {
-      'upcoming': 'Próximas',
-      'in_progress': 'En Curso',
-      'finished': 'Finalizadas'
+      'open': 'Inscripciones Abiertas',
+      'closed': 'Inscripciones Cerradas'
     };
     return statusMap[status] || status;
   };
@@ -81,11 +45,10 @@ export default function LeaguesPage() {
       // Filter by status
       if (selectedStatus !== 'Todos') {
         const statusMap: { [key: string]: string } = {
-          'Próximas': 'upcoming',
-          'En Curso': 'in_progress',
-          'Finalizadas': 'finished'
+          'Inscripciones Abiertas': 'open',
+          'Inscripciones Cerradas': 'closed'
         };
-        return league.status === statusMap[selectedStatus];
+        return league.registration_status === statusMap[selectedStatus];
       }
       return true;
     });
@@ -102,12 +65,10 @@ export default function LeaguesPage() {
 
     const getStatusMessage = (status: string) => {
       switch (status) {
-        case 'upcoming':
-          return 'próximas';
-        case 'in_progress':
-          return 'en curso';
-        case 'finished':
-          return 'finalizadas';
+        case 'open':
+          return 'con inscripciones abiertas';
+        case 'closed':
+          return 'con inscripciones cerradas';
         default:
           return status.toLowerCase();
       }

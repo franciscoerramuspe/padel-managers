@@ -2,6 +2,7 @@ import { CalendarDays, Clock, ChevronLeft, ChevronRight, ListFilter } from "luci
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import { useRouter } from "next/navigation";
+import { EmptySchedule } from "./EmptySchedule";
 
 interface Match {
   id: string;
@@ -154,18 +155,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
   }
 
   if (!matches.length) {
-    return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 p-4">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700/50">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Próximos Partidos
-          </h2>
-        </div>
-        <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-          No hay partidos programados
-        </p>
-      </div>
-    );
+    return <EmptySchedule />;
   }
 
   return (
