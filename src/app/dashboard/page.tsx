@@ -7,6 +7,7 @@ import { DateTime } from '@/components/Dashboard/DateTime';
 import { LeagueStatsCard } from '@/components/Dashboard/LeagueStatsCard';
 import { LeagueScheduleCard } from '@/components/Dashboard/LeagueScheduleCard';
 import { CategoryStandings } from '@/components/Dashboard/CategoryStandings';
+import { LeagueRegistrationProgress } from '@/components/Dashboard/LeagueRegistrationProgress';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUsers } from '@/hooks/useUsers';
 import { useLeagues } from '@/hooks/useLeagues';
@@ -78,6 +79,14 @@ export default function Dashboard() {
           {/* Próximos Partidos */}
           <div className="w-full">
             <LeagueScheduleCard />
+          </div>
+
+          {/* Progreso de Inscripciones */}
+          <div className="w-full bg-white dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50 p-4">
+            <LeagueRegistrationProgress
+              leagues={leagues}
+              categories={categories}
+            />
           </div>
 
           {/* Tabla de Posiciones con Tabs */}

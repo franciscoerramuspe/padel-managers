@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Mail, Phone } from 'lucide-react';
+import { toast } from "@/components/ui/use-toast";
 
 interface AdminData {
   first_name: string;
   last_name: string;
   email: string;
-  phone: string;
 }
 
 export default function ProfileSettings() {
@@ -29,6 +28,11 @@ export default function ProfileSettings() {
         setProfile(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error al cargar el perfil');
+        toast({
+          title: "❌ Error",
+          description: err instanceof Error ? err.message : 'Error al cargar el perfil',
+          variant: "destructive",
+        });
       }
     }
 
@@ -45,7 +49,7 @@ export default function ProfileSettings() {
           Perfil
         </h2>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Gestiona tu información personal
+          Información personal
         </p>
       </div>
 
@@ -54,47 +58,31 @@ export default function ProfileSettings() {
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Nombre
           </label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
-                     text-gray-900 dark:text-white bg-white dark:bg-gray-700
-                     focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-            placeholder="Tu nombre"
-          />
+          <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                       text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
+            {profile.first_name}
+          </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Apellido
           </label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
-                     text-gray-900 dark:text-white bg-white dark:bg-gray-700
-                     focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-            placeholder="Tu apellido"
-          />
+          <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                       text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
+            {profile.last_name}
+          </div>
         </div>
 
         <div className="col-span-2">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Email
           </label>
-          <input
-            type="email"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
-                     text-gray-900 dark:text-white bg-white dark:bg-gray-700
-                     focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-            placeholder="tu@email.com"
-          />
+          <div className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg 
+                       text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
+            {profile.email}
+          </div>
         </div>
-      </div>
-
-      <div className="flex justify-end pt-4">
-        <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 
-                        text-white rounded-lg transition-colors duration-200">
-          Guardar cambios
-        </button>
       </div>
     </div>
   );
