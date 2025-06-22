@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import UserAvatar from './UserAvatar';
 
 interface User {
   id: string;
@@ -63,15 +63,7 @@ export default function UsersTable({ users }: UsersTableProps) {
               <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                      <Image
-                        src={user.avatar}
-                        alt={user.name}
-                        width={40}
-                        height={40}
-                        className="object-cover"
-                      />
-                    </div>
+                    <UserAvatar name={user.name} avatar={user.avatar} />
                     <span className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</span>
                   </div>
                 </td>

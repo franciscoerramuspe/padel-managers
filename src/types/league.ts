@@ -2,7 +2,7 @@ export interface League {
   id: string;
   name: string;
   category_id: string;
-  image_url: string;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
   start_date: string;
@@ -17,8 +17,21 @@ export interface League {
   points_for_loss_with_set: number;
   points_for_loss: number;
   points_for_walkover: number;
-  status: string | null;
-  team_size: number | null;
+  status: string;
+  registration_status: 'open' | 'closed';
+  team_size: number;
+  registeredTeams: number;
+  teams?: {
+    id: string;
+    player1: {
+      id: string;
+      name: string;
+    };
+    player2: {
+      id: string;
+      name: string;
+    };
+  }[];
 }
 
 export interface LeagueTeam {
@@ -37,14 +50,26 @@ export interface LeagueTeam {
 
 export interface LeagueMatch {
   id: string;
+  league_id: string;
+  league_team1_id: string;
+  league_team2_id: string;
   team1: string;
   team2: string;
-  date: string;
-  time: string;
-  round: number;
-  score: {
-    team1Sets: number;
-    team2Sets: number;
-  } | null;
-  status: 'pending' | 'completed' | 'walkover';
+  match_date: string;
+  match_number: number;
+  team1_sets1_won: number;
+  team2_sets1_won: number;
+  team1_sets2_won: number;
+  team2_sets2_won: number;
+  team1_tie1_won?: number;
+  team2_tie1_won?: number;
+  team1_tie2_won?: number;
+  team2_tie2_won?: number;
+  team1_tie3_won?: number;
+  team2_tie3_won?: number;
+  winner_league_team_id: string | null;
+  status: 'SCHEDULED' | 'COMPLETED' | 'WALKOVER';
+  walkover: boolean;
+  walkover_team_id: string | null;
+  category_id: string;
 } 

@@ -12,10 +12,16 @@ export function useLeague(leagueId: string) {
       
       setIsLoading(true);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/${leagueId}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/byId/${leagueId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+          }
+        });
+        
         if (!response.ok) {
           throw new Error(`Failed to fetch league details. Status: ${response.status}`);
         }
+        
         const data: League = await response.json();
         setLeague(data);
         setError(null);

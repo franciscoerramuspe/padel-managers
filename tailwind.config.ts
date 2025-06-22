@@ -113,12 +113,11 @@ const config: Config = {
   			}
   		},
   		fontFamily: {
-  			sans: [
-  				'var(--font-geist-sans)'
-  			],
+  			sans: ['var(--font-plus-jakarta)', 'system-ui', 'sans-serif'],
   			mono: [
   				'var(--font-geist-mono)'
-  			]
+  			],
+  			orbitron: ['Orbitron', 'sans-serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

@@ -16,7 +16,7 @@ export function useLeagues() {
           throw new Error('No authentication token found');
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/all?page=1&pageSize=10`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/all?page=1&pageSize=10&include=teams`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

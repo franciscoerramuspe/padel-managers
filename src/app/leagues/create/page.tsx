@@ -1,44 +1,42 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { TableIcon } from 'lucide-react';
 import Header from '@/components/Header';
 import { LeagueBasicInfo } from '@/components/Leagues/create/LeagueBasicInfo';
 import { LeagueScheduleInfo } from '@/components/Leagues/create/LeagueScheduleInfo';
-
-const CATEGORIES = ['4ta', '5ta', '6ta', '7ta', 'Femenino A', 'Femenino B'];
-const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+import { LeagueScoringInfo } from '@/components/Leagues/create/LeagueScoringInfo';
+import { useCategories } from '@/hooks/useCategories';
+import { Progress } from '@/components/ui/progress';
+import { useLeagueForm } from '@/hooks/useLeagueForm';
 
 export default function CreateLeaguePage() {
-  const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    start_date: '',
-    max_teams: 8,
-    schedule: '',
-    frequency: 'Quincenal',
-    days_of_week: [],
-    time_slots: ['22:30', '23:15', '00:00'],
-    duration_months: 4
-  });
+  const { categories, isLoading: isLoadingCategories, fetchCategories } = useCategories();
+  const {
+    step,
+    formData,
+    setFormData,
+    isSubmitting,
+    handleFirstStep,
+    handleSecondStep,
+    handleBack,
+    handleCreateLeague
+  } = useLeagueForm();
 
-  const handleFirstStep = (data: typeof formData) => {
-    setFormData(data);
-    setStep(2);
-  };
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
-  const handleBack = () => {
-    setStep(1);
-  };
-
-  const handleCreateLeague = async () => {
-    // TODO: Integrar con backend
-    console.log('League data:', formData);
-    router.push('/leagues');
-  };
+  if (isLoadingCategories) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando categorías...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-8">
@@ -50,21 +48,40 @@ export default function CreateLeaguePage() {
         />
         
         <div className="mt-8">
+          <div className="mb-8">
+            <div className="flex justify-between mb-2 text-sm text-gray-600 dark:text-gray-400">
+              <span>Paso {step} de 3</span>
+              <span>{Math.round((step / 3) * 100)}%</span>
+            </div>
+            <Progress 
+              value={(step / 3) * 100} 
+              className="h-2 bg-slate-200 dark:bg-slate-800" 
+              indicatorClassName="bg-gradient-to-r from-emerald-400 to-emerald-600 dark:from-emerald-500 dark:to-emerald-700"
+            />
+          </div>
+
           <div className="bg-white dark:bg-slate-800/50 rounded-xl shadow-md dark:shadow-lg border border-gray-200 dark:border-gray-700">
             {step === 1 ? (
               <LeagueBasicInfo
                 formData={formData}
                 setFormData={setFormData}
-                categories={CATEGORIES}
+                categories={categories}
                 onSubmit={handleFirstStep}
               />
-            ) : (
+            ) : step === 2 ? (
               <LeagueScheduleInfo
                 formData={formData}
                 setFormData={setFormData}
-                days={DAYS}
+                onSubmit={handleSecondStep}
+                onBack={handleBack}
+                categories={categories}
+              />
+            ) : (
+              <LeagueScoringInfo
+                formData={formData}
                 onSubmit={handleCreateLeague}
                 onBack={handleBack}
+                isSubmitting={isSubmitting}
               />
             )}
           </div>
@@ -72,4 +89,4 @@ export default function CreateLeaguePage() {
       </div>
     </div>
   );
-} 
+}

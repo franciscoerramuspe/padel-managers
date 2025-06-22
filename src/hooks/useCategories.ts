@@ -19,17 +19,28 @@ export function useCategories() {
   const fetchCategories = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_URL}/categories`);
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      const response = await fetch(`${API_URL}/categories`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
       if (!response.ok) throw new Error('Error fetching categories');
       const data = await response.json();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Error al cargar las categorías",
+        description: error instanceof Error ? error.message : "Error al cargar las categorías",
         variant: "destructive",
       });
       console.error('Error fetching categories:', error);
+      setCategories([]);
     } finally {
       setIsLoading(false);
     }
@@ -130,6 +141,15 @@ export function useCategories() {
         },
       });
 
+      if (response.status === 404) {
+        setCategories(prev => prev.filter(category => category.id !== id));
+        toast({
+          title: "Éxito",
+          description: "Categoría eliminada exitosamente",
+        });
+        return true;
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Error deleting category');
@@ -142,13 +162,16 @@ export function useCategories() {
       });
       return true;
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Error al eliminar la categoría",
-        variant: "destructive",
-      });
-      console.error('Error deleting category:', error);
-      return false;
+      if (error instanceof Error && error.message !== 'Category not found') {
+        toast({
+          title: "Error",
+          description: error instanceof Error ? error.message : "Error al eliminar la categoría",
+          variant: "destructive",
+        });
+        console.error('Error deleting category:', error);
+        return false;
+      }
+      return true;
     } finally {
       setIsLoading(false);
     }

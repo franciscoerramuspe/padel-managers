@@ -5,6 +5,9 @@ export interface Match {
   team2: string;
   dateTime: string;
   court: string;
+  status: "SCHEDULED" | "COMPLETED" | "WALKOVER";
+  team1_sets_won?: number;
+  team2_sets_won?: number;
 }
 
 export const mockUpcomingMatches: Match[] = [
@@ -14,7 +17,10 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo A',
     team2: 'Equipo B',
     dateTime: '2024-03-20T22:30:00',
-    court: 'Cancha 1'
+    court: 'Cancha 1',
+    status: "COMPLETED",
+    team1_sets_won: 6,
+    team2_sets_won: 4
   },
   {
     id: 2,
@@ -22,7 +28,10 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo C',
     team2: 'Equipo D',
     dateTime: '2024-03-20T22:30:00',
-    court: 'Cancha 2'
+    court: 'Cancha 2',
+    status: "COMPLETED",
+    team1_sets_won: 6,
+    team2_sets_won: 2
   },
   {
     id: 3,
@@ -30,7 +39,8 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo E',
     team2: 'Equipo F',
     dateTime: '2024-03-21T22:30:00',
-    court: 'Cancha 1'
+    court: 'Cancha 1',
+    status: "SCHEDULED"
   },
   {
     id: 4,
@@ -38,7 +48,8 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo G',
     team2: 'Equipo H',
     dateTime: '2024-03-21T22:30:00',
-    court: 'Cancha 2'
+    court: 'Cancha 2',
+    status: "SCHEDULED"
   },
   {
     id: 5,
@@ -46,7 +57,8 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo I',
     team2: 'Equipo J',
     dateTime: '2024-03-22T22:30:00',
-    court: 'Cancha 1'
+    court: 'Cancha 1',
+    status: "WALKOVER"
   },
   {
     id: 6,
@@ -54,7 +66,8 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo K',
     team2: 'Equipo L',
     dateTime: '2024-03-22T22:30:00',
-    court: 'Cancha 2'
+    court: 'Cancha 2',
+    status: "SCHEDULED"
   },
   {
     id: 7,
@@ -62,7 +75,8 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo M',
     team2: 'Equipo N',
     dateTime: '2024-03-23T22:30:00',
-    court: 'Cancha 1'
+    court: 'Cancha 1',
+    status: "SCHEDULED"
   },
   {
     id: 8,
@@ -70,38 +84,7 @@ export const mockUpcomingMatches: Match[] = [
     team1: 'Equipo O',
     team2: 'Equipo P',
     dateTime: '2024-03-23T22:30:00',
-    court: 'Cancha 2'
-  },
-  {
-    id: 9,
-    category: '4ta',
-    team1: 'Equipo Q',
-    team2: 'Equipo R',
-    dateTime: '2024-03-24T22:30:00',
-    court: 'Cancha 1'
-  },
-  {
-    id: 10,
-    category: '5ta',
-    team1: 'Equipo S',
-    team2: 'Equipo T',
-    dateTime: '2024-03-24T22:30:00',
-    court: 'Cancha 2'
-  },
-  {
-    id: 11,
-    category: '6ta',
-    team1: 'Equipo U',
-    team2: 'Equipo V',
-    dateTime: '2024-03-25T22:30:00',
-    court: 'Cancha 1'
-  },
-  {
-    id: 12,
-    category: '7ma',
-    team1: 'Equipo W',
-    team2: 'Equipo X',
-    dateTime: '2024-03-25T22:30:00',
-    court: 'Cancha 2'
+    court: 'Cancha 2',
+    status: "SCHEDULED"
   }
 ]; 

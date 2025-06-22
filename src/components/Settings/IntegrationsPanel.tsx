@@ -20,27 +20,13 @@ interface IntegrationPanelState {
 
 const integrations: Integration[] = [
   {
-    id: 'google',
-    name: 'Google',
-    description: 'Conecta con tu cuenta de Google',
-    icon: '/assets/google.png',
-    connected: true
-  },
-  {
     id: 'whatsapp',
     name: 'WhatsApp',
     description: 'Conecta con tu cuenta de WhatsApp Business',
     icon: '/assets/whatsapp_logo.png',
     connected: false,
     phoneNumber: ''
-  },
-  {
-    id: 'mercadopago',
-    name: 'Mercado Pago',
-    description: 'Procesa pagos con Mercado Pago',
-    icon: '/assets/mercado-pago.png',
-    connected: false
-  },
+  }
 ];
 
 export default function IntegrationsPanel() {
@@ -123,8 +109,8 @@ export default function IntegrationsPanel() {
       <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">Integraciones</h2>
-            <p className="text-gray-600">Conecta tus aplicaciones y servicios favoritos</p>
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Integraciones</h2>
+            <p className="text-gray-600 dark:text-gray-400">Conecta tus aplicaciones y servicios favoritos</p>
           </div>
         </div>
 

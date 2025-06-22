@@ -1,59 +1,333 @@
+import { CalendarDays, Clock, ChevronLeft, ChevronRight, ListFilter } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Spinner } from "@/components/ui/Spinner";
+import { useRouter } from "next/navigation";
+import { EmptySchedule } from "./EmptySchedule";
+
 interface Match {
-  id: number;
-  category: string;
+  id: string;
+  category_id: string;
+  category_name: string;
   team1: string;
   team2: string;
-  dateTime: string;
+  match_date: string;
   court: string;
+  status: "SCHEDULED" | "COMPLETED" | "WALKOVER";
+  team1_sets1_won: number;
+  team1_sets2_won: number;
+  team2_sets1_won: number;
+  team2_sets2_won: number;
 }
 
 interface LeagueScheduleCardProps {
-  matches: Match[];
+  leagueId?: string;
 }
 
-export function LeagueScheduleCard({ matches }: LeagueScheduleCardProps) {
+export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
+  const router = useRouter();
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        console.log('Fetching matches with leagueId:', leagueId);
+        
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+        const url = `${baseUrl}/leagues/matches/league/${leagueId || 'all'}`;
+        console.log('Fetching from URL:', url);
+
+        const response = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          console.error('Response error:', {
+            status: response.status,
+            statusText: response.statusText,
+            errorData
+          });
+          throw new Error(
+            errorData?.message || 
+            `Error al cargar los partidos: ${response.status} ${response.statusText}`
+          );
+        }
+        
+        const data = await response.json();
+        console.log('Received data:', data);
+        
+        if (!data) {
+          throw new Error('No se recibieron datos del servidor');
+        }
+
+        const pendingMatches = Array.isArray(data.pending) ? data.pending : [];
+        
+        const scheduledMatches = pendingMatches
+          .filter((match: Match) => match.status === "SCHEDULED")
+          .sort((a: Match, b: Match) => 
+            new Date(a.match_date).getTime() - new Date(b.match_date).getTime()
+          );
+        
+        console.log('Scheduled matches:', scheduledMatches);
+        setMatches(scheduledMatches);
+      } catch (err) {
+        console.error('Error in fetchMatches:', err);
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMatches();
+  }, [leagueId]);
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
-    return new Intl.DateTimeFormat('es', {  
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+    return {
+      time: new Intl.DateTimeFormat('es', {  
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date),
+      date: new Intl.DateTimeFormat('es', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+      }).format(date)
+    };
   };
 
-  // Limitamos a mostrar solo los primeros 8 partidos
-  const displayMatches = matches.slice(0, 8);
+  const totalPages = Math.ceil(matches.length / 4);
+
+  const handlePrevious = () => {
+    if (sliderRef.current && currentPage > 0) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+      sliderRef.current.scrollTo({
+        left: newPage * sliderRef.current.offsetWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleNext = () => {
+    if (sliderRef.current && currentPage < totalPages - 1) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+      sliderRef.current.scrollTo({
+        left: newPage * sliderRef.current.offsetWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (sliderRef.current) {
+      const newPage = Math.round(e.currentTarget.scrollLeft / e.currentTarget.offsetWidth);
+      setCurrentPage(newPage);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 p-4">
+        <p className="text-red-500 dark:text-red-400 text-center">
+          {error}
+        </p>
+      </div>
+    );
+  }
+
+  if (!matches.length) {
+    return <EmptySchedule />;
+  }
 
   return (
-    <div className="bg-white dark:bg-slate-800/50 rounded-lg border border-gray-200 dark:border-gray-700/50">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+    <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
+      <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-between items-center">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Próximos Partidos
         </h2>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4">
-        {displayMatches.map((match) => (
-          <div 
-            key={match.id}
-            className="bg-gray-50 dark:bg-slate-700/30 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors"
+        {leagueId && (
+          <button
+            onClick={() => router.push(`/leagues/${leagueId}/matches`)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
+                     bg-gradient-to-r from-purple-500 to-purple-600 
+                     hover:from-purple-600 hover:to-purple-700
+                     rounded-lg transition-all duration-200
+                     shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
           >
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-400/10 px-2 py-1 rounded">
-                {match.category}
-              </span>
-              <span className="text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-400/10 px-2 py-1 rounded">
-                {match.court}
-              </span>
+            <ListFilter className="w-4 h-4" />
+            Ver todos los partidos
+          </button>
+        )}
+      </div>
+      
+      <div className="relative">
+        {/* Navigation Buttons */}
+        {currentPage > 0 && (
+          <button
+            onClick={handlePrevious}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full
+                     bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm
+                     border border-gray-200 dark:border-gray-700
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-white dark:hover:bg-slate-700
+                     transition-all duration-200
+                     shadow-lg"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+        )}
+        
+        {currentPage < totalPages - 1 && (
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full
+                     bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm
+                     border border-gray-200 dark:border-gray-700
+                     text-gray-700 dark:text-gray-200
+                     hover:bg-white dark:hover:bg-slate-700
+                     transition-all duration-200
+                     shadow-lg"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        )}
+
+        {/* Cards Container */}
+        <div 
+          ref={sliderRef}
+          onScroll={handleScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {Array.from({ length: totalPages }).map((_, pageIndex) => (
+            <div 
+              key={pageIndex}
+              className="flex-none w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6 p-6 snap-start"
+            >
+              {matches.slice(pageIndex * 4, (pageIndex + 1) * 4).map((match) => (
+                <div 
+                  key={match.id}
+                  className="relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#1D283A]/80 dark:to-[#1D283A] 
+                           rounded-2xl p-5 hover:shadow-xl transition-all duration-300
+                           border border-gray-200/50 dark:border-gray-700/30
+                           backdrop-blur-sm"
+                >
+                  {/* Categoría Badge */}
+                  <div className="absolute -top-3 left-4">
+                    <span className="px-3 py-1 rounded-full text-sm font-medium
+                                 bg-gradient-to-r from-purple-500 to-purple-600 
+                                 text-white shadow-lg shadow-purple-500/30
+                                 dark:from-purple-600 dark:to-purple-700
+                                 dark:shadow-purple-900/30">
+                      {match.category_name}
+                    </span>
+                  </div>
+
+                  {/* Court Badge */}
+                  <div className="absolute -top-3 right-4">
+                    <span className="px-3 py-1 rounded-full text-xs font-medium
+                                 bg-gray-900/5 dark:bg-white/5 
+                                 text-gray-700 dark:text-gray-300
+                                 border border-gray-200/50 dark:border-gray-700/30">
+                      {match.court || 'Sin asignar'}
+                    </span>
+                  </div>
+
+                  {/* Match Content */}
+                  <div className="mt-4 space-y-6">
+                    {/* Teams */}
+                    <div className="space-y-4">
+                      {/* Team 1 */}
+                      <div className="flex items-center justify-between space-x-2">
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={match.team1}>
+                            {match.team1}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* VS Divider */}
+                      <div className="flex items-center justify-center">
+                        <div className="relative w-full">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-200 dark:border-gray-700/30"></div>
+                          </div>
+                          <div className="relative flex justify-center">
+                            <span className="px-3 text-sm font-bold bg-gradient-to-r from-emerald-500 to-emerald-600 
+                                         text-white rounded-full py-1 shadow-lg shadow-emerald-500/20
+                                         dark:shadow-emerald-900/30">
+                              VS
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Team 2 */}
+                      <div className="flex items-center justify-between space-x-2">
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate" title={match.team2}>
+                            {match.team2}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Date and Time */}
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-200/50 dark:border-gray-700/30">
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          {formatDateTime(match.match_date).time}h
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <CalendarDays className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                          {formatDateTime(match.match_date).date}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="space-y-2">
-              <p className="text-base font-medium text-gray-900 dark:text-gray-100">
-                {match.team1} vs {match.team2}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {formatDateTime(match.dateTime)}
-              </p>
-            </div>
+          ))}
+        </div>
+
+        {/* Pagination Dots */}
+        {totalPages > 1 && (
+          <div className="flex justify-center gap-2 py-4">
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <div
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  currentPage === index
+                    ? 'bg-purple-600 dark:bg-purple-500 w-4'
+                    : 'bg-gray-300 dark:bg-gray-600'
+                }`}
+              />
+            ))}
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

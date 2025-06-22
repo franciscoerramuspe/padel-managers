@@ -11,10 +11,7 @@ import {
   ArrowRightOnRectangleIcon as LogoutIcon,
   Bars3Icon,
   XMarkIcon,
-  UserIcon,
-  ChartBarIcon,
   PhotoIcon as ImageIcon,
-  BanknotesIcon,
   PlusIcon,
   TableCellsIcon,
 } from '@heroicons/react/24/outline';
@@ -47,23 +44,17 @@ const MENU_ITEMS: MenuItem[] = [
     hoverColor: 'hover:bg-blue-50'
   },
   { 
-    name: 'Categorías', 
-    href: '/categories', 
-    icon: TrophyIcon,
-    iconColor: 'text-purple-500'
-  },
-  { 
     name: 'Ligas', 
     href: '/leagues', 
     icon: TableCellsIcon,
-    iconColor: 'text-purple-500',
-    hoverColor: 'hover:bg-purple-50',
+    iconColor: 'text-green-500',
+    hoverColor: 'hover:bg-green-50',
     submenu: [
       { 
         name: 'Ver ligas', 
         href: '/leagues', 
         icon: TableCellsIcon,
-        iconColor: 'text-purple-500' 
+        iconColor: 'text-green-500' 
       },
       { 
         name: 'Crear liga', 
@@ -71,8 +62,20 @@ const MENU_ITEMS: MenuItem[] = [
         icon: PlusIcon,
         iconColor: 'text-emerald-500',
         textColor: 'text-emerald-600 font-medium'
-      }
+      },
     ]
+  },
+  { 
+    name: 'Categorías', 
+    href: '/categories', 
+    icon: TrophyIcon,
+    iconColor: 'text-blue-500'
+  },
+  { 
+    name: 'Canchas', 
+    href: '/courts', 
+    icon: TrophyIcon,
+    iconColor: 'text-purple-500'
   },
   { 
     name: 'Usuarios', 
@@ -80,13 +83,6 @@ const MENU_ITEMS: MenuItem[] = [
     icon: UsersIcon,
     iconColor: 'text-cyan-500',
     hoverColor: 'hover:bg-cyan-50'
-  },
-  { 
-    name: 'Patrocinadores', 
-    href: '/sponsors', 
-    icon: ImageIcon,
-    iconColor: 'text-pink-500',
-    hoverColor: 'hover:bg-pink-50'
   },
   { 
     name: 'Configuraciones', 
@@ -130,7 +126,7 @@ const MenuItem = ({
           <item.icon
             className={`w-4 h-4 mr-2.5 transition-colors ${item.iconColor || 'text-gray-400 dark:text-gray-500'}`}
           />
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+          <span className="text-sm font-semibold tracking-wide uppercase text-gray-700 dark:text-gray-100">
             {item.name}
           </span>
         </div>
@@ -153,7 +149,7 @@ const MenuItem = ({
               className="flex items-center p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
             >
               <subItem.icon className={`w-3.5 h-3.5 mr-2 ${subItem.iconColor || 'text-gray-400 dark:text-gray-500'}`} />
-              <span className={`text-xs ${subItem.textColor || ''}`}>
+              <span className={`text-xs font-medium tracking-wide uppercase ${subItem.textColor || ''}`}>
                 {subItem.name}
               </span>
             </Link>
@@ -184,8 +180,8 @@ const LogoCard = () => (
       </div>
     </div>
     <div className="p-3 bg-white dark:bg-gray-800">
-      <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-0.5">Club:</h3>
-      <p className="text-sm font-medium bg-gradient-to-r from-blue-600 to-blue-400 dark:from-blue-500 dark:to-blue-300 bg-clip-text text-transparent">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-0.5">Club:</h3>
+      <p className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-blue-400 dark:from-blue-500 dark:to-blue-300 bg-clip-text text-transparent">
         Recrea Padel Club
       </p>
     </div>

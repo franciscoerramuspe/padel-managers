@@ -4,6 +4,9 @@ import { ArrowLeft } from "lucide-react"
 import type { League } from "@/types/league"
 import type { Category } from "@/hooks/useCategories"
 import { getCategoryName } from "@/utils/category"
+import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 interface LeagueHeaderProps {
   league: League
@@ -16,59 +19,49 @@ export function LeagueHeader({ league, categories, onBack }: LeagueHeaderProps) 
     league.category_id && categories ? getCategoryName(league.category_id, categories) : "Categoría no especificada"
 
   return (
-    <div className="relative">
-      {/* Banner con gradiente */}
-      <div className="relative h-[300px]">
-        <div className="h-full bg-gradient-to-r from-purple-700 via-purple-600 to-purple-800 animate-gradient-x" />
-        {/* Overlay gradiente */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+    <div className="bg-white dark:bg-[#0E1629] border-b border-gray-200 dark:border-[#1D283A]">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onBack}
+              className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Volver a ligas
+            </Button>
 
-        {/* Pattern overlay for texture */}
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%23ffffff' fillOpacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            backgroundSize: "30px 30px",
-          }}
-        />
-      </div>
-
-      {/* Contenido del header */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <button
-            onClick={onBack}
-            className="mb-6 inline-flex items-center text-sm text-white/80 hover:text-white transition-colors duration-200 bg-black/20 px-3 py-1.5 rounded-full backdrop-blur-sm"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Volver a ligas
-          </button>
-
-          <div className="mb-12">
-            <h1 className="text-4xl font-bold text-white mb-6 drop-shadow-md">{league.name}</h1>
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="px-5 py-2 rounded-full bg-purple-500/40 text-purple-50 text-sm font-medium border border-purple-400/30 backdrop-blur-sm shadow-md">
+            <div className="flex items-center gap-3">
+              <Badge 
+                variant="outline" 
+                className="border-purple-200 dark:border-purple-500/20 bg-purple-100 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 px-4 py-1.5 text-sm font-medium shadow-[0_2px_10px] shadow-purple-100 dark:shadow-purple-500/20"
+              >
                 {categoryName}
-              </span>
-              <span
-                className={`px-5 py-2 rounded-full text-sm font-medium backdrop-blur-sm shadow-md ${
-                  league.status === "upcoming"
-                    ? "bg-blue-500/40 text-blue-50 border border-blue-400/30"
-                    : league.status === "in_progress"
-                      ? "bg-green-500/40 text-green-50 border border-green-400/30"
-                      : "bg-gray-500/40 text-gray-50 border border-gray-400/30"
-                }`}
+              </Badge>
+              <Badge 
+                variant="outline"
+                className={cn(
+                  "px-4 py-1.5 text-sm font-medium shadow-[0_2px_10px]",
+                  league.status === "upcoming" && "border-blue-200 dark:border-blue-500/20 bg-blue-100 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 shadow-blue-100 dark:shadow-blue-500/20",
+                  league.status === "in_progress" && "border-green-200 dark:border-green-500/20 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 shadow-green-100 dark:shadow-green-500/20",
+                  league.status === "finished" && "border-orange-200 dark:border-orange-500/20 bg-orange-100 dark:bg-orange-500/10 text-orange-700 dark:text-orange-400 shadow-orange-100 dark:shadow-orange-500/20"
+                )}
               >
                 {league.status === "upcoming"
                   ? "Próxima"
                   : league.status === "in_progress"
                     ? "En Curso"
-                    : league.status
-                      ? "Finalizada"
-                      : "Estado no definido"}
-              </span>
+                    : "Finalizada"}
+              </Badge>
             </div>
+          </div>
+
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
+              {league.name}
+            </h1>
           </div>
         </div>
       </div>
