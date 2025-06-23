@@ -135,7 +135,8 @@ export default function LeagueDetailsPage() {
                 status={league.status}
               />
               {league.status === 'Activa' && 
-               league.teams?.length === league.team_size && (
+               league.teams?.length === league.team_size &&
+               (!league.matches || league.matches.length === 0) && (
                 <div className="mt-4 flex justify-center">
                   <button
                     onClick={async () => {

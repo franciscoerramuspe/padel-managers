@@ -21,7 +21,7 @@ export function useCategories() {
       setIsLoading(true);
       const token = localStorage.getItem('adminToken');
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       }
 
       const response = await fetch(`${API_URL}/categories`, {

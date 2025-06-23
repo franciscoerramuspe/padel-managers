@@ -17,7 +17,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     try {
       const token = localStorage.getItem('adminToken');
       if (!token) {
-        throw new Error('No token found');
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
@@ -27,7 +27,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        throw new Error('Invalid token');
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       }
 
       const data = await response.json();
