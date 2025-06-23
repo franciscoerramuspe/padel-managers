@@ -13,6 +13,7 @@ import { useStandings } from "@/hooks/useStandings"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
 import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
+import { useToast } from "@/components/ui/use-toast"
 import { 
   CalendarDays, 
   Clock, 
@@ -22,10 +23,12 @@ import {
   Users2
 } from 'lucide-react';
 import { LeagueTeams } from '@/components/Leagues/LeagueTeams';
+import { supabase } from '@/lib/supabase';
 
 export default function LeagueDetailsPage() {
   const params = useParams()
   const router = useRouter()
+  const { toast } = useToast()
   const leagueId = params.id as string
 
   const { league, isLoading: isLoadingLeague, error: leagueError } = useLeague(leagueId)
@@ -131,6 +134,67 @@ export default function LeagueDetailsPage() {
                 maxTeams={league.team_size}
                 status={league.status}
               />
+              {league.status === 'Activa' && 
+               league.teams?.length === league.team_size && (
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const adminToken = localStorage.getItem('adminToken');
+                        
+                        if (!adminToken) {
+                          toast({
+                            variant: "destructive",
+                            title: "Error de autenticación",
+                            description: "No hay sesión de administrador activa"
+                          });
+                          return;
+                        }
+
+                        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/generateStandings/${leagueId}`, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${adminToken}`
+                          },
+                          body: JSON.stringify({ rounds: 1 })
+                        });
+
+                        if (!response.ok) {
+                          const error = await response.json();
+                          console.error('Error response:', error);
+                          toast({
+                            variant: "destructive",
+                            title: "Error al generar la liga",
+                            description: error.message || "No se pudo generar el calendario y standings"
+                          });
+                          return;
+                        }
+
+                        const data = await response.json();
+                        console.log('Success:', data);
+                        toast({
+                          title: "¡Liga generada con éxito!",
+                          description: "Se han generado el calendario y las standings correctamente",
+                          className: "bg-green-500 text-white"
+                        });
+                        router.refresh();
+                      } catch (error) {
+                        console.error('Error generando la liga:', error);
+                        toast({
+                          variant: "destructive",
+                          title: "Error inesperado",
+                          description: "Ocurrió un error al generar la liga"
+                        });
+                      }
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    <Trophy className="w-5 h-5" />
+                    Generar partidos de la liga
+                  </button>
+                </div>
+              )}
             </CardContent>
           </Card>
 

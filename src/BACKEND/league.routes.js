@@ -5,6 +5,14 @@ import { verifyAdmin } from '../middlewares/admin.middleware.js'
 
 const router = Router()
 
+// Add CORS headers
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
 router.post('/createLeague', verifyToken, verifyAdmin, createLeague)
 router.get('/all', verifyToken, getAllLeagues);
 router.get('/byId/:id', verifyToken, getLeagueById);
@@ -13,10 +21,10 @@ router.get('/matches/user/:userId', verifyToken, getMatchesByUserId);
 router.get('/matches/round/:leagueId', verifyToken, getMatchesByRound);
 router.get('/matches/league/:leagueId', getMatchesByLeague);
 router.post('/join', verifyToken, joinLeague);
-router.post('/generateStandings/:uuid', generateStandings);
+router.post('/generateStandings/:uuid', verifyToken, verifyAdmin, generateStandings);
 router.get('/standings/:league_id', verifyToken, getStandings);
 router.get('/standing/:id', verifyToken, getStandingById);
-router.post('/match/result/:id', verifyToken, updateMatchResult);
+router.post('/match/result/:id', updateMatchResult);
 router.put('/match/schedule/:id', verifyToken, verifyAdmin, updateMatchSchedule);
 
 export default router 
