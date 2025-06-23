@@ -375,14 +375,17 @@ export async function joinLeague(req, res) {
 }
 
 export async function generateStandings(req, res) {
+  console.log('Starting generateStandings with params:', { league_id: req.params.uuid, body: req.body });
   const league_id = req.params.uuid;
   const rounds = parseInt(req.body.rounds) || 1;
 
   if (rounds !== 1 && rounds !== 2) {
+    console.log('Invalid rounds value:', rounds);
     return res.status(400).json({ message: 'El número de rondas debe ser 1 o 2' });
   }
 
   // Verificar si ya existen standings para esta liga
+  console.log('Checking for existing standings...');
   const { data: existingStandings, error: checkStandingsError } = await supabase
     .from('league_standings')
     .select('id')
@@ -390,14 +393,16 @@ export async function generateStandings(req, res) {
     .limit(1);
 
   if (checkStandingsError) {
-    console.error('Error al verificar standings existentes:', checkStandingsError);
+    console.error('Error checking existing standings:', checkStandingsError);
     return res.status(500).json({ message: checkStandingsError.message });
   }
 
   if (existingStandings && existingStandings.length > 0) {
+    console.log('Standings already exist for this league');
     return res.status(409).json({ message: 'Los standings y partidos para esta liga ya han sido generados.' });
   }
 
+  console.log('Fetching league and category information...');
   const { data: league, error: leagueError } = await supabase
     .from('leagues')
     .select('*, category:category_id(*)')
@@ -405,20 +410,35 @@ export async function generateStandings(req, res) {
     .single();
 
   if (leagueError || !league) {
+    console.error('Error fetching league:', leagueError);
     return res.status(404).json({ message: 'Liga no encontrada' });
   }
 
+  console.log('League data:', {
+    id: league.id,
+    name: league.name,
+    category: league.category,
+    play_day: league.category.play_day,
+    play_time: league.category.play_time
+  });
+
+  console.log('Fetching league teams...');
   const { data: leagueTeams, error: teamsError } = await supabase
     .from('league_teams')
     .select('id, team_id')
     .eq('league_id', league_id);
 
   if (teamsError) {
+    console.error('Error fetching teams:', teamsError);
     return res.status(500).json({ message: teamsError.message });
   }
+
   if (!leagueTeams.length) {
+    console.log('No teams found in league');
     return res.status(400).json({ message: 'No hay equipos inscritos en la liga' });
   }
+
+  console.log(`Found ${leagueTeams.length} teams in league`);
 
   const leagueTeamIdMap = new Map();
   leagueTeams.forEach(lt => {
@@ -426,8 +446,10 @@ export async function generateStandings(req, res) {
   });
 
   const teamIds = leagueTeams.map(lt => lt.team_id);
+  console.log('Team IDs:', teamIds);
 
   // Crear standings iniciales
+  console.log('Creating initial standings...');
   const standings = teamIds.map(team_id => ({
     league_id,
     team_id,
@@ -449,6 +471,7 @@ export async function generateStandings(req, res) {
     .insert(standings);
 
   if (standingsError) {
+    console.error('Error creating standings:', standingsError);
     return res.status(500).json({ message: standingsError.message });
   }
 
@@ -457,7 +480,10 @@ export async function generateStandings(req, res) {
   const playTime = league.category.play_time;
   const leagueStartDate = league.start_date;
 
+  console.log('Schedule parameters:', { playDay, playTime, leagueStartDate });
+
   if (!playDay || !playTime) {
+    console.error('Missing play_day or play_time:', { playDay, playTime });
     return res.status(400).json({ message: 'La categoría de la liga debe tener un día y hora de juego definidos.' });
   }
 
@@ -497,8 +523,10 @@ export async function generateStandings(req, res) {
   }
 
   // Generar el calendario
+  console.log('Generating match schedule...');
   const schedule = generateRoundRobinSchedule([...teamIds]);
-  
+  console.log('Generated schedule:', schedule);
+
   // Preparar las fechas y horarios
   let currentMatchDate = getNextDayOccurrence(leagueStartDate, playDay, false);
   let currentMatchTime = formatTime(playTime);
@@ -506,8 +534,11 @@ export async function generateStandings(req, res) {
   const matches = [];
   let matchNumber = 1;
 
+  console.log('Initial match date and time:', { currentMatchDate, currentMatchTime });
+
   // Generar los partidos para cada ronda
   schedule.forEach((round, roundIndex) => {
+    console.log(`Processing round ${roundIndex + 1}`);
     round.forEach(([team1Id, team2Id]) => {
       const leagueTeam1Id = leagueTeamIdMap.get(team1Id);
       const leagueTeam2Id = leagueTeamIdMap.get(team2Id);
@@ -535,19 +566,21 @@ export async function generateStandings(req, res) {
         category_id: league.category_id
       });
 
-      // Actualizar la hora para el próximo partido del mismo día
       currentMatchTime = addHoursToTime(currentMatchTime, TIME_INCREMENT_HOURS);
     });
 
+    console.log(`Generated ${round.length} matches for round ${roundIndex + 1}`);
+
     // Si es la segunda ronda, generar los partidos de vuelta
     if (rounds === 2) {
+      console.log('Generating return matches for round', roundIndex + 1);
       round.forEach(([team1Id, team2Id]) => {
         const leagueTeam1Id = leagueTeamIdMap.get(team1Id);
         const leagueTeam2Id = leagueTeamIdMap.get(team2Id);
 
         matches.push({
           league_id,
-          league_team1_id: leagueTeam2Id, // Invertir el orden para la vuelta
+          league_team1_id: leagueTeam2Id,
           league_team2_id: leagueTeam1Id,
           team1_sets1_won: 0,
           team2_sets1_won: 0,
@@ -572,29 +605,35 @@ export async function generateStandings(req, res) {
       });
     }
 
-    // Actualizar la fecha para la próxima ronda
     currentMatchDate = getNextDayOccurrence(currentMatchDate, playDay, true);
     currentMatchTime = formatTime(playTime);
     matchNumber++;
   });
 
+  console.log(`Total matches generated: ${matches.length}`);
+
+  console.log('Inserting matches into database...');
   const { error: matchesError } = await supabase
     .from('league_matches')
     .insert(matches);
 
   if (matchesError) {
+    console.error('Error creating matches:', matchesError);
     return res.status(500).json({ message: matchesError.message });
   }
 
+  console.log('Updating league status...');
   const { error: updateError } = await supabase
     .from('leagues')
     .update({ status: LEAGUE_STATUS.ACTIVA })
     .eq('id', league_id);
 
   if (updateError) {
+    console.error('Error updating league status:', updateError);
     return res.status(500).json({ message: updateError.message });
   }
 
+  console.log('Successfully completed generateStandings');
   res.status(200).json({
     message: 'Standings y partidos generados exitosamente',
     standings,

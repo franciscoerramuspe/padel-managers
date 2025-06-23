@@ -170,10 +170,36 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
 
 // Componente de tarjeta extraído para mejor organización
 function LeagueCard({ category, league }: { category: Category; league: League }) {
-  const registeredTeams = league.teams ? league.teams.length : 0;
+  const registeredTeams = league.registeredTeams || 0;
   const availableSpots = league.team_size - registeredTeams;
   const registrationProgress = (registeredTeams / league.team_size) * 100;
-  const isRegistrationOpen = league.status === 'Inscribiendo';
+  
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case 'Inscribiendo':
+        return {
+          text: 'Inscripciones Abiertas',
+          style: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300'
+        };
+      case 'Activa':
+        return {
+          text: 'En Curso',
+          style: 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300'
+        };
+      case 'Finalizada':
+        return {
+          text: 'Finalizada',
+          style: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+        };
+      default:
+        return {
+          text: 'Inscripciones Cerradas',
+          style: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+        };
+    }
+  };
+
+  const statusInfo = getStatusStyle(league.status);
 
   return (
     <Card className="bg-white dark:bg-slate-800/50 border-gray-200 dark:border-gray-700/50 overflow-hidden">
@@ -189,13 +215,9 @@ function LeagueCard({ category, league }: { category: Category; league: League }
             </span>
           </div>
           <span 
-            className={`px-3 py-1 rounded-full text-xs font-medium ${
-              isRegistrationOpen 
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/30'
-                : 'bg-gray-50 dark:bg-gray-500/10 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800/30'
-            }`}
+            className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.style}`}
           >
-            {isRegistrationOpen ? 'Inscripciones Abiertas' : 'Inscripciones Cerradas'}
+            {statusInfo.text}
           </span>
         </div>
         <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{league.name}</h4>

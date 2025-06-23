@@ -149,7 +149,7 @@ export function useLeagueForm() {
       setIsSubmitting(true);
       const token = localStorage.getItem('adminToken');
       if (!token) {
-        throw new Error('No authentication token found');
+        throw new Error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
       }
 
       // Usando horas enteras: 22:00 a 24:00 (medianoche)

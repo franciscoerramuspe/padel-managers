@@ -6,7 +6,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
 import { useLeague } from "@/hooks/useLeague"
 import { useCategories } from "@/hooks/useCategories"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { ArrowLeft, CalendarDays, Clock, Filter, ListFilter, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowLeft, CalendarDays, Clock, Filter, ListFilter, ChevronLeft, ChevronRight, CheckCircle, XCircle, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { LeagueMatch } from "@/types/league"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface Match {
   id: string;
@@ -56,6 +57,7 @@ export default function LeagueMatchesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [selectedRound, setSelectedRound] = useState<string>("all")
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1)
@@ -339,146 +341,178 @@ export default function LeagueMatchesPage() {
               <CardTitle className="text-gray-900 dark:text-white">Partidos de {league.name}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-6 mb-6">
-                <div className="flex gap-2 flex-wrap">
-                  <Badge variant="outline" className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300">
-                    {completed} Completados
-                  </Badge>
-                  <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-                    {scheduled} Programados
-                  </Badge>
-                  {walkover > 0 && (
-                    <Badge variant="outline" className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300">
-                      {walkover} W.O.
-                    </Badge>
-                  )}
-                </div>
-                
-                <div className="flex items-center gap-3 mt-4 md:mt-0">
-                  <ListFilter className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <div className="flex flex-col gap-6">
+                {/* Stats and Filters Row */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
+                  <div className="flex gap-3">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-green-50/50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-lg">
+                      <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                      <span className="text-sm font-medium text-green-700 dark:text-green-300">{completed} Completados</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-50/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg">
+                      <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{scheduled} Programados</span>
+                    </div>
+                    {walkover > 0 && (
+                      <div className="flex items-center gap-2 px-4 py-2 bg-red-50/50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-lg">
+                        <XCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                        <span className="text-sm font-medium text-red-700 dark:text-red-300">{walkover} W.O.</span>
+                      </div>
+                    )}
+                  </div>
+
                   <Select
                     value={statusFilter}
                     onValueChange={setStatusFilter}
                   >
-                    <SelectTrigger className="w-[180px] bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                      <SelectValue placeholder="Filtrar por estado" />
+                    <SelectTrigger className="w-[180px] bg-primary/10 hover:bg-primary/20 transition-colors border-primary/20">
+                      <div className="flex items-center gap-2">
+                        <Filter className="w-4 h-4" />
+                        <SelectValue placeholder="Filtrar por estado" />
+                      </div>
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                      <SelectItem value="all">Todos los partidos</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los estados</SelectItem>
                       <SelectItem value="COMPLETED">Completados</SelectItem>
                       <SelectItem value="SCHEDULED">Programados</SelectItem>
                       <SelectItem value="WALKOVER">W.O.</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
 
-              {isLoading ? (
-                <div className="flex justify-center items-center py-12">
-                  <LoadingSpinner size="lg" showText />
-                </div>
-              ) : error ? (
-                <div className="text-center py-12">
-                  <p className="text-red-500 dark:text-red-400">{error}</p>
-                </div>
-              ) : filteredMatches.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 dark:text-gray-400">No hay partidos que mostrar</p>
-                </div>
-              ) : (
-                <>
-                  <div className="grid gap-4">
-                    {currentMatches.map((match) => (
-                      <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
-                        <div className="p-6">
-                          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                {getStatusBadge(match.status)}
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {new Date(match.match_date).toLocaleDateString()}
-                                </span>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                  {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                                <div className="text-right md:text-left">
-                                  <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
-                                  {match.status === 'COMPLETED' && (
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                      {match.team1_sets1_won + match.team1_sets2_won} sets
-                                    </p>
-                                  )}
+                {/* Tabs */}
+                <Tabs defaultValue="all" className="w-full" value={selectedRound} onValueChange={setSelectedRound}>
+                  <TabsList className="w-full h-auto p-1 bg-background/50 dark:bg-background/10 border-b border-border">
+                    <TabsTrigger 
+                      value="all" 
+                      className="data-[state=active]:border-primary data-[state=active]:text-primary border-b-2 border-transparent rounded-none px-6 py-2 transition-colors"
+                    >
+                      Todas las fechas
+                    </TabsTrigger>
+                    {Array.from(new Set(matches.map(match => match.match_number))).sort((a, b) => a - b).map((round) => (
+                      <TabsTrigger 
+                        key={round} 
+                        value={round.toString()}
+                        className="data-[state=active]:border-primary data-[state=active]:text-primary border-b-2 border-transparent rounded-none px-6 py-2 transition-colors"
+                      >
+                        Fecha {round}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+
+                  <TabsContent value="all" className="mt-6">
+                    <div className="grid gap-4">
+                      {currentMatches.map((match) => (
+                        <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
+                          <div className="p-6">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  {getStatusBadge(match.status)}
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    {new Date(match.match_date).toLocaleDateString()}
+                                  </span>
+                                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                                    {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
                                 </div>
-                                <div className="flex justify-center">
-                                  <Button
-                                    variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
-                                    onClick={() => handleMatchClick(match)}
-                                    disabled={isUpdating}
-                                    className={match.status === 'COMPLETED' 
-                                      ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
-                                      : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
-                                  >
-                                    {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
-                                  </Button>
-                                </div>
-                                <div className="text-left md:text-right">
-                                  <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
-                                  {match.status === 'COMPLETED' && (
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                                      {match.team2_sets1_won + match.team2_sets2_won} sets
-                                    </p>
-                                  )}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                  <div className="text-right md:text-left">
+                                    <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
+                                    {match.status === 'COMPLETED' && (
+                                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {match.team1_sets1_won + match.team1_sets2_won} sets
+                                      </p>
+                                    )}
+                                  </div>
+                                  <div className="flex justify-center">
+                                    <Button
+                                      variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
+                                      onClick={() => handleMatchClick(match)}
+                                      disabled={isUpdating}
+                                      className={match.status === 'COMPLETED' 
+                                        ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
+                                        : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
+                                    >
+                                      {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
+                                    </Button>
+                                  </div>
+                                  <div className="text-left md:text-right">
+                                    <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
+                                    {match.status === 'COMPLETED' && (
+                                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {match.team2_sets1_won + match.team2_sets2_won} sets
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="w-8 h-8 p-0"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "outline"}
-                          size="icon"
-                          onClick={() => handlePageChange(page)}
-                          className={`w-8 h-8 p-0 ${
-                            currentPage === page
-                              ? "bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white"
-                              : ""
-                          }`}
-                        >
-                          {page}
-                        </Button>
+                        </Card>
                       ))}
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="w-8 h-8 p-0"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
                     </div>
-                  )}
-                </>
-              )}
+                  </TabsContent>
+
+                  {Array.from(new Set(matches.map(match => match.match_number))).sort((a, b) => a - b).map((round) => (
+                    <TabsContent key={round} value={round.toString()} className="mt-6">
+                      <div className="grid gap-4">
+                        {matches
+                          .filter(match => match.match_number === round && (statusFilter === 'all' || match.status === statusFilter))
+                          .map((match) => (
+                            <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
+                              <div className="p-6">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-2">
+                                      {getStatusBadge(match.status)}
+                                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        {new Date(match.match_date).toLocaleDateString()}
+                                      </span>
+                                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                      <div className="text-right md:text-left">
+                                        <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
+                                        {match.status === 'COMPLETED' && (
+                                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            {match.team1_sets1_won + match.team1_sets2_won} sets
+                                          </p>
+                                        )}
+                                      </div>
+                                      <div className="flex justify-center">
+                                        <Button
+                                          variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
+                                          onClick={() => handleMatchClick(match)}
+                                          disabled={isUpdating}
+                                          className={match.status === 'COMPLETED' 
+                                            ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
+                                            : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
+                                        >
+                                          {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
+                                        </Button>
+                                      </div>
+                                      <div className="text-left md:text-right">
+                                        <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
+                                        {match.status === 'COMPLETED' && (
+                                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            {match.team2_sets1_won + match.team2_sets2_won} sets
+                                          </p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
+                      </div>
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              </div>
             </CardContent>
           </Card>
         </div>

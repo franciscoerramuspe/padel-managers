@@ -32,6 +32,7 @@ export interface League {
       name: string;
     };
   }[];
+  matches?: LeagueMatch[];
 }
 
 export interface LeagueTeam {
