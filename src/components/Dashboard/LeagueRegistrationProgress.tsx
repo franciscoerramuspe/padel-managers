@@ -7,6 +7,7 @@ import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { EmptyLeagues } from './EmptyLeagues';
 import { CategoryFilterTabs } from './CategoryFilterTabs';
+import Image from 'next/image';
 
 interface LeagueRegistrationProgressProps {
   leagues: League[];
@@ -232,6 +233,19 @@ function LeagueCard({ category, league }: { category: Category; league: League }
         </div>
         <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{league.name}</h4>
       </div>
+
+      {/* Imagen de la liga */}
+      {league.image_url && (
+        <div className="relative aspect-square w-full max-h-[200px]">
+          <Image
+            src={league.image_url}
+            alt={league.name}
+            fill
+            className="object-cover rounded-md"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </div>
+      )}
 
       {/* Contenido */}
       <div className="p-4 space-y-4">

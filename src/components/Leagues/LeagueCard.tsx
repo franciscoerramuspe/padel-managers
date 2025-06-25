@@ -1,5 +1,6 @@
 import { Calendar, Users, Clock } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { League } from '@/types/league';
 import { Category } from '@/hooks/useCategories';
 import { getCategoryName } from '@/utils/category';
@@ -51,6 +52,19 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
             {getStatusText(league.status)}
           </span>
         </div>
+
+        {/* Imagen de la liga */}
+        {league.image_url && (
+          <div className="relative aspect-square w-full mb-6">
+            <Image
+              src={league.image_url}
+              alt={league.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
+        )}
 
         {/* Encabezado */}
         <div className="mb-6">

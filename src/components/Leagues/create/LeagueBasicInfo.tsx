@@ -5,20 +5,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Category } from '@/hooks/useCategories';
 import { cn } from "@/lib/utils";
-import { Info } from "lucide-react";
+import { Info, ImageIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { LeagueFormData } from '@/hooks/useLeagueForm';
 
 interface LeagueBasicInfoProps {
-  formData: {
-    name: string;
-    categories: string[];
-    description: string;
-    inscription_cost: number;
-    team_size: number;
-  };
-  setFormData: (data: any) => void;
+  formData: LeagueFormData;
+  setFormData: (data: LeagueFormData) => void;
   categories: Category[];
-  onSubmit: (data: any) => void;
+  onSubmit: (data: LeagueFormData) => void;
 }
 
 function LabelWithTooltip({
@@ -55,6 +50,7 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
     categories: false,
     team_size: false
   });
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleSubmit = () => {
     const newErrors = {
@@ -83,6 +79,22 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
       : [...currentCategories, categoryId];
     
     setFormData({ ...formData, categories: newCategories });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // Show error toast or message
+        return;
+      }
+      setFormData({ ...formData, image: file });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   if (!Array.isArray(categories) || categories.length === 0) {
@@ -197,6 +209,60 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
             {errors.description && (
               <p className="text-sm text-red-500 mt-1">La descripción es requerida</p>
             )}
+          </div>
+
+          <div>
+            <LabelWithTooltip
+              label="Imagen de la Liga"
+              tooltip="Imagen representativa de la liga"
+            />
+            <div className="mt-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
+              <div className="flex flex-col items-center">
+                {previewUrl ? (
+                  <div className="relative group">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="h-40 w-40 object-contain rounded-lg"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, image: null });
+                          setPreviewUrl(null);
+                        }}
+                        className="text-white hover:text-red-400"
+                      >
+                        Cambiar imagen
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label className="w-full cursor-pointer">
+                    <div className="flex flex-col items-center">
+                      <ImageIcon className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                        Click para subir o arrastrar imagen
+                      </p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        PNG, JPG (max. 5MB)
+                      </p>
+                      <p className="text-xs text-purple-500 dark:text-purple-400 mt-2 text-center">
+                        Recomendado: 1080x1080px (formato cuadrado)<br/>
+                        Esto asegurará que la imagen se vea perfecta en todas las cards
+                      </p>
+                    </div>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">
