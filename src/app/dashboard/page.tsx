@@ -8,7 +8,6 @@ import { LeagueStatsCard } from '@/components/Dashboard/LeagueStatsCard';
 import { LeagueScheduleCard } from '@/components/Dashboard/LeagueScheduleCard';
 import { CategoryStandings } from '@/components/Dashboard/CategoryStandings';
 import { LeagueRegistrationProgress } from '@/components/Dashboard/LeagueRegistrationProgress';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { ChevronDown } from 'lucide-react';
@@ -38,12 +37,6 @@ export default function Dashboard() {
       setSelectedCategory(categories[0].id);
     }
   }, [categories, isLoadingCategories, selectedCategory]);
-
-  // Memoizar el nombre de la categoría seleccionada
-  const selectedCategoryName = useMemo(() => 
-    categories.find(cat => cat.id === selectedCategory)?.name || '',
-    [categories, selectedCategory]
-  );
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-gray-900">
@@ -177,24 +170,13 @@ export default function Dashboard() {
               </Collapsible.Trigger>
               <Collapsible.Content>
                 <CardContent className="p-6">
-                  <Tabs defaultValue={selectedCategory} onValueChange={setSelectedCategory}>
-                    <TabsList className="mb-4">
-                      {categories.map((category) => (
-                        <TabsTrigger
-                          key={category.id}
-                          value={category.id}
-                          className="text-sm"
-                        >
-                          {category.name}
-                        </TabsTrigger>
-                      ))}
-                    </TabsList>
-                    <CategoryStandings
-                      category={selectedCategoryName}
-                      standings={standings}
-                      isLoading={isLoadingStandings}
-                    />
-                  </Tabs>
+                  <CategoryStandings
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                    standings={standings}
+                    isLoading={isLoadingStandings}
+                  />
                 </CardContent>
               </Collapsible.Content>
             </Card>

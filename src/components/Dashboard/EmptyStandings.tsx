@@ -7,11 +7,6 @@ interface EmptyStandingsProps {
 export function EmptyStandings({ message = "No hay posiciones disponibles en este momento." }: EmptyStandingsProps) {
   return (
     <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 p-4">
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Tabla de Posiciones
-        </h2>
-      </div>
       <div className="flex flex-col items-center justify-center py-6 px-4">
         <div className="relative w-48 h-48 mb-4">
           <Image
