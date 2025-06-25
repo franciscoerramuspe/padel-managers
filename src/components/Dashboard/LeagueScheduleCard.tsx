@@ -48,9 +48,15 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
         const url = `${baseUrl}/leagues/matches/league/${leagueId || 'all'}`;
         console.log('Fetching from URL:', url);
 
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
         const response = await fetch(url, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           }
         });
 
@@ -74,9 +80,10 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
           throw new Error('No se recibieron datos del servidor');
         }
 
-        const pendingMatches = Array.isArray(data.pending) ? data.pending : [];
+        // El backend devuelve { completed: [], pending: [] }
+        const allMatches = [...(data.pending || []), ...(data.completed || [])];
         
-        const scheduledMatches = pendingMatches
+        const scheduledMatches = allMatches
           .filter((match: Match) => match.status === "SCHEDULED")
           .sort((a: Match, b: Match) => 
             new Date(a.match_date).getTime() - new Date(b.match_date).getTime()

@@ -37,7 +37,7 @@ export function useLeagueSchedule(leagueId?: string) {
         console.log('Fetching matches with leagueId:', leagueId);
         
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-        const url = `${baseUrl}/leagues/matches/league/${leagueId}`;
+        const url = `${baseUrl}/leagues/matches/round/${leagueId}`;
         console.log('Fetching from URL:', url);
 
         const token = localStorage.getItem('adminToken');
@@ -72,10 +72,9 @@ export function useLeagueSchedule(leagueId?: string) {
           throw new Error('No se recibieron datos del servidor');
         }
 
-        // El backend devuelve { completed: [], pending: [] }
-        const allMatches = [...(data.pending || []), ...(data.completed || [])];
+        const pendingMatches = Array.isArray(data.pending) ? data.pending : [];
         
-        const scheduledMatches = allMatches
+        const scheduledMatches = pendingMatches
           .filter((match: Match) => match.status === "SCHEDULED")
           .sort((a: Match, b: Match) => 
             new Date(a.match_date).getTime() - new Date(b.match_date).getTime()

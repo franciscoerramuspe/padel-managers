@@ -221,7 +221,7 @@ function LeagueCard({ category, league }: { category: Category; league: League }
               CATEGORÍA
             </span>
             <span className="text-sm font-semibold text-gray-900 dark:text-white">
-              {category.name}
+              {category?.name || 'Categoría no disponible'}
             </span>
           </div>
           <span 
