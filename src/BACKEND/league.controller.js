@@ -15,13 +15,20 @@ export async function createLeague(req, res) {
     courts_available = 2,
     time_slots, 
     team_size, 
-    inscription_cost 
+    inscription_cost,
+    image_url,
+    description
   } = req.body;
 
   // Validaciones
   if (!name || !Array.isArray(categories) || categories.length === 0) {
     return res.status(400).json({ 
       message: 'Nombre de la liga y al menos una categoría son requeridos' 
+    });
+  }
+  if (!description) {
+    return res.status(400).json({
+      message: 'La descripción de la liga es requerida'
     });
   }
   if (courts_available < 1) {
@@ -66,7 +73,9 @@ export async function createLeague(req, res) {
     courts_available,
     team_size,
     time_slots,
-    inscription_cost
+    inscription_cost,
+    image_url,
+    description
   }));
 
   const { data, error } = await supabase

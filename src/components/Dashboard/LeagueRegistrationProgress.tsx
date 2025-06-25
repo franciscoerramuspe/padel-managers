@@ -6,6 +6,7 @@ import { Category } from '@/hooks/useCategories';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { EmptyLeagues } from './EmptyLeagues';
+import { CategoryFilterTabs } from './CategoryFilterTabs';
 
 interface LeagueRegistrationProgressProps {
   leagues: League[];
@@ -14,6 +15,7 @@ interface LeagueRegistrationProgressProps {
 
 export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegistrationProgressProps) {
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // Si no hay ligas, mostrar el componente EmptyLeagues
@@ -21,21 +23,14 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
     return <EmptyLeagues />;
   }
 
-  // Agrupar ligas por categoría
-  const leaguesByCategory = categories.reduce((acc, category) => {
-    acc[category.id] = leagues.filter(league => league.category_id === category.id);
-    return acc;
-  }, {} as Record<string, League[]>);
-
-  // Crear un array plano de todas las ligas con su categoría
-  const allLeagueCards = categories.flatMap((category) => {
-    const categoryLeagues = leaguesByCategory[category.id] || [];
-    return categoryLeagues.map(league => ({ category, league }));
-  });
+  // Filtrar ligas por categoría seleccionada
+  const filteredLeagues = selectedCategory === 'all'
+    ? leagues
+    : leagues.filter(league => league.category_id === selectedCategory);
 
   const CARDS_PER_PAGE = 3;
-  const totalPages = Math.ceil(allLeagueCards.length / CARDS_PER_PAGE);
-  const showSlider = allLeagueCards.length > CARDS_PER_PAGE;
+  const totalPages = Math.ceil(filteredLeagues.length / CARDS_PER_PAGE);
+  const showSlider = filteredLeagues.length > CARDS_PER_PAGE;
 
   const handlePrevious = () => {
     if (sliderRef.current && currentPage > 0) {
@@ -66,14 +61,29 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
     }
   };
 
+  if (filteredLeagues.length === 0) {
+    return (
+      <div className="space-y-6">
+        <CategoryFilterTabs
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          className="px-0"
+        />
+
+        <EmptyLeagues />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          Progreso de Inscripciones
-        </h3>
-      </div>
+      <CategoryFilterTabs
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        className="px-0"
+      />
 
       <div className="relative">
         {/* Navigation Buttons */}
@@ -125,12 +135,12 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
                 key={pageIndex}
                 className="flex-none w-full grid grid-cols-1 md:grid-cols-3 gap-4 snap-start"
               >
-                {allLeagueCards
+                {filteredLeagues
                   .slice(pageIndex * CARDS_PER_PAGE, (pageIndex + 1) * CARDS_PER_PAGE)
-                  .map(({ category, league }) => (
+                  .map((league) => (
                     <LeagueCard 
                       key={league.id} 
-                      category={category} 
+                      category={categories.find(cat => cat.id === league.category_id)!} 
                       league={league} 
                     />
                   ))}
@@ -138,10 +148,10 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
             ))
           ) : (
             // Grid view
-            allLeagueCards.map(({ category, league }) => (
+            filteredLeagues.map((league) => (
               <LeagueCard 
                 key={league.id} 
-                category={category} 
+                category={categories.find(cat => cat.id === league.category_id)!} 
                 league={league} 
               />
             ))

@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import { useRouter } from "next/navigation";
 import { EmptySchedule } from "./EmptySchedule";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCategories } from "@/hooks/useCategories";
 
 interface Match {
   id: string;
@@ -26,9 +28,12 @@ interface LeagueScheduleCardProps {
 export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
   const router = useRouter();
   const [matches, setMatches] = useState<Match[]>([]);
+  const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { categories, isLoading: isLoadingCategories } = useCategories();
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,6 +95,20 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
     fetchMatches();
   }, [leagueId]);
 
+  // Efecto para filtrar los partidos cuando cambia la categoría seleccionada
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredMatches(matches);
+    } else {
+      const filtered = matches.filter(match => match.category_id === selectedCategory);
+      setFilteredMatches(filtered);
+    }
+    setCurrentPage(0); // Reset page when changing category
+    if (sliderRef.current) {
+      sliderRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, [selectedCategory, matches]);
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     return {
@@ -105,7 +124,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
     };
   };
 
-  const totalPages = Math.ceil(matches.length / 4);
+  const totalPages = Math.ceil(filteredMatches.length / 4);
 
   const handlePrevious = () => {
     if (sliderRef.current && currentPage > 0) {
@@ -136,7 +155,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isLoadingCategories) {
     return (
       <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
         <Spinner size="lg" />
@@ -158,13 +177,50 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
     return <EmptySchedule />;
   }
 
+  if (filteredMatches.length === 0) {
+    return (
+      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
+        {/* Category Tabs */}
+        <div className="px-6 pt-4">
+          <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="all" className="text-sm">
+                Todas las categorías
+              </TabsTrigger>
+              {categories.map((category) => (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id}
+                  className="text-sm"
+                >
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <div className="w-24 h-24 mb-4 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+            <CalendarDays className="w-12 h-12 text-purple-500 dark:text-purple-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No hay partidos programados
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 max-w-sm">
+            {selectedCategory === 'all' 
+              ? 'No hay partidos programados en ninguna categoría.'
+              : `No hay partidos programados para la categoría ${categories.find(cat => cat.id === selectedCategory)?.name || ''}.`}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Próximos Partidos
-        </h2>
-        {leagueId && (
+      {leagueId && (
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-end">
           <button
             onClick={() => router.push(`/leagues/${leagueId}/matches`)}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
@@ -176,7 +232,27 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
             <ListFilter className="w-4 h-4" />
             Ver todos los partidos
           </button>
-        )}
+        </div>
+      )}
+
+      {/* Category Tabs */}
+      <div className="px-6 pt-4">
+        <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+          <TabsList className="mb-4">
+            <TabsTrigger value="all" className="text-sm">
+              Todas las categorías
+            </TabsTrigger>
+            {categories.map((category) => (
+              <TabsTrigger
+                key={category.id}
+                value={category.id}
+                className="text-sm"
+              >
+                {category.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
       
       <div className="relative">
@@ -223,7 +299,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
               key={pageIndex}
               className="flex-none w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6 p-6 snap-start"
             >
-              {matches.slice(pageIndex * 4, (pageIndex + 1) * 4).map((match) => (
+              {filteredMatches.slice(pageIndex * 4, (pageIndex + 1) * 4).map((match) => (
                 <div 
                   key={match.id}
                   className="relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-[#1D283A]/80 dark:to-[#1D283A] 
