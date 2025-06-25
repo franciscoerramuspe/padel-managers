@@ -8,6 +8,7 @@ import { useCategories } from "@/hooks/useCategories";
 
 interface Match {
   id: string;
+  league_id: string;
   category_id: string;
   category_name: string;
   team1: string;
@@ -189,22 +190,24 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
       <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
         {/* Category Tabs */}
         <div className="px-6 pt-4">
-          <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="all" className="text-sm">
-                Todas las categorías
-              </TabsTrigger>
-              {categories.map((category) => (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.id}
-                  className="text-sm"
-                >
-                  {category.name}
+          <div className="flex justify-between items-center mb-4">
+            <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+              <TabsList>
+                <TabsTrigger value="all" className="text-sm">
+                  Todas las categorías
                 </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                {categories.map((category) => (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id}
+                    className="text-sm"
+                  >
+                    {category.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
         <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -226,40 +229,39 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   return (
     <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-      {leagueId && (
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-end">
-          <button
-            onClick={() => router.push(`/leagues/${leagueId}/matches`)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
-                     bg-gradient-to-r from-purple-500 to-purple-600 
-                     hover:from-purple-600 hover:to-purple-700
-                     rounded-lg transition-all duration-200
-                     shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
-          >
-            <ListFilter className="w-4 h-4" />
-            Ver todos los partidos
-          </button>
-        </div>
-      )}
-
       {/* Category Tabs */}
       <div className="px-6 pt-4">
-        <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="all" className="text-sm">
-              Todas las categorías
-            </TabsTrigger>
-            {categories.map((category) => (
-              <TabsTrigger
-                key={category.id}
-                value={category.id}
-                className="text-sm"
-              >
-                {category.name}
+        <div className="flex justify-between items-center mb-4">
+          <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+            <TabsList>
+              <TabsTrigger value="all" className="text-sm">
+                Todas las categorías
               </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+              {categories.map((category) => (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id}
+                  className="text-sm"
+                >
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          {filteredMatches.length > 0 && (
+            <button
+              onClick={() => router.push(`/leagues/${matches[0]?.league_id}/matches`)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
+                       bg-gradient-to-r from-purple-500 to-purple-600 
+                       hover:from-purple-600 hover:to-purple-700
+                       rounded-lg transition-all duration-200
+                       shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
+            >
+              <ListFilter className="w-4 h-4" />
+              Ver todos los partidos
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="relative">
