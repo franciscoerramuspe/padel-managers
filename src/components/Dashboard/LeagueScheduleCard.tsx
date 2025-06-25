@@ -164,7 +164,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (isLoading || isLoadingCategories) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
+      <div className="bg-white dark:bg-slate-800/50  border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -172,7 +172,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 p-4">
+      <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 p-4">
         <p className="text-red-500 dark:text-red-400 text-center">
           {error}
         </p>
@@ -186,7 +186,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (filteredMatches.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
         {/* Category Tabs */}
         <div className="px-6 pt-4">
           <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -225,7 +225,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
+    <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
       {leagueId && (
         <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-end">
           <button

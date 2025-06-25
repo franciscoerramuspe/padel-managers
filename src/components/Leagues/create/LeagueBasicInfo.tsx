@@ -250,7 +250,7 @@ export function LeagueBasicInfo({ formData, setFormData, categories = [], onSubm
                       </p>
                       <p className="text-xs text-purple-500 dark:text-purple-400 mt-2 text-center">
                         Recomendado: 1080x1080px (formato cuadrado)<br/>
-                        Esto asegurará que la imagen se vea perfecta en todas las cards
+                        Esto asegurará que la imagen se vea perfecta.
                       </p>
                     </div>
                     <Input
