@@ -1,4 +1,4 @@
-import { Calendar, Users, Clock } from 'lucide-react';
+import { Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { League } from '@/types/league';
@@ -56,8 +56,11 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
   return (
     <Link href={`/leagues/${league.id}`}>
       <div className="relative bg-white dark:bg-gray-800/50 rounded-xl shadow-sm hover:shadow-md dark:shadow-lg transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 group">
-        {/* Estado de la liga (badge flotante) */}
-        <div className="absolute top-4 right-4">
+        {/* Estado de la liga y categoría */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+            {categoryName}
+          </span>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(league.status)}`}>
             {getStatusText(league.status)}
           </span>
@@ -65,12 +68,12 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
 
         {/* Imagen de la liga */}
         {league.image_url && (
-          <div className="relative aspect-square w-full mb-6">
+          <div className="relative w-full mb-6" style={{ aspectRatio: '5/4' }}>
             <Image
               src={league.image_url}
               alt={league.name}
               fill
-              className="object-cover"
+              className="object-cover rounded-lg"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </div>
@@ -78,42 +81,26 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
 
         {/* Encabezado */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Categoría
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
-              {categoryName}
-            </span>
-          </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
             {league.name}
           </h3>
-          {league.description && (
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              {league.description}
-            </p>
-          )}
         </div>
 
         {/* Información principal */}
         <div className="space-y-4">
           {/* Fecha de inicio y fin */}
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-            <Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            <div className="space-y-2">
-              <div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de inicio</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {formatDate(league.start_date)}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de fin</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {formatDate(league.end_date)}
-                </p>
-              </div>
+          <div className="flex flex-col gap-2">
+            <div className="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <p className="text-sm font-medium text-emerald-900 dark:text-emerald-300">Fecha de inicio</p>
+              <p className="text-sm text-emerald-800 dark:text-emerald-200">
+                {formatDate(league.start_date)}
+              </p>
+            </div>
+            <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
+              <p className="text-sm font-medium text-red-900 dark:text-red-300">Fecha de fin</p>
+              <p className="text-sm text-red-800 dark:text-red-200">
+                {formatDate(league.end_date)}
+              </p>
             </div>
           </div>
 
@@ -141,7 +128,7 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
                     : 'bg-emerald-500 dark:bg-emerald-600'
                 }`}
               />
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between">
                 <span className="text-xs text-gray-500 dark:text-gray-400">
                   {registrationProgress}% completado
                 </span>
@@ -158,38 +145,17 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
             </div>
           </div>
 
-          {/* Información adicional */}
-          <div className="flex flex-col gap-2 mt-2">
-            {/* Horarios */}
-            {league.time_slots && league.time_slots.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Horarios: {league.time_slots.map(([start, end]) => 
-                    `${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`
-                  ).join(', ')}
-                </span>
-              </div>
-            )}
-            
-            {/* Costo de inscripción */}
-            {league.inscription_cost > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Costo de inscripción: ${league.inscription_cost}
-                </span>
-              </div>
-            )}
-
-            {/* Canchas disponibles */}
-            {league.courts_available > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 dark:text-gray-400">
-                  Canchas disponibles: {league.courts_available}
-                </span>
-              </div>
-            )}
-          </div>
+          {/* Costo de inscripción */}
+          {league.inscription_cost > 0 && (
+            <div className="mt-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300 mb-1">
+                Costo de inscripción
+              </p>
+              <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                ${league.inscription_cost}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Link>

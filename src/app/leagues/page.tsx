@@ -20,22 +20,24 @@ export default function LeaguesPage() {
   
   const getStatusDisplayName = (status: string) => {
     const statusMap: { [key: string]: string } = {
-      'open': 'Inscripciones Abiertas',
-      'closed': 'Inscripciones Cerradas'
+      'Inscribiendo': 'Inscripciones abiertas',
+      'Activa': 'En Curso',
+      'Finalizada': 'Finalizada'
     };
     return statusMap[status] || status;
   };
 
   const filteredLeagues = leagues
     .filter(league => {
-      // Filter by search query
+      // Filter by search query (now searching by category)
       if (searchQuery.trim()) {
-        return league.name.toLowerCase().includes(searchQuery.toLowerCase().trim());
+        const categoryName = categories.find(cat => cat.id === league.category_id)?.name || '';
+        return categoryName.toLowerCase().includes(searchQuery.toLowerCase().trim());
       }
       return true;
     })
     .filter(league => {
-      // Filter by category
+      // Filter by category dropdown
       if (selectedCategory && selectedCategory !== 'all') {
         return league.category_id === selectedCategory;
       }
@@ -44,11 +46,7 @@ export default function LeaguesPage() {
     .filter(league => {
       // Filter by status
       if (selectedStatus !== 'Todos') {
-        const statusMap: { [key: string]: string } = {
-          'Inscripciones Abiertas': 'open',
-          'Inscripciones Cerradas': 'closed'
-        };
-        return league.registration_status === statusMap[selectedStatus];
+        return league.status === selectedStatus;
       }
       return true;
     });
@@ -65,10 +63,12 @@ export default function LeaguesPage() {
 
     const getStatusMessage = (status: string) => {
       switch (status) {
-        case 'open':
+        case 'Inscribiendo':
           return 'con inscripciones abiertas';
-        case 'closed':
-          return 'con inscripciones cerradas';
+        case 'Activa':
+          return 'en curso';
+        case 'Finalizada':
+          return 'finalizadas';
         default:
           return status.toLowerCase();
       }
@@ -83,11 +83,11 @@ export default function LeaguesPage() {
           </h3>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
             {searchQuery.trim() && (
-              <span>No hay ligas que coincidan con "{searchQuery}"{selectedCategoryName ? ' en la categoría ' + selectedCategoryName : ''}{selectedStatus !== 'Todos' ? ' que estén ' + getStatusMessage(selectedStatus.toLowerCase()) : ''}</span>
+              <span>No hay ligas en categorías que coincidan con "{searchQuery}"{selectedCategoryName ? ' en la categoría ' + selectedCategoryName : ''}{selectedStatus !== 'Todos' ? ' que estén ' + getStatusMessage(selectedStatus) : ''}</span>
             )}
             {!searchQuery.trim() && (
               <span>
-                No hay ligas {selectedCategoryName ? 'en la categoría ' + selectedCategoryName : ''}{selectedStatus !== 'Todos' ? ' que estén ' + getStatusMessage(selectedStatus.toLowerCase()) : ''}
+                No hay ligas {selectedCategoryName ? 'en la categoría ' + selectedCategoryName : ''}{selectedStatus !== 'Todos' ? ' que estén ' + getStatusMessage(selectedStatus) : ''}
               </span>
             )}
           </p>

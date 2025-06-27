@@ -19,7 +19,7 @@ interface LeagueFiltersProps {
   categories: Category[];
 }
 
-const STATUS = ['Todos', 'open', 'closed'];
+const STATUS = ['Todos', 'Inscribiendo', 'Activa', 'Finalizada'];
 
 export function LeagueFilters({
   searchQuery,
@@ -30,11 +30,24 @@ export function LeagueFilters({
   setSelectedStatus,
   categories
 }: LeagueFiltersProps) {
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'Inscribiendo':
+        return 'Inscripciones abiertas';
+      case 'Activa':
+        return 'En Curso';
+      case 'Finalizada':
+        return 'Finalizada';
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
       <div className="flex-1">
         <Input
-          placeholder="Buscar por nombre..."
+          placeholder="Buscar por categoría..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-sm"
@@ -57,23 +70,19 @@ export function LeagueFilters({
         </Select>
 
         <div className="flex gap-2">
-          {STATUS.map((statusValue) => {
-            let statusLabel = statusValue;
-            if (statusValue === 'open') statusLabel = 'Inscripciones Abiertas';
-            if (statusValue === 'closed') statusLabel = 'Inscripciones Cerradas';
-            if (statusValue === 'Todos') statusLabel = 'Todos';
-
-            return (
-              <Button
-                key={statusValue}
-                variant={selectedStatus === statusValue ? "default" : "outline"}
-                onClick={() => setSelectedStatus(statusValue)}
-                className="whitespace-nowrap"
-              >
-                {statusLabel}
-              </Button>
-            );
-          })}
+          {STATUS.map((statusValue) => (
+            <Button
+              key={statusValue}
+              variant={selectedStatus === statusValue ? "default" : "outline"}
+              onClick={() => setSelectedStatus(statusValue)}
+              className={`whitespace-nowrap ${
+                statusValue === 'Inscribiendo' ? 'text-emerald-700 dark:text-emerald-300' : 
+                statusValue === 'Activa' ? 'text-blue-700 dark:text-blue-300' : ''
+              }`}
+            >
+              {getStatusLabel(statusValue)}
+            </Button>
+          ))}
         </div>
       </div>
     </div>
