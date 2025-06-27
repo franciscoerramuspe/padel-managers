@@ -74,14 +74,14 @@ export async function createLeague(req, res) {
     team_size,
     time_slots,
     inscription_cost,
-    image_url,
+    image_url: image_url || null, // Aseguramos que image_url sea null si no viene
     description
   }));
 
   const { data, error } = await supabase
     .from('leagues')
     .insert(leaguesToCreate)
-    .select();
+    .select(); // Removemos la selección de categoría ya que no es necesaria
 
   if (error) {
     console.error('Error creando ligas:', error);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trophy, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -18,14 +18,35 @@ export function GenerateMatchesButton({
   maxTeams 
 }: GenerateMatchesButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [hasExistingMatches, setHasExistingMatches] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const checkExistingMatches = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/matches/league/${leagueId}`);
+        if (!response.ok) {
+          throw new Error('Error al verificar partidos existentes');
+        }
+        const data = await response.json();
+        setHasExistingMatches(data.total > 0);
+      } catch (error) {
+        console.error('Error checking existing matches:', error);
+        setHasExistingMatches(false);
+      }
+    };
+
+    if (leagueId) {
+      checkExistingMatches();
+    }
+  }, [leagueId]);
 
   const handleGenerateMatches = async () => {
     try {
       setIsLoading(true);
 
       // Validaciones del lado del cliente
-      if (status !== 'Inscribiendo') {
+      if (status !== 'Inscribiendo' && !hasExistingMatches) {
         toast({
           title: "No se pueden generar partidos",
           description: "La liga ya no está en periodo de inscripción.",
@@ -53,19 +74,35 @@ export function GenerateMatchesButton({
       }
 
       // Llamada al backend para generar los partidos
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/${leagueId}/generate-standings`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/generateStandings/${leagueId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}` // Aseguramos que se envía el token
         },
         body: JSON.stringify({
-          rounds: 1 // Por ahora hardcodeado a 1 ronda, podría ser configurable
+          rounds: 1 // Por ahora solo generamos una ronda
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al generar los partidos');
+        const errorData = await response.json();
+        if (response.status === 409) {
+          toast({
+            title: "Partidos ya generados",
+            description: errorData.message,
+            variant: "destructive",
+          });
+          setHasExistingMatches(true);
+          return;
+        }
+        throw new Error(errorData.message || 'Error al generar los partidos');
+      }
+
+      const data = await response.json();
+
+      if (!data.matches || data.matches.length === 0) {
+        throw new Error('No se generaron partidos');
       }
 
       toast({
@@ -73,8 +110,12 @@ export function GenerateMatchesButton({
         description: "Los partidos han sido generados exitosamente.",
       });
 
-      // Refrescar la página para mostrar los cambios
+      // Actualizar el estado local
+      setHasExistingMatches(true);
+
+      // Redireccionar a la misma página para forzar una recarga completa
       router.refresh();
+      router.push(`/leagues/${leagueId}`);
 
     } catch (error) {
       console.error('Error generating matches:', error);
@@ -88,7 +129,8 @@ export function GenerateMatchesButton({
     }
   };
 
-  const isDisabled = status !== 'Inscribiendo' || registeredTeams < 2 || isLoading;
+  // Modificar la lógica del botón deshabilitado
+  const isDisabled = (registeredTeams < 2 || isLoading || hasExistingMatches);
 
   return (
     <Button
@@ -101,7 +143,7 @@ export function GenerateMatchesButton({
       ) : (
         <Trophy className="h-5 w-5" />
       )}
-      {isLoading ? 'Generando partidos...' : 'Generar Partidos'}
+      {isLoading ? 'Generando partidos...' : hasExistingMatches ? 'Partidos ya generados' : 'Generar Partidos'}
     </Button>
   );
 } 

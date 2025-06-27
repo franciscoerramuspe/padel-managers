@@ -16,6 +16,26 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 
 const DAYS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
+const DAY_MAPPING: Record<string, string> = {
+  'Lunes': 'monday',
+  'Martes': 'tuesday',
+  'Miércoles': 'wednesday',
+  'Jueves': 'thursday',
+  'Viernes': 'friday',
+  'Sábado': 'saturday',
+  'Domingo': 'sunday'
+};
+
+const REVERSE_DAY_MAPPING: Record<string, string> = {
+  'monday': 'Lunes',
+  'tuesday': 'Martes',
+  'wednesday': 'Miércoles',
+  'thursday': 'Jueves',
+  'friday': 'Viernes',
+  'saturday': 'Sábado',
+  'sunday': 'Domingo'
+};
+
 interface CategoryDayAssignmentProps {
   selectedCategories: string[];
   categories: Category[];
@@ -152,7 +172,7 @@ function DroppableCategory({
                   border border-blue-200 dark:border-blue-800
                 "
               >
-                <span className="font-medium text-sm">{day}</span>
+                <span className="font-medium text-sm">{REVERSE_DAY_MAPPING[day] || day}</span>
                 <button
                   onClick={() => onRemoveDay(day)}
                   className="
@@ -219,21 +239,16 @@ export function CategoryDayAssignment({
     if (over) {
       const categoryId = over.id;
       const day = active.id;
+      const backendDay = DAY_MAPPING[day];
 
-      // Check if the day is already used in any category
-      if (!usedDays.has(day)) {
+      if (backendDay) {
         setAssignments(prev => {
           const newAssignments = { ...prev };
-          if (!newAssignments[categoryId]) {
-            newAssignments[categoryId] = [];
-          }
-          if (!newAssignments[categoryId].includes(day)) {
-            newAssignments[categoryId] = [...newAssignments[categoryId], day];
-            // Notify parent component in the next tick to avoid React state update during render
-            setTimeout(() => {
-              onDaysAssigned(newAssignments);
-            }, 0);
-          }
+          // Reemplazar el día existente en vez de añadir uno nuevo
+          newAssignments[categoryId] = [backendDay];
+          setTimeout(() => {
+            onDaysAssigned(newAssignments);
+          }, 0);
           return newAssignments;
         });
       }

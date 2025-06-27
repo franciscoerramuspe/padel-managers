@@ -8,6 +8,7 @@ import { useCategories } from "@/hooks/useCategories";
 
 interface Match {
   id: string;
+  league_id: string;
   category_id: string;
   category_name: string;
   team1: string;
@@ -48,9 +49,15 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
         const url = `${baseUrl}/leagues/matches/league/${leagueId || 'all'}`;
         console.log('Fetching from URL:', url);
 
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
         const response = await fetch(url, {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
           }
         });
 
@@ -74,9 +81,10 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
           throw new Error('No se recibieron datos del servidor');
         }
 
-        const pendingMatches = Array.isArray(data.pending) ? data.pending : [];
+        // El backend devuelve { completed: [], pending: [] }
+        const allMatches = [...(data.pending || []), ...(data.completed || [])];
         
-        const scheduledMatches = pendingMatches
+        const scheduledMatches = allMatches
           .filter((match: Match) => match.status === "SCHEDULED")
           .sort((a: Match, b: Match) => 
             new Date(a.match_date).getTime() - new Date(b.match_date).getTime()
@@ -157,7 +165,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (isLoading || isLoadingCategories) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
+      <div className="bg-white dark:bg-slate-800/50  border-gray-200 dark:border-gray-700/50 min-h-[200px] flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -165,7 +173,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 p-4">
+      <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 p-4">
         <p className="text-red-500 dark:text-red-400 text-center">
           {error}
         </p>
@@ -179,25 +187,27 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
   if (filteredMatches.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
         {/* Category Tabs */}
         <div className="px-6 pt-4">
-          <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="all" className="text-sm">
-                Todas las categorías
-              </TabsTrigger>
-              {categories.map((category) => (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.id}
-                  className="text-sm"
-                >
-                  {category.name}
+          <div className="flex justify-between items-center mb-4">
+            <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+              <TabsList>
+                <TabsTrigger value="all" className="text-sm">
+                  Todas las categorías
                 </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+                {categories.map((category) => (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id}
+                    className="text-sm"
+                  >
+                    {category.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
         <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -218,41 +228,40 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-gray-700/50 overflow-hidden">
-      {leagueId && (
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700/50 flex justify-end">
-          <button
-            onClick={() => router.push(`/leagues/${leagueId}/matches`)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
-                     bg-gradient-to-r from-purple-500 to-purple-600 
-                     hover:from-purple-600 hover:to-purple-700
-                     rounded-lg transition-all duration-200
-                     shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
-          >
-            <ListFilter className="w-4 h-4" />
-            Ver todos los partidos
-          </button>
-        </div>
-      )}
-
+    <div className="bg-white dark:bg-slate-800/50 border border-gray-200 dark:border-gray-700/50 overflow-hidden">
       {/* Category Tabs */}
       <div className="px-6 pt-4">
-        <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="all" className="text-sm">
-              Todas las categorías
-            </TabsTrigger>
-            {categories.map((category) => (
-              <TabsTrigger
-                key={category.id}
-                value={category.id}
-                className="text-sm"
-              >
-                {category.name}
+        <div className="flex justify-between items-center mb-4">
+          <Tabs defaultValue="all" value={selectedCategory} onValueChange={setSelectedCategory}>
+            <TabsList>
+              <TabsTrigger value="all" className="text-sm">
+                Todas las categorías
               </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+              {categories.map((category) => (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id}
+                  className="text-sm"
+                >
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+          {filteredMatches.length > 0 && (
+            <button
+              onClick={() => router.push(`/leagues/${matches[0]?.league_id}/matches`)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white
+                       bg-gradient-to-r from-purple-500 to-purple-600 
+                       hover:from-purple-600 hover:to-purple-700
+                       rounded-lg transition-all duration-200
+                       shadow-lg shadow-purple-500/20 dark:shadow-purple-900/30"
+            >
+              <ListFilter className="w-4 h-4" />
+              Ver todos los partidos
+            </button>
+          )}
+        </div>
       </div>
       
       <div className="relative">
