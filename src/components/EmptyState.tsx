@@ -22,7 +22,7 @@ export default function EmptyState() {
           No hay canchas creadas aún.
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-400 text-center max-w-sm">
-          Comienza agregando tu primera cancha para gestionar las canchas en la liga.
+          Agrega tu primera cancha para gestionar las canchas en la liga.
         </p>
       </div>
     </div>
