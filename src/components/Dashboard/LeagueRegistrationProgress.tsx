@@ -184,155 +184,148 @@ function LeagueCard({ category, league }: { category: Category; league: League }
   const registeredTeams = league.registeredTeams || 0;
   const availableSpots = league.team_size - registeredTeams;
   const registrationProgress = (registeredTeams / league.team_size) * 100;
-  
+
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'Inscribiendo':
-        return {
-          text: 'Inscripciones Abiertas',
-          style: 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300'
-        };
+        return 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300';
       case 'Activa':
-        return {
-          text: 'En Curso',
-          style: 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300'
-        };
+        return 'bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300';
       case 'Finalizada':
-        return {
-          text: 'Finalizada',
-          style: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-        };
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300';
       default:
-        return {
-          text: 'Inscripciones Cerradas',
-          style: 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
-        };
+        return 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300';
     }
   };
 
-  const statusInfo = getStatusStyle(league.status);
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'Inscribiendo':
+        return 'Inscripciones abiertas';
+      case 'Activa':
+        return 'En Curso';
+      case 'Finalizada':
+        return 'Finalizada';
+      default:
+        return status;
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
 
   return (
-    <Card className="bg-white dark:bg-slate-800/50 border-gray-200 dark:border-gray-700/50 overflow-hidden">
-      {/* Header con categoría y estado */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700/50">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
-              CATEGORÍA
-            </span>
-            <span className="text-sm font-semibold text-gray-900 dark:text-white">
-              {category?.name || 'Categoría no disponible'}
-            </span>
-          </div>
-          <span 
-            className={`px-3 py-1 rounded-full text-xs font-medium ${statusInfo.style}`}
-          >
-            {statusInfo.text}
+    <Link href={`/leagues/${league.id}`}>
+      <div className="relative bg-white dark:bg-gray-800/50 rounded-xl shadow-sm hover:shadow-md dark:shadow-lg transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 group">
+        {/* Estado de la liga y categoría */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
+            {category.name}
+          </span>
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(league.status)}`}>
+            {getStatusText(league.status)}
           </span>
         </div>
-        <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">{league.name}</h4>
-      </div>
 
-      {/* Imagen de la liga */}
-      {league.image_url && (
-        <div className="relative aspect-square w-full max-h-[200px]">
-          <Image
-            src={league.image_url}
-            alt={league.name}
-            fill
-            className="object-cover rounded-md"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+        {/* Imagen de la liga */}
+        {league.image_url && (
+          <div className="relative w-full mb-6" style={{ aspectRatio: '5/4' }}>
+            <Image
+              src={league.image_url}
+              alt={league.name}
+              fill
+              className="object-cover rounded-lg"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
+        )}
+
+        {/* Encabezado */}
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+            {league.name}
+          </h3>
         </div>
-      )}
 
-      {/* Contenido */}
-      <div className="p-4 space-y-4">
-        {/* Fecha de inicio */}
-        <div className="flex items-center gap-3">
-          <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          <div className="space-y-2">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Fecha de inicio</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {(() => {
-                  const [year, month, day] = league.start_date.split('T')[0].split('-').map(Number);
-                  const date = new Date(year, month - 1, day);
-                  return date.toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  });
-                })()}
+        {/* Información principal */}
+        <div className="space-y-4">
+          {/* Fecha de inicio y fin */}
+          <div className="flex flex-col gap-2">
+            <div className="p-3 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+              <p className="text-sm font-medium text-emerald-900 dark:text-emerald-300">Fecha de inicio</p>
+              <p className="text-sm text-emerald-800 dark:text-emerald-200">
+                {formatDate(league.start_date)}
               </p>
             </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Fecha de fin</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {(() => {
-                  const [year, month, day] = league.end_date.split('T')[0].split('-').map(Number);
-                  const date = new Date(year, month - 1, day);
-                  return date.toLocaleDateString('es-ES', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  });
-                })()}
+            <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/30">
+              <p className="text-sm font-medium text-red-900 dark:text-red-300">Fecha de fin</p>
+              <p className="text-sm text-red-800 dark:text-red-200">
+                {formatDate(league.end_date)}
               </p>
             </div>
           </div>
-        </div>
 
-        {/* Equipos registrados */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Users2 className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                Equipos registrados
+          {/* Equipos y progreso */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users2 className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Equipos registrados
+                </span>
+              </div>
+              <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                {registeredTeams} / {league.team_size}
               </span>
             </div>
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {registeredTeams} / {league.team_size}
-            </span>
-          </div>
-          <Progress 
-            value={registrationProgress} 
-            className="h-1 bg-gray-100 dark:bg-gray-700/50" 
-          />
-          <div className="flex justify-between mt-1">
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {Math.round(registrationProgress)}% completado
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {availableSpots} cupos disponibles
-            </span>
-          </div>
-        </div>
 
-        {/* Frecuencia */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-          <Clock className="w-4 h-4" />
-          <span>Frecuencia: {league.frequency === 'biweekly' ? 'quincenal' : league.frequency}</span>
-        </div>
+            <div className="space-y-2">
+              <Progress 
+                value={registrationProgress} 
+                className="h-2 bg-gray-100 dark:bg-gray-700" 
+                indicatorClassName={`${
+                  registrationProgress === 100
+                    ? 'bg-blue-500 dark:bg-blue-600'
+                    : 'bg-emerald-500 dark:bg-emerald-600'
+                }`}
+              />
+              <div className="flex justify-between">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {registrationProgress}% completado
+                </span>
+                {league.status === 'Inscribiendo' && availableSpots > 0 ? (
+                  <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                    {availableSpots} cupos disponibles
+                  </span>
+                ) : registeredTeams === league.team_size && (
+                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                    Cupos completos
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
 
-        {/* Botón Ver Detalles */}
-        <Link 
-          href={`/leagues/${league.id}`}
-          className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 
-                   bg-purple-50 dark:bg-purple-500/10 
-                   hover:bg-purple-100 dark:hover:bg-purple-500/20 
-                   text-purple-600 dark:text-purple-400 
-                   hover:text-purple-700 dark:hover:text-purple-300
-                   border border-purple-200 dark:border-purple-800/30 
-                   hover:border-purple-300 dark:hover:border-purple-700/30
-                   rounded-lg transition-all duration-200"
-        >
-          Ver detalles
-          <ArrowRight className="w-4 h-4" />
-        </Link>
+          {/* Costo de inscripción */}
+          {league.inscription_cost > 0 && (
+            <div className="mt-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300 mb-1">
+                Costo de inscripción
+              </p>
+              <span className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">
+                ${league.inscription_cost}
+              </span>
+            </div>
+          )}
+        </div>
       </div>
-    </Card>
+    </Link>
   );
 } 

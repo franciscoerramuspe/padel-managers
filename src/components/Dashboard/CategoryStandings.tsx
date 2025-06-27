@@ -79,9 +79,9 @@ export function CategoryStandings({
                 <HeaderWithTooltip short="PJ" full="Partidos Jugados" />
                 <HeaderWithTooltip short="PG" full="Partidos Ganados" />
                 <HeaderWithTooltip short="PP" full="Partidos Perdidos" />
-                <HeaderWithTooltip short="SG" full="Sets Ganados" />
-                <HeaderWithTooltip short="SP" full="Sets Perdidos" />
-                <HeaderWithTooltip short="DG" full="Diferencia de Sets" />
+                <HeaderWithTooltip short="JG" full="Juegos Ganados" />
+                <HeaderWithTooltip short="JP" full="Juegos Perdidos" />
+                <HeaderWithTooltip short="DJ" full="Diferencia de Juegos" />
                 <HeaderWithTooltip short="Pts" full="Puntos Totales" />
               </tr>
             </thead>

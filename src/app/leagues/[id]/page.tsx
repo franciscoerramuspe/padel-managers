@@ -362,7 +362,9 @@ export default function LeagueDetailsPage() {
               <Collapsible.Content>
                 <CardContent className="p-6">
                   <CategoryStandings
-                    category={category?.name || ''}
+                    categories={categories}
+                    selectedCategory={category?.id || ''}
+                    onCategoryChange={() => {}}
                     standings={standings}
                     isLoading={isLoadingStandings}
                   />
