@@ -21,6 +21,29 @@ interface LeagueMatchResultsProps {
   onSaveResults: (results: LeagueMatch[]) => void
 }
 
+function formatMatchDate(dateStr: string) {
+  // Crear un objeto Date con la fecha UTC
+  const date = new Date(dateStr);
+  
+  // Ajustar a la zona horaria de Uruguay (UTC-3)
+  const uruguayDate = new Date(date.getTime());
+  uruguayDate.setHours(uruguayDate.getHours() - 3);
+  
+  return {
+    date: uruguayDate.toLocaleDateString('es-UY', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }),
+    time: uruguayDate.toLocaleTimeString('es-UY', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'America/Montevideo'
+    })
+  };
+}
+
 export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResultsProps) {
   const [selectedMatch, setSelectedMatch] = useState<LeagueMatch | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -221,89 +244,92 @@ export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResult
         </div>
       ) : (
         <div className="grid gap-4">
-          {matches.map((match) => (
-            <div
-              key={match.id}
-              className={cn(
-                "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border transition-all duration-200",
-                match.status === "COMPLETED" 
-                  ? "border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700" 
-                  : match.status === "WALKOVER" 
-                  ? "border-red-200 dark:border-red-800 hover:border-red-300 dark:hover:border-red-700"
-                  : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700"
-              )}
-            >
-              <div className="grid grid-cols-7 gap-4 items-center">
-                <div className="col-span-3 text-right md:text-left">
-                  <p className="font-medium text-gray-800 dark:text-gray-200">{match.team1}</p>
-                  {match.status === "COMPLETED" && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {match.team1_sets1_won + match.team1_sets2_won} sets
-                    </p>
-                  )}
-                  {match.status === "WALKOVER" && match.walkover_team_id === match.league_team1_id && (
-                    <p className="text-sm text-red-500 dark:text-red-400 mt-1">W.O.</p>
-                  )}
+          {matches.map((match) => {
+            const { date, time } = formatMatchDate(match.match_date);
+            return (
+              <div
+                key={match.id}
+                className={cn(
+                  "bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border transition-all duration-200",
+                  match.status === "COMPLETED" 
+                    ? "border-green-200 dark:border-green-800 hover:border-green-300 dark:hover:border-green-700" 
+                    : match.status === "WALKOVER" 
+                    ? "border-red-200 dark:border-red-800 hover:border-red-300 dark:hover:border-red-700"
+                    : "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700"
+                )}
+              >
+                <div className="grid grid-cols-7 gap-4 items-center">
+                  <div className="col-span-3 text-right md:text-left">
+                    <p className="font-medium text-gray-800 dark:text-gray-200">{match.team1}</p>
+                    {match.status === "COMPLETED" && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {match.team1_sets1_won + match.team1_sets2_won} sets
+                      </p>
+                    )}
+                    {match.status === "WALKOVER" && match.walkover_team_id === match.league_team1_id && (
+                      <p className="text-sm text-red-500 dark:text-red-400 mt-1">W.O.</p>
+                    )}
+                  </div>
+
+                  <div className="col-span-1 flex justify-center">
+                    {match.status === "COMPLETED" || match.status === "WALKOVER" ? (
+                      <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full">
+                        <span className="font-bold text-lg text-gray-800 dark:text-gray-200">VS</span>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleMatchClick(match)}
+                        disabled={isLoading || !isMatchEditable(match)}
+                        className={cn(
+                          "w-full transition-all duration-200 dark:text-white",
+                          isMatchEditable(match)
+                            ? "bg-purple-500 hover:bg-purple-600 text-white border-none shadow hover:shadow-md"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-500 cursor-not-allowed"
+                        )}
+                      >
+                        {isLoading ? "Guardando..." : getMatchStatusText(match)}
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="col-span-3 text-left md:text-right">
+                    <p className="font-medium text-gray-800 dark:text-gray-200">{match.team2}</p>
+                    {match.status === "COMPLETED" && (
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {match.team2_sets1_won + match.team2_sets2_won} sets
+                      </p>
+                    )}
+                    {match.status === "WALKOVER" && match.walkover_team_id === match.league_team2_id && (
+                      <p className="text-sm text-red-500 dark:text-red-400 mt-1">W.O.</p>
+                    )}
+                  </div>
                 </div>
 
-                <div className="col-span-1 flex justify-center">
-                  {match.status === "COMPLETED" || match.status === "WALKOVER" ? (
-                    <div className="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-full">
-                      <span className="font-bold text-lg text-gray-800 dark:text-gray-200">VS</span>
-                    </div>
-                  ) : (
+                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    {getMatchStatusBadge(match)}
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      {date} {time}
+                    </span>
+                  </div>
+
+                  {(match.status === "COMPLETED" || match.status === "WALKOVER") && (
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
                       onClick={() => handleMatchClick(match)}
-                      disabled={isLoading || !isMatchEditable(match)}
-                      className={cn(
-                        "w-full transition-all duration-200 dark:text-white",
-                        isMatchEditable(match)
-                          ? "bg-purple-500 hover:bg-purple-600 text-white border-none shadow hover:shadow-md"
-                          : "bg-gray-100 dark:bg-gray-800 text-gray-500 cursor-not-allowed"
-                      )}
+                      disabled={isLoading}
+                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-900/20"
                     >
-                      {isLoading ? "Guardando..." : getMatchStatusText(match)}
+                      Ver detalles
                     </Button>
                   )}
                 </div>
-
-                <div className="col-span-3 text-left md:text-right">
-                  <p className="font-medium text-gray-800 dark:text-gray-200">{match.team2}</p>
-                  {match.status === "COMPLETED" && (
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {match.team2_sets1_won + match.team2_sets2_won} sets
-                    </p>
-                  )}
-                  {match.status === "WALKOVER" && match.walkover_team_id === match.league_team2_id && (
-                    <p className="text-sm text-red-500 dark:text-red-400 mt-1">W.O.</p>
-                  )}
-                </div>
               </div>
-
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                  {getMatchStatusBadge(match)}
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(match.match_date).toLocaleDateString()} {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-
-                {(match.status === "COMPLETED" || match.status === "WALKOVER") && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleMatchClick(match)}
-                    disabled={isLoading}
-                    className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-900/20"
-                  >
-                    Ver detalles
-                  </Button>
-                )}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
 

@@ -12,7 +12,7 @@ export interface LeagueFormData {
   end_date: string;
   frequency: string;
   days_of_week: string[];
-  category_days: Record<string, string[]>;
+  category_days: Record<string, string>;
   courts_available: number;
   points_for_win: number;
   points_for_loss_with_set: number;
@@ -110,10 +110,15 @@ export function useLeagueForm() {
       return false;
     }
 
-    if (data.days_of_week.length === 0) {
+    // Verificar que todas las categorías tengan un día asignado
+    const unassignedCategories = data.categories.filter(
+      categoryId => !data.category_days[categoryId]
+    );
+
+    if (unassignedCategories.length > 0) {
       toast({
         title: "Error de validación",
-        description: "Debes seleccionar al menos un día de juego",
+        description: "Debes asignar un día de juego a todas las categorías seleccionadas",
         variant: "destructive"
       });
       return false;
@@ -187,8 +192,8 @@ export function useLeagueForm() {
       const token = localStorage.getItem('adminToken');
       if (!token) throw new Error('No estás autenticado');
 
-      // Convertir days_of_week a time_slots con formato [22, 24] (10pm a 12am)
-      const time_slots = formData.days_of_week.map(() => [22, 24]);
+      // Generar time_slots para cada categoría
+      const time_slots = formData.categories.map(() => [22, 24]);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/createLeague`, {
         method: 'POST',
@@ -203,10 +208,12 @@ export function useLeagueForm() {
           inscription_cost: formData.inscription_cost,
           start_date: formData.start_date,
           end_date: formData.end_date,
-          courts_available: formData.courts_available,
+          frequency: formData.frequency,
           time_slots,
+          courts_available: formData.courts_available,
           team_size: formData.team_size,
-          image_url: formData.image_url
+          image_url: formData.image_url,
+          category_days: formData.category_days
         })
       });
 

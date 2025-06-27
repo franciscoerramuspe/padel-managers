@@ -19,6 +19,8 @@ interface LeagueScheduleInfoProps {
     frequency: string;
     days_of_week: string[];
     categories: string[];
+    team_size: number;
+    category_days: Record<string, string>;
   };
   setFormData: (data: any) => void;
   onSubmit: (data: any) => void;
@@ -44,6 +46,36 @@ function LabelWithTooltip({ htmlFor, label, tooltip }: { htmlFor?: string; label
   );
 }
 
+function calculateMinimumDays(teamSize: number, frequency: string): number {
+  const numberOfRounds = teamSize - 1;
+  
+  switch(frequency.toLowerCase()) {
+    case 'semanal':
+      return numberOfRounds * 7;
+    case 'quincenal':
+      return numberOfRounds * 14;
+    case 'mensual':
+      return numberOfRounds * 30;
+    default:
+      return numberOfRounds * 14; // Por defecto quincenal
+  }
+}
+
+// Agregar función helper para manejar fechas
+function adjustDateToUruguay(date: Date): Date {
+  // Crear fecha en timezone Uruguay (UTC-3)
+  const uruguayOffset = -3 * 60; // offset en minutos
+  const userOffset = date.getTimezoneOffset();
+  const offsetDiff = userOffset - uruguayOffset;
+  
+  const adjustedDate = new Date(date.getTime() + offsetDiff * 60 * 1000);
+  return adjustedDate;
+}
+
+function formatDateForInput(date: Date): string {
+  return date.toISOString().split('T')[0];
+}
+
 export function LeagueScheduleInfo({
   formData,
   setFormData,
@@ -52,21 +84,100 @@ export function LeagueScheduleInfo({
   categories,
 }: LeagueScheduleInfoProps) {
   const { courts, isLoading: isLoadingCourts, fetchCourts } = useCourts();
+  const [errors, setErrors] = useState<string[]>([]);
+  const [suggestedEndDate, setSuggestedEndDate] = useState<string>('');
 
   useEffect(() => {
     fetchCourts();
   }, []);
 
   const handleDaysAssigned = (categoryDays: Record<string, string[]>) => {
-    const allDays = new Set<string>();
-    Object.values(categoryDays).forEach((days) => {
-      days.forEach((day) => allDays.add(day));
-    });
+    // Convertir el objeto de días por categoría a un formato más simple
+    const categoryPlayDays = Object.entries(categoryDays).reduce((acc, [categoryId, days]) => {
+      if (days && days.length > 0) {
+        acc[categoryId] = days[0];
+      }
+      return acc;
+    }, {} as Record<string, string>);
 
+    // Actualizar el formData con los días asignados
     setFormData({
       ...formData,
-      days_of_week: Array.from(allDays),
-      category_days: categoryDays,
+      category_days: categoryPlayDays
+    });
+
+    // Limpiar errores relacionados con días de juego
+    setErrors(errors.filter(error => !error.includes('día de juego')));
+  };
+
+  // Calcular fecha de fin sugerida cuando cambie la fecha de inicio o la frecuencia
+  useEffect(() => {
+    if (formData.start_date && formData.team_size) {
+      const startDate = new Date(formData.start_date);
+      const minimumDays = calculateMinimumDays(formData.team_size, formData.frequency);
+      
+      // Agregar un 20% más de días para flexibilidad
+      const recommendedDays = Math.ceil(minimumDays * 1.2);
+      
+      const suggestedDate = adjustDateToUruguay(new Date(startDate));
+      suggestedDate.setDate(startDate.getDate() + recommendedDays);
+      
+      const suggestedDateStr = formatDateForInput(suggestedDate);
+      setSuggestedEndDate(suggestedDateStr);
+
+      if (!formData.end_date) {
+        setFormData({
+          ...formData,
+          end_date: suggestedDateStr
+        });
+      }
+    }
+  }, [formData.start_date, formData.team_size, formData.frequency]);
+
+  // Validar el formulario antes de enviar
+  const handleSubmit = () => {
+    const newErrors: string[] = [];
+
+    // Validar que todas las categorías tengan un día asignado
+    const unassignedCategories = formData.categories.filter(
+      categoryId => !formData.category_days[categoryId]
+    );
+
+    if (unassignedCategories.length > 0) {
+      newErrors.push('Debes asignar un día de juego a todas las categorías');
+      setErrors(newErrors);
+      return;
+    }
+
+    // Validar fechas
+    if (formData.start_date && formData.end_date) {
+      const start = adjustDateToUruguay(new Date(formData.start_date));
+      const end = adjustDateToUruguay(new Date(formData.end_date));
+      const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      const minimumDays = calculateMinimumDays(formData.team_size, formData.frequency);
+
+      if (diffDays < minimumDays) {
+        newErrors.push(
+          `El rango de fechas es insuficiente. Para ${formData.team_size} equipos con frecuencia ${
+            formData.frequency.toLowerCase()
+          }, necesitas al menos ${minimumDays} días (${Math.ceil(minimumDays/7)} semanas)`
+        );
+      }
+    }
+
+    setErrors(newErrors);
+    
+    if (newErrors.length === 0) {
+      onSubmit(formData);
+    }
+  };
+
+  const formatDisplayDate = (dateStr: string): string => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('es-UY', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
     });
   };
 
@@ -82,39 +193,31 @@ export function LeagueScheduleInfo({
           </p>
         </div>
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <LabelWithTooltip
-                htmlFor="start_date"
-                label="Fecha de Inicio"
-                tooltip="Fecha en la que comenzará la liga"
-              />
-              <Input
-                type="date"
-                id="start_date"
-                value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="bg-transparent dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus:border-primary"
-              />
-            </div>
+        {errors.length > 0 && (
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+            <ul className="list-disc list-inside text-sm text-destructive">
+              {errors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
-            <div>
-              <LabelWithTooltip
-                htmlFor="end_date"
-                label="Fecha de Fin"
-                tooltip="Fecha en la que terminará la liga"
-              />
-              <Input
-                type="date"
-                id="end_date"
-                value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="bg-transparent dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus:border-primary"
-              />
-            </div>
+        <div className="space-y-6">
+          {/* Asignación de Días por Categoría - Ahora primero */}
+          <div>
+            <LabelWithTooltip
+              label="Asignación de Días por Categoría"
+              tooltip="Arrastra los días a cada categoría para definir cuándo se jugarán los partidos"
+            />
+            <CategoryDayAssignment
+              selectedCategories={formData.categories}
+              categories={categories}
+              onDaysAssigned={handleDaysAssigned}
+            />
           </div>
 
+          {/* Frecuencia */}
           <div>
             <LabelWithTooltip
               htmlFor="frequency"
@@ -141,18 +244,56 @@ export function LeagueScheduleInfo({
             </Select>
           </div>
 
-          <div>
-            <LabelWithTooltip
-              label="Asignación de Días por Categoría"
-              tooltip="Arrastra los días a cada categoría para definir cuándo se jugarán los partidos"
-            />
-            <CategoryDayAssignment
-              selectedCategories={formData.categories}
-              categories={categories}
-              onDaysAssigned={handleDaysAssigned}
-            />
+          {/* Fechas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <LabelWithTooltip
+                htmlFor="start_date"
+                label="Fecha de Inicio"
+                tooltip="Selecciona la fecha de inicio de la liga"
+              />
+              <Input
+                type="date"
+                id="start_date"
+                value={formData.start_date}
+                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                className="bg-transparent dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 focus:border-primary"
+              />
+            </div>
+
+            <div>
+              <LabelWithTooltip
+                htmlFor="end_date"
+                label="Fecha de Fin"
+                tooltip={suggestedEndDate ? 
+                  `Fecha sugerida: ${formatDisplayDate(suggestedEndDate)} (${Math.ceil(calculateMinimumDays(formData.team_size, formData.frequency)/7)} semanas)` : 
+                  'Selecciona primero la fecha de inicio'
+                }
+              />
+              <div className="relative">
+                <Input
+                  type="date"
+                  id="end_date"
+                  value={formData.end_date}
+                  onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  className={`
+                    bg-transparent dark:bg-slate-800/50 
+                    border-slate-200 dark:border-slate-700 
+                    hover:border-slate-300 dark:hover:border-slate-600 
+                    focus:border-primary
+                    ${suggestedEndDate && formData.end_date !== suggestedEndDate ? 'border-yellow-400' : ''}
+                  `}
+                />
+                {suggestedEndDate && formData.end_date !== suggestedEndDate && (
+                  <div className="absolute -bottom-6 left-0 text-xs text-yellow-600 dark:text-yellow-400">
+                    Fecha sugerida: {formatDisplayDate(suggestedEndDate)}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
+          {/* Canchas Disponibles */}
           <div>
             <LabelWithTooltip
               label="Canchas Disponibles"
@@ -190,7 +331,11 @@ export function LeagueScheduleInfo({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver
           </Button>
-          <Button onClick={() => onSubmit(formData)} className="bg-primary hover:bg-primary/90">
+          <Button 
+            onClick={handleSubmit} 
+            className="bg-primary hover:bg-primary/90"
+            disabled={errors.length > 0}
+          >
             Continuar
           </Button>
         </div>

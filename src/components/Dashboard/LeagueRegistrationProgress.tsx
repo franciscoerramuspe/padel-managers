@@ -252,15 +252,35 @@ function LeagueCard({ category, league }: { category: Category; league: League }
         {/* Fecha de inicio */}
         <div className="flex items-center gap-3">
           <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-          <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Fecha de inicio</p>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
-              {new Date(league.start_date).toLocaleDateString('es-ES', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })}
-            </p>
+          <div className="space-y-2">
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Fecha de inicio</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {(() => {
+                  const [year, month, day] = league.start_date.split('T')[0].split('-').map(Number);
+                  const date = new Date(year, month - 1, day);
+                  return date.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  });
+                })()}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Fecha de fin</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {(() => {
+                  const [year, month, day] = league.end_date.split('T')[0].split('-').map(Number);
+                  const date = new Date(year, month - 1, day);
+                  return date.toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                  });
+                })()}
+              </p>
+            </div>
           </div>
         </div>
 

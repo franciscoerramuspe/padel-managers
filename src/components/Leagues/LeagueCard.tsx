@@ -43,6 +43,16 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split('T')[0].split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
   return (
     <Link href={`/leagues/${league.id}`}>
       <div className="relative bg-white dark:bg-gray-800/50 rounded-xl shadow-sm hover:shadow-md dark:shadow-lg transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 group">
@@ -79,22 +89,31 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">
             {league.name}
           </h3>
+          {league.description && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              {league.description}
+            </p>
+          )}
         </div>
 
         {/* Información principal */}
         <div className="space-y-4">
-          {/* Fecha de inicio */}
+          {/* Fecha de inicio y fin */}
           <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
             <Calendar className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de inicio</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {new Date(league.start_date).toLocaleDateString('es-ES', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric'
-                })}
-              </p>
+            <div className="space-y-2">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de inicio</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {formatDate(league.start_date)}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Fecha de fin</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {formatDate(league.end_date)}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -139,12 +158,37 @@ export function LeagueCard({ league, categories }: LeagueCardProps) {
             </div>
           </div>
 
-          {/* Frecuencia */}
-          <div className="flex items-center gap-2 mt-2">
-            <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Frecuencia: {league.frequency === 'biweekly' ? 'Quincenal' : league.frequency}
-            </span>
+          {/* Información adicional */}
+          <div className="flex flex-col gap-2 mt-2">
+            {/* Horarios */}
+            {league.time_slots && league.time_slots.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Horarios: {league.time_slots.map(([start, end]) => 
+                    `${String(start).padStart(2, '0')}:00-${String(end).padStart(2, '0')}:00`
+                  ).join(', ')}
+                </span>
+              </div>
+            )}
+            
+            {/* Costo de inscripción */}
+            {league.inscription_cost > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Costo de inscripción: ${league.inscription_cost}
+                </span>
+              </div>
+            )}
+
+            {/* Canchas disponibles */}
+            {league.courts_available > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  Canchas disponibles: {league.courts_available}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

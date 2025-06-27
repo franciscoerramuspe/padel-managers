@@ -40,6 +40,19 @@ interface LeagueMatchModalProps {
   isLoading?: boolean;
 }
 
+function formatMatchDate(dateStr: string) {
+  // Crear la fecha usando el string directamente sin modificar la zona horaria
+  const date = new Date(dateStr.replace('Z', ''));
+  return {
+    date: date.toLocaleDateString('es-UY'),
+    time: date.toLocaleTimeString('es-UY', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: false 
+    })
+  };
+}
+
 export function LeagueMatchModal({
   isOpen,
   onClose,
@@ -323,11 +336,7 @@ export function LeagueMatchModal({
                 </div>
                 <div className="relative">
                   <Badge className="bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-500/50 text-sm px-4 py-1.5 rounded-full">
-                    {new Date(match.match_date).toLocaleDateString('es-ES', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric'
-                    })}
+                    {formatMatchDate(match.match_date).date} {formatMatchDate(match.match_date).time}
                   </Badge>
                 </div>
               </div>

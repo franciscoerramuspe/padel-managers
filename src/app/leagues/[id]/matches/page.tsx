@@ -45,6 +45,18 @@ interface MatchResult {
   team2_sets2_won: number;
 }
 
+function formatMatchDate(dateStr: string) {
+  const date = new Date(dateStr.replace('Z', ''));
+  return {
+    date: date.toLocaleDateString('es-UY'),
+    time: date.toLocaleTimeString('es-UY', { 
+      hour: '2-digit', 
+      minute: '2-digit', 
+      hour12: false 
+    })
+  };
+}
+
 export default function LeagueMatchesPage() {
   const params = useParams()
   const router = useRouter()
@@ -402,55 +414,58 @@ export default function LeagueMatchesPage() {
 
                   <TabsContent value="all" className="mt-6">
                     <div className="grid gap-4">
-                      {currentMatches.map((match) => (
-                        <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
-                          <div className="p-6">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-2">
-                                  {getStatusBadge(match.status)}
-                                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                                    {new Date(match.match_date).toLocaleDateString()}
-                                  </span>
-                                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                                    {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </span>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                                  <div className="text-right md:text-left">
-                                    <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
-                                    {match.status === 'COMPLETED' && (
-                                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        {match.team1_sets1_won + match.team1_sets2_won} sets
-                                      </p>
-                                    )}
+                      {currentMatches.map((match) => {
+                        const { date, time } = formatMatchDate(match.match_date);
+                        return (
+                          <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
+                            <div className="p-6">
+                              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    {getStatusBadge(match.status)}
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                      {date}
+                                    </span>
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                      {time}
+                                    </span>
                                   </div>
-                                  <div className="flex justify-center">
-                                    <Button
-                                      variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
-                                      onClick={() => handleMatchClick(match)}
-                                      disabled={isUpdating}
-                                      className={match.status === 'COMPLETED' 
-                                        ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
-                                        : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
-                                    >
-                                      {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
-                                    </Button>
-                                  </div>
-                                  <div className="text-left md:text-right">
-                                    <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
-                                    {match.status === 'COMPLETED' && (
-                                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                                        {match.team2_sets1_won + match.team2_sets2_won} sets
-                                      </p>
-                                    )}
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                    <div className="text-right md:text-left">
+                                      <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
+                                      {match.status === 'COMPLETED' && (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                          {match.team1_sets1_won + match.team1_sets2_won} sets
+                                        </p>
+                                      )}
+                                    </div>
+                                    <div className="flex justify-center">
+                                      <Button
+                                        variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
+                                        onClick={() => handleMatchClick(match)}
+                                        disabled={isUpdating}
+                                        className={match.status === 'COMPLETED' 
+                                          ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
+                                          : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
+                                      >
+                                        {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
+                                      </Button>
+                                    </div>
+                                    <div className="text-left md:text-right">
+                                      <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
+                                      {match.status === 'COMPLETED' && (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                          {match.team2_sets1_won + match.team2_sets2_won} sets
+                                        </p>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </Card>
-                      ))}
+                          </Card>
+                        );
+                      })}
                     </div>
                   </TabsContent>
 
@@ -459,55 +474,58 @@ export default function LeagueMatchesPage() {
                       <div className="grid gap-4">
                         {matches
                           .filter(match => match.match_number === round && (statusFilter === 'all' || match.status === statusFilter))
-                          .map((match) => (
-                            <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
-                              <div className="p-6">
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                      {getStatusBadge(match.status)}
-                                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                                        {new Date(match.match_date).toLocaleDateString()}
-                                      </span>
-                                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                                        {new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                      </span>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                                      <div className="text-right md:text-left">
-                                        <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
-                                        {match.status === 'COMPLETED' && (
-                                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            {match.team1_sets1_won + match.team1_sets2_won} sets
-                                          </p>
-                                        )}
+                          .map((match) => {
+                            const { date, time } = formatMatchDate(match.match_date);
+                            return (
+                              <Card key={match.id} className="overflow-hidden bg-white dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
+                                <div className="p-6">
+                                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        {getStatusBadge(match.status)}
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                                          {date}
+                                        </span>
+                                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                                          {time}
+                                        </span>
                                       </div>
-                                      <div className="flex justify-center">
-                                        <Button
-                                          variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
-                                          onClick={() => handleMatchClick(match)}
-                                          disabled={isUpdating}
-                                          className={match.status === 'COMPLETED' 
-                                            ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
-                                            : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
-                                        >
-                                          {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
-                                        </Button>
-                                      </div>
-                                      <div className="text-left md:text-right">
-                                        <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
-                                        {match.status === 'COMPLETED' && (
-                                          <p className="text-sm text-gray-500 dark:text-gray-400">
-                                            {match.team2_sets1_won + match.team2_sets2_won} sets
-                                          </p>
-                                        )}
+                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                                        <div className="text-right md:text-left">
+                                          <p className="font-medium text-gray-900 dark:text-white">{match.team1}</p>
+                                          {match.status === 'COMPLETED' && (
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                              {match.team1_sets1_won + match.team1_sets2_won} sets
+                                            </p>
+                                          )}
+                                        </div>
+                                        <div className="flex justify-center">
+                                          <Button
+                                            variant={match.status === 'COMPLETED' ? 'outline' : 'default'}
+                                            onClick={() => handleMatchClick(match)}
+                                            disabled={isUpdating}
+                                            className={match.status === 'COMPLETED' 
+                                              ? 'bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700 text-white border-0' 
+                                              : 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800'}
+                                          >
+                                            {match.status === 'COMPLETED' ? 'Ver resultado' : 'Gestionar partido'}
+                                          </Button>
+                                        </div>
+                                        <div className="text-left md:text-right">
+                                          <p className="font-medium text-gray-900 dark:text-white">{match.team2}</p>
+                                          {match.status === 'COMPLETED' && (
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                              {match.team2_sets1_won + match.team2_sets2_won} sets
+                                            </p>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
-                            </Card>
-                          ))}
+                              </Card>
+                            );
+                          })}
                       </div>
                     </TabsContent>
                   ))}
