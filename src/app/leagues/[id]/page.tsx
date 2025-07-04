@@ -146,6 +146,7 @@ export default function LeagueDetailsPage() {
                     teams={league.teams || []}
                     maxTeams={league.team_size}
                     status={league.status}
+                    leagueId={leagueId}
                   />
                   {league.status === 'Activa' && 
                    league.teams?.length === league.team_size &&

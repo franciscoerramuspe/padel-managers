@@ -81,11 +81,9 @@ export function WeatherWidget() {
       try {
         setLoading(true);
         const data = await getWeather();
-        console.log('Weather data:', data);
         setWeather(data);
         setError(null);
       } catch (err) {
-        console.error('Error fetching weather:', err);
         setError('Error al cargar el clima');
       } finally {
         setLoading(false);

@@ -43,11 +43,9 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
         setIsLoading(true);
         setError(null);
         
-        console.log('Fetching matches with leagueId:', leagueId);
         
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
         const url = `${baseUrl}/leagues/matches/league/${leagueId || 'all'}`;
-        console.log('Fetching from URL:', url);
 
         const token = localStorage.getItem('adminToken');
         if (!token) {
@@ -63,11 +61,6 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
-          console.error('Response error:', {
-            status: response.status,
-            statusText: response.statusText,
-            errorData
-          });
           throw new Error(
             errorData?.message || 
             `Error al cargar los partidos: ${response.status} ${response.statusText}`
@@ -75,7 +68,6 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
         }
         
         const data = await response.json();
-        console.log('Received data:', data);
         
         if (!data) {
           throw new Error('No se recibieron datos del servidor');
@@ -90,10 +82,8 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
             new Date(a.match_date).getTime() - new Date(b.match_date).getTime()
           );
         
-        console.log('Scheduled matches:', scheduledMatches);
         setMatches(scheduledMatches);
       } catch (err) {
-        console.error('Error in fetchMatches:', err);
         setError(err instanceof Error ? err.message : 'Error desconocido');
       } finally {
         setIsLoading(false);
