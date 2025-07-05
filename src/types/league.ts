@@ -23,6 +23,8 @@ export interface League {
   registeredTeams: number;
   teams?: {
     id: string;
+    league_team_id: string;
+    inscription_paid: boolean;
     player1: {
       id: string;
       name: string;

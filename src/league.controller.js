@@ -1,16 +1,8 @@
 import { supabase } from '../config/supabaseClient.js'
-import { sendLeagueConfirmation } from './invitation.controller.js'
+import { LEAGUE_STATUS, FIRST_SLOT, SECOND_SLOT, COURTS_PER_TIME } from '../config/index.config.js'
+import { sendLeagueConfirmation, sendMatchesGeneratedNotification } from './invitation.controller.js'
 
-const LEAGUE_STATUS = {
-  INSCRIBIENDO: 'Inscribiendo',
-  ACTIVA: 'Activa',
-  FINALIZADA: 'Finalizada'
-};
-
-const FIRST_SLOT = '22:30';
-const SECOND_SLOT = '23:15';
 const TIME_INCREMENT_MINUTES = 45;
-const COURTS_PER_TIME = 2; 
 
 export async function createLeague(req, res) {
   const { 
@@ -235,6 +227,7 @@ export async function getLeagueById(req, res) {
     .from('league_teams')
     .select(`
       id,
+      inscription_paid,
       team:team_id (
         id,
         player1:player1_id (
@@ -258,6 +251,8 @@ export async function getLeagueById(req, res) {
   // Formatear los equipos para una mejor respuesta
   const registeredTeams = leagueTeams.map(lt => ({
     id: lt.team.id,
+    league_team_id: lt.id,
+    inscription_paid: lt.inscription_paid,
     player1: {
       id: lt.team.player1.id,
       name: `${lt.team.player1.first_name} ${lt.team.player1.last_name}`
@@ -377,7 +372,11 @@ export async function joinLeague(req, res) {
   // Inscribir el equipo en la liga
   const { data: leagueTeam, error: joinError } = await supabase
     .from('league_teams')
-    .insert({ league_id, team_id: team.id })
+    .insert({ 
+      league_id, 
+      team_id: team.id,
+      inscription_paid: false 
+    })
     .select()
     .single();
 
@@ -805,11 +804,80 @@ export async function generateStandings(req, res) {
     return res.status(500).json({ message: updateError.message });
   }
 
-  console.log('Successfully completed generateStandings');
-  res.status(200).json({
+  // Obtener todos los jugadores de los equipos para enviar notificaciones
+  console.log('👥 Fetching players for notifications...');
+  const uniqueTeamIds = [...new Set(teamIds)];
+  console.log('📋 Unique team IDs:', uniqueTeamIds);
+  
+  const { data: teams, error: teamsQueryError } = await supabase
+    .from('teams')
+    .select('player1_id, player2_id')
+    .in('id', uniqueTeamIds);
+
+  if (teamsQueryError) {
+    console.error('❌ Error fetching teams for notifications:', teamsQueryError);
+    // No bloqueamos la respuesta principal si falla la obtención de jugadores
+  } else {
+    // Obtener IDs únicos de jugadores
+    const playerIds = [...new Set(teams.flatMap(team => [team.player1_id, team.player2_id]))];
+    console.log('👤 Found player IDs:', playerIds);
+    
+    // Obtener información de los jugadores
+    const { data: players, error: playersError } = await supabase
+      .from('users')
+      .select('id, email, first_name, last_name')
+      .in('id', playerIds);
+
+    if (!playersError && players) {
+      console.log(`✅ Found ${players.length} players to notify`);
+      console.log('📧 Player details:', players.map(p => ({
+        id: p.id,
+        name: `${p.first_name} ${p.last_name}`,
+        email: p.email
+      })));
+
+      // Crear objeto req simulado para la función de email
+      const emailReq = {
+        body: {
+          league_id,
+          players
+        }
+      };
+
+      // Crear objeto res simulado que captura y loguea las respuestas
+      const emailRes = {
+        status: (code) => {
+          console.log(`📫 Email notification response status: ${code}`);
+          return {
+            json: (data) => {
+              console.log('📬 Email notification response:', data);
+            }
+          };
+        },
+        json: (data) => {
+          console.log('📬 Email notification direct response:', data);
+        }
+      };
+
+      console.log('📤 Attempting to send notifications...');
+      try {
+        await sendMatchesGeneratedNotification(emailReq, emailRes);
+        console.log('✅ Notifications sent successfully');
+      } catch (emailError) {
+        console.error('❌ Error sending matches generated notifications:', emailError);
+        // No bloquear la respuesta principal si falla el email
+      }
+    } else {
+      console.error('❌ Error fetching player details:', playersError);
+    }
+  }
+
+  res.status(201).json({
     message: 'Standings y partidos generados exitosamente',
-    standings,
-    matches
+    data: {
+      standings,
+      matches
+    }
   });
 }
 
@@ -1483,4 +1551,52 @@ export async function getMatchesByLeague(req, res) {
       error: error.message 
     });
   }
+}
+
+export async function updateInscriptionPaymentStatus(req, res) {
+  const { league_team_id, inscription_paid } = req.body;
+
+  // Validar que se proporcionen los campos requeridos
+  if (league_team_id === undefined || inscription_paid === undefined) {
+    return res.status(400).json({
+      message: 'Se requiere league_team_id y inscription_paid'
+    });
+  }
+
+  // Validar que inscription_paid sea booleano
+  if (typeof inscription_paid !== 'boolean') {
+    return res.status(400).json({
+      message: 'El campo inscription_paid debe ser un valor booleano'
+    });
+  }
+
+  // Verificar que el league_team existe
+  const { data: leagueTeam, error: leagueTeamError } = await supabase
+    .from('league_teams')
+    .select('id')
+    .eq('id', league_team_id)
+    .single();
+
+  if (leagueTeamError) {
+    return res.status(500).json({ message: leagueTeamError.message });
+  }
+  if (!leagueTeam) {
+    return res.status(404).json({ message: 'Equipo no encontrado en la liga' });
+  }
+
+  // Actualizar el estado de pago
+  const { error: updateError } = await supabase
+    .from('league_teams')
+    .update({ inscription_paid })
+    .eq('id', league_team_id);
+
+  if (updateError) {
+    return res.status(500).json({ message: updateError.message });
+  }
+
+  res.status(200).json({
+    message: `Estado de pago ${inscription_paid ? 'confirmado' : 'pendiente'} exitosamente`,
+    league_team_id,
+    inscription_paid
+  });
 }

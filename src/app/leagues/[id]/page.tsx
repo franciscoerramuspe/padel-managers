@@ -22,6 +22,39 @@ import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
 import { useToast } from "@/components/ui/use-toast"
 import { LeagueTeams } from '@/components/Leagues/LeagueTeams'
 
+// Definir la interfaz Team con la estructura exacta del backend
+interface RegisteredTeam {
+  id: string;
+  league_team_id: string;
+  inscription_paid: boolean;
+  player1: {
+    id: string;
+    name: string;
+  };
+  player2: {
+    id: string;
+    name: string;
+  };
+}
+
+interface League {
+  id: string;
+  name: string;
+  description?: string;
+  category_id: string;
+  status: string;
+  team_size: number;
+  start_date: string;
+  end_date: string;
+  inscription_cost: number;
+  points_for_win: number;
+  points_for_loss: number;
+  points_for_loss_with_set: number;
+  points_for_walkover?: number;
+  teams: RegisteredTeam[];
+  matches?: any[];
+}
+
 export default function LeagueDetailsPage() {
   const params = useParams()
   const router = useRouter()

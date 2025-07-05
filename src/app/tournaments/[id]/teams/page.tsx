@@ -106,7 +106,7 @@ export default function TournamentTeamsPage() {
                           ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
                           : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200'
                       }`}>
-                        {payment.payment_status === 'paid' ? 'Pagado' : 'Pendiente'}
+                        {payment.payment_status === 'paid' ? 'Inscripcion pagada' : 'Inscripcion pendiente'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
