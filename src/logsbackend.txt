@@ -1,0 +1,880 @@
+JhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Starting generateStandings with params: {
+  league_id: 'fd567fe5-66a1-4753-903e-2ad4be729083',
+  body: { rounds: 1 }
+}
+Checking for existing standings...
+Standings already exist for this league
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Starting generateStandings with params: {
+  league_id: 'fd567fe5-66a1-4753-903e-2ad4be729083',
+  body: { rounds: 1 }
+}
+Checking for existing standings...
+Standings already exist for this league
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 28
+Auth Header: Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6IndmU0UyYXpCR0RMQ0MvejkiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2dvaXBtcmFjY2NqeGptaHBpemliLnN1cGFiYXNlLmNvL2F1dGgvdjEiLCJzdWIiOiIzNDExMGM4NS04MjQ5LTQ1YzMtOGI1MC03NTNkYjcxMDg5YWYiLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzUxNzUyNTc4LCJpYXQiOjE3NTE3NDg5NzgsImVtYWlsIjoiYWRtaW50ZXN0QGV4YW1wbGUuY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCJdfSwidXNlcl9tZXRhZGF0YSI6eyJlbWFpbCI6ImFkbWludGVzdEBleGFtcGxlLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJzdF9uYW1lIjoiQWRtaW4iLCJsYXN0X25hbWUiOiJVc2VyIiwicGhvbmUiOiIxMjMtNDU2NyIsInBob25lX3ZlcmlmaWVkIjpmYWxzZSwicm9sZSI6ImFkbWluIiwic3ViIjoiMzQxMTBjODUtODI0OS00NWMzLThiNTAtNzUzZGI3MTA4OWFmIn0sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoicGFzc3dvcmQiLCJ0aW1lc3RhbXAiOjE3NTE3NDg5Nzh9XSwic2Vzc2lvbl9pZCI6ImVlN2VjNmE3LTBiZjYtNGFkMS1hNzA4LWM5ZmY2MTE2ZjMyOSIsImlzX2Fub255bW91cyI6ZmFsc2V9.VSS7xx4dbw9mmCxFBML7Cj48sPXFrLHiGN6Q-399YcY
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 0
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 0
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 0
+Getting matches for league: fd567fe5-66a1-4753-903e-2ad4be729083
+Completed matches: 0
+Pending matches: 0
+Starting generateStandings with params: {
+  league_id: 'fd567fe5-66a1-4753-903e-2ad4be729083',
+  body: { rounds: 1 }
+}
+Checking for existing standings...
+Fetching league and category information...
+League data: {
+  id: 'fd567fe5-66a1-4753-903e-2ad4be729083',
+  name: 'Liga Nocturna',
+  category: {
+    id: '5d7bb630-c07f-487e-855e-cbac886c463b',
+    name: 'Cuarta',
+    status: 'registration',
+    play_day: 'monday',
+    max_teams: 8,
+    min_teams: 8,
+    play_time: '22:00:00',
+    created_at: '2025-06-19T03:32:10.679724+00:00',
+    updated_at: '2025-06-19T03:32:10.679724+00:00',
+    registration_deadline: null
+  },
+  play_day: 'monday',
+  play_time: '22:00:00'
+}
+Fetching league teams...
+Found 8 teams in league
+Team IDs: [
+  '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+  '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a',
+  '4ac2381f-a734-4901-9e5f-cb541c458fea',
+  '132b17a9-1a55-4451-88cd-4c523c919a9e',
+  'dfbd5233-4025-4656-9e1b-db7b30a612eb',
+  '52ba91e2-2129-42c1-8c51-363b418e3dc8',
+  'b449e8d8-b97b-4147-9ac1-3a4d17271d38',
+  'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+]
+Creating initial standings...
+Schedule parameters: {
+  playDay: 'monday',
+  playTime: '22:00:00',
+  leagueStartDate: '2025-07-07T00:00:00+00:00'
+}
+Generating match schedule...
+Generated schedule: [
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+    ],
+    [
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a',
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38'
+    ],
+    [
+      '4ac2381f-a734-4901-9e5f-cb541c458fea',
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8'
+    ],
+    [
+      '132b17a9-1a55-4451-88cd-4c523c919a9e',
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38'
+    ],
+    [
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3',
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8'
+    ],
+    [
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a',
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb'
+    ],
+    [
+      '4ac2381f-a734-4901-9e5f-cb541c458fea',
+      '132b17a9-1a55-4451-88cd-4c523c919a9e'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8'
+    ],
+    [
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38',
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb'
+    ],
+    [
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3',
+      '132b17a9-1a55-4451-88cd-4c523c919a9e'
+    ],
+    [
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a',
+      '4ac2381f-a734-4901-9e5f-cb541c458fea'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb'
+    ],
+    [
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8',
+      '132b17a9-1a55-4451-88cd-4c523c919a9e'
+    ],
+    [
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38',
+      '4ac2381f-a734-4901-9e5f-cb541c458fea'
+    ],
+    [
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3',
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      '132b17a9-1a55-4451-88cd-4c523c919a9e'
+    ],
+    [
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb',
+      '4ac2381f-a734-4901-9e5f-cb541c458fea'
+    ],
+    [
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8',
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a'
+    ],
+    [
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38',
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      '4ac2381f-a734-4901-9e5f-cb541c458fea'
+    ],
+    [
+      '132b17a9-1a55-4451-88cd-4c523c919a9e',
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a'
+    ],
+    [
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb',
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+    ],
+    [
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8',
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38'
+    ]
+  ],
+  [
+    [
+      '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+      '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a'
+    ],
+    [
+      '4ac2381f-a734-4901-9e5f-cb541c458fea',
+      'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+    ],
+    [
+      '132b17a9-1a55-4451-88cd-4c523c919a9e',
+      'b449e8d8-b97b-4147-9ac1-3a4d17271d38'
+    ],
+    [
+      'dfbd5233-4025-4656-9e1b-db7b30a612eb',
+      '52ba91e2-2129-42c1-8c51-363b418e3dc8'
+    ]
+  ]
+]
+Initial match date and time: { currentMatchDate: '2025-07-07', currentMatchTime: '22:30' }
+Processing round 1
+Processing round 2
+Processing round 3
+Processing round 4
+Processing round 5
+Processing round 6
+Processing round 7
+Total matches generated: 28
+Inserting matches into database...
+Updating league status...
+👥 Fetching players for notifications...
+📋 Unique team IDs: [
+  '7d13f534-b0fd-42a1-ae99-08df08a071a0',
+  '57d1d89f-71cf-4ea7-a66d-bbf66c81a03a',
+  '4ac2381f-a734-4901-9e5f-cb541c458fea',
+  '132b17a9-1a55-4451-88cd-4c523c919a9e',
+  'dfbd5233-4025-4656-9e1b-db7b30a612eb',
+  '52ba91e2-2129-42c1-8c51-363b418e3dc8',
+  'b449e8d8-b97b-4147-9ac1-3a4d17271d38',
+  'b59925cc-feba-4dbf-8caf-d0110ce8e2e3'
+]
+👤 Found player IDs: [
+  'b56b4762-3564-4afe-a345-020fbdb1e791',
+  'de7b8e85-f941-456c-9d52-6e6262839b11',
+  '041f7689-86d6-4bae-8a9e-575666d88960',
+  'f9842ce0-64e4-467b-94e9-eb4e6bb5c3c4',
+  '51b2501d-f8f2-4f96-acee-cea381c1984b',
+  'bbe99e8c-3b3c-46d8-befe-f809f559b514',
+  '33cde80c-cd66-490e-92f3-85ad6b00aacc',
+  'abfce014-a64d-4b3f-ad93-88d1106fba27',
+  'fff53809-bf40-4a22-afa3-d7d7577cb15d',
+  'b6456600-c691-46e3-a5ab-3a6ba141175b',
+  '0914bcb7-be23-4062-8301-7eb8209d99b9',
+  '976284a1-0d5e-43a5-b6c9-597aaa591225',
+  'bb5dabe2-c245-4b23-aa73-192cb9f5ef14',
+  '1d7123b9-d57e-4426-80dd-64cd3d581d31',
+  'a82f7041-abb2-4f05-bd57-dad635ae2c74',
+  '5a652fdc-c915-4083-ba05-5dda04c15c57'
+]
+✅ Found 16 players to notify
+📧 Player details: [
+  {
+    id: 'fff53809-bf40-4a22-afa3-d7d7577cb15d',
+    name: 'Agustin Tapia',
+    email: 'agustintapa@gmail.com'
+  },
+  {
+    id: '041f7689-86d6-4bae-8a9e-575666d88960',
+    name: 'Pablo Cardona',
+    email: 'pcardo@gmail.com'
+  },
+  {
+    id: 'b6456600-c691-46e3-a5ab-3a6ba141175b',
+    name: 'Alejandro Galan',
+    email: 'alegalan@gmail.com'
+  },
+  {
+    id: 'abfce014-a64d-4b3f-ad93-88d1106fba27',
+    name: 'Alex Chozas',
+    email: 'achozas@gmail.com'
+  },
+  {
+    id: '0914bcb7-be23-4062-8301-7eb8209d99b9',
+    name: 'Arturo Coello',
+    email: 'artucoello@gmail.com'
+  },
+  {
+    id: 'bbe99e8c-3b3c-46d8-befe-f809f559b514',
+    name: 'Martin Di Nenno',
+    email: 'mdinneno@gmail.com'
+  },
+  {
+    id: '5a652fdc-c915-4083-ba05-5dda04c15c57',
+    name: 'Jon Sanz',
+    email: 'jonsa@gmail.com'
+  },
+  {
+    id: 'a82f7041-abb2-4f05-bd57-dad635ae2c74',
+    name: 'Juan Lebron',
+    email: 'jlebron@gmail.com'
+  },
+  {
+    id: '976284a1-0d5e-43a5-b6c9-597aaa591225',
+    name: 'Felipe Gutiérrez',
+    email: 'fgwebdesign0@gmail.com'
+  },
+  {
+    id: '1d7123b9-d57e-4426-80dd-64cd3d581d31',
+    name: 'Javier Garrido',
+    email: 'javigarr@gmail.com'
+  },
+  {
+    id: 'de7b8e85-f941-456c-9d52-6e6262839b11',
+    name: 'Paquito Navarro',
+    email: 'paquitonav@gmail.com'
+  },
+  {
+    id: '51b2501d-f8f2-4f96-acee-cea381c1984b',
+    name: 'Juan Tello',
+    email: 'jtello@gmail.com'
+  },
+  {
+    id: 'b56b4762-3564-4afe-a345-020fbdb1e791',
+    name: 'Lucas Bergamini',
+    email: 'lucasberg@gmail.com'
+  },
+  {
+    id: 'f9842ce0-64e4-467b-94e9-eb4e6bb5c3c4',
+    name: 'Leandro Ausburguer',
+    email: 'leaausb@gmail.com'
+  },
+  {
+    id: 'bb5dabe2-c245-4b23-aa73-192cb9f5ef14',
+    name: 'Gonzalo Alfonso',
+    email: 'galfonso@gmail.com'
+  },
+  {
+    id: '33cde80c-cd66-490e-92f3-85ad6b00aacc',
+    name: 'Felipe Gutierrez',
+    email: 'yegoelvigote15@gmail.com'
+  }
+]
+📤 Attempting to send notifications...
+🚀 Starting sendMatchesGeneratedNotification with params: {
+  league_id: 'fd567fe5-66a1-4753-903e-2ad4be729083',
+  players_count: 16
+}
+📋 Processing notifications for 16 players in league fd567fe5-66a1-4753-903e-2ad4be729083
+📝 Loading email template from: /Users/felipegutierrez/Code/recrea-backend/src/templates/matchesGenerated.html
+✅ Email template loaded successfully
+📧 Starting to send emails to players...
+📨 Preparing email for player: {
+  id: 'fff53809-bf40-4a22-afa3-d7d7577cb15d',
+  name: 'Agustin Tapia',
+  email: 'agustintapa@gmail.com'
+}
+✅ Email sent successfully to agustintapa@gmail.com: { data: { id: '650ace67-024d-4850-b6a9-7f6f99270449' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '041f7689-86d6-4bae-8a9e-575666d88960',
+  name: 'Pablo Cardona',
+  email: 'pcardo@gmail.com'
+}
+✅ Email sent successfully to pcardo@gmail.com: { data: { id: '87103baf-9b41-4658-9cd6-1e696bdfc4fc' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'b6456600-c691-46e3-a5ab-3a6ba141175b',
+  name: 'Alejandro Galan',
+  email: 'alegalan@gmail.com'
+}
+✅ Email sent successfully to alegalan@gmail.com: { data: { id: 'd5a97f81-ece9-4052-b8c8-7a1237e1f721' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'abfce014-a64d-4b3f-ad93-88d1106fba27',
+  name: 'Alex Chozas',
+  email: 'achozas@gmail.com'
+}
+✅ Email sent successfully to achozas@gmail.com: { data: { id: '695f15fc-7aca-4f43-9344-39eb2482c7e8' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '0914bcb7-be23-4062-8301-7eb8209d99b9',
+  name: 'Arturo Coello',
+  email: 'artucoello@gmail.com'
+}
+✅ Email sent successfully to artucoello@gmail.com: { data: { id: 'f71fdd31-c0ea-432c-8bc7-2023a4dede05' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'bbe99e8c-3b3c-46d8-befe-f809f559b514',
+  name: 'Martin Di Nenno',
+  email: 'mdinneno@gmail.com'
+}
+✅ Email sent successfully to mdinneno@gmail.com: { data: { id: 'fda554d5-8316-4276-abf7-a1aaff8f20ca' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '5a652fdc-c915-4083-ba05-5dda04c15c57',
+  name: 'Jon Sanz',
+  email: 'jonsa@gmail.com'
+}
+✅ Email sent successfully to jonsa@gmail.com: { data: { id: 'b2c50873-3e2a-47e1-aed8-b33ab6a39ef1' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'a82f7041-abb2-4f05-bd57-dad635ae2c74',
+  name: 'Juan Lebron',
+  email: 'jlebron@gmail.com'
+}
+✅ Email sent successfully to jlebron@gmail.com: { data: { id: '0b2e1b0b-1d1a-41ca-ab4a-b6b859fd1a35' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '976284a1-0d5e-43a5-b6c9-597aaa591225',
+  name: 'Felipe Gutiérrez',
+  email: 'fgwebdesign0@gmail.com'
+}
+✅ Email sent successfully to fgwebdesign0@gmail.com: { data: { id: '1a7c3cbd-9004-4403-a399-9d223d9552d6' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '1d7123b9-d57e-4426-80dd-64cd3d581d31',
+  name: 'Javier Garrido',
+  email: 'javigarr@gmail.com'
+}
+✅ Email sent successfully to javigarr@gmail.com: { data: { id: '02c3d6dc-caf7-494f-bf33-fb3162e2af71' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'de7b8e85-f941-456c-9d52-6e6262839b11',
+  name: 'Paquito Navarro',
+  email: 'paquitonav@gmail.com'
+}
+✅ Email sent successfully to paquitonav@gmail.com: { data: { id: '53abdd07-be78-4c07-8716-bbb3eab4faf1' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '51b2501d-f8f2-4f96-acee-cea381c1984b',
+  name: 'Juan Tello',
+  email: 'jtello@gmail.com'
+}
+✅ Email sent successfully to jtello@gmail.com: { data: { id: 'fe18e657-b2d5-4ff9-8325-4d7a37282f85' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'b56b4762-3564-4afe-a345-020fbdb1e791',
+  name: 'Lucas Bergamini',
+  email: 'lucasberg@gmail.com'
+}
+✅ Email sent successfully to lucasberg@gmail.com: { data: { id: '808c9ea3-259b-48aa-b14e-b22fd7b22d4e' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'f9842ce0-64e4-467b-94e9-eb4e6bb5c3c4',
+  name: 'Leandro Ausburguer',
+  email: 'leaausb@gmail.com'
+}
+✅ Email sent successfully to leaausb@gmail.com: { data: { id: '86a42769-d009-4618-9dba-7639c710430a' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: 'bb5dabe2-c245-4b23-aa73-192cb9f5ef14',
+  name: 'Gonzalo Alfonso',
+  email: 'galfonso@gmail.com'
+}
+✅ Email sent successfully to galfonso@gmail.com: { data: { id: 'b7b622fa-28c1-410a-9dc2-9904b899d56b' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+📨 Preparing email for player: {
+  id: '33cde80c-cd66-490e-92f3-85ad6b00aacc',
+  name: 'Felipe Gutierrez',
+  email: 'yegoelvigote15@gmail.com'
+}
+✅ Email sent successfully to yegoelvigote15@gmail.com: { data: { id: 'c68b5030-6349-4907-8934-72ffc2ad719f' }, error: null }
+⏳ Waiting 1000ms before sending next email...
+🎉 All emails sent successfully!
+📫 Email notification response status: 200
+📬 Email notification response: {
+  message: 'Emails de notificación enviados exitosamente',
+  results: [
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null },
+    { data: [Object], error: null }
+  ]
+}
+✅ Notifications sent successfully

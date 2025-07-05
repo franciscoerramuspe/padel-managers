@@ -24,9 +24,10 @@ interface Match {
 
 interface LeagueScheduleCardProps {
   leagueId?: string;
+  onMatchesLoaded?: (hasMatches: boolean) => void;
 }
 
-export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
+export function LeagueScheduleCard({ leagueId, onMatchesLoaded }: LeagueScheduleCardProps) {
   const router = useRouter();
   const [matches, setMatches] = useState<Match[]>([]);
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
@@ -42,7 +43,6 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
       try {
         setIsLoading(true);
         setError(null);
-        
         
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
         const url = `${baseUrl}/leagues/matches/league/${leagueId || 'all'}`;
@@ -83,6 +83,11 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
           );
         
         setMatches(scheduledMatches);
+        
+        // Notificar al componente padre si hay partidos
+        if (onMatchesLoaded) {
+          onMatchesLoaded(allMatches.length > 0);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
       } finally {
@@ -91,7 +96,7 @@ export function LeagueScheduleCard({ leagueId }: LeagueScheduleCardProps) {
     };
 
     fetchMatches();
-  }, [leagueId]);
+  }, [leagueId, onMatchesLoaded]);
 
   // Efecto para filtrar los partidos cuando cambia la categoría seleccionada
   useEffect(() => {

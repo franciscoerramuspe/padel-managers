@@ -60,6 +60,9 @@ export default function LeagueDetailsPage() {
   const router = useRouter()
   const { toast } = useToast()
   const leagueId = params.id as string
+  const [hasGeneratedMatches, setHasGeneratedMatches] = useState(false);
+  const [isGeneratingLeague, setIsGeneratingLeague] = useState(false);
+  const [key, setKey] = useState(0);
 
   const { league, isLoading: isLoadingLeague, error: leagueError } = useLeague(leagueId)
   const { categories, isLoading: isLoadingCategories } = useCategories()
@@ -180,10 +183,10 @@ export default function LeagueDetailsPage() {
                     maxTeams={league.team_size}
                     status={league.status}
                     leagueId={leagueId}
+                    hasGeneratedMatches={hasGeneratedMatches}
                   />
                   {league.status === 'Activa' && 
-                   league.teams?.length === league.team_size &&
-                   (!league.matches || league.matches.length === 0) && (
+                   league.teams?.length === league.team_size && (
                     <div className="mt-4 flex justify-center">
                       <button
                         onClick={async () => {
@@ -198,6 +201,15 @@ export default function LeagueDetailsPage() {
                               });
                               return;
                             }
+
+                            setIsGeneratingLeague(true);
+                            // Mostrar toast de estado "generando"
+                            const loadingToast = toast({
+                              title: "Generando liga...",
+                              description: "Por favor espera mientras se generan los partidos y se envían las notificaciones",
+                              variant: "default",
+                              className: "bg-green-500 text-white border-green-600 dark:bg-green-500 dark:text-white dark:border-green-600"
+                            });
 
                             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/generateStandings/${leagueId}`, {
                               method: 'POST',
@@ -214,19 +226,39 @@ export default function LeagueDetailsPage() {
                               toast({
                                 variant: "destructive",
                                 title: "Error al generar la liga",
-                                description: error.message || "No se pudo generar el calendario y standings"
+                                description: error.message || "No se pudo generar el calendario y standings",
+                                className: "bg-red-500 text-white border-red-600 dark:bg-red-500 dark:text-white dark:border-red-600"
                               });
+                              setIsGeneratingLeague(false);
                               return;
                             }
 
                             const data = await response.json();
                             console.log('Success:', data);
+                            
+                            // Forzar actualización del componente LeagueScheduleCard
+                            try {
+                              const scheduleResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leagues/${leagueId}/matches`, {
+                                headers: {
+                                  'Authorization': `Bearer ${adminToken}`
+                                }
+                              });
+                              
+                              if (scheduleResponse.ok) {
+                                setKey(prevKey => prevKey + 1); // Incrementar key para forzar re-render
+                                setHasGeneratedMatches(true);
+                              }
+                            } catch (error) {
+                              console.error('Error actualizando partidos:', error);
+                            }
+
+                            setIsGeneratingLeague(false);
                             toast({
                               title: "¡Liga generada con éxito!",
                               description: "Se han generado el calendario y las standings correctamente",
-                              className: "bg-green-500 text-white"
+                              variant: "default",
+                              className: "bg-green-500 text-white border-green-600 dark:bg-green-500 dark:text-white dark:border-green-600"
                             });
-                            router.refresh();
                           } catch (error) {
                             console.error('Error generando la liga:', error);
                             toast({
@@ -234,12 +266,24 @@ export default function LeagueDetailsPage() {
                               title: "Error inesperado",
                               description: "Ocurrió un error al generar la liga"
                             });
+                            setIsGeneratingLeague(false);
                           }
                         }}
-                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={hasGeneratedMatches || isGeneratingLeague}
+                        title={hasGeneratedMatches ? "Los partidos ya han sido generados" : isGeneratingLeague ? "Generando liga..." : ""}
                       >
-                        <Trophy className="w-5 h-5" />
-                        Generar partidos de la liga
+                        {isGeneratingLeague ? (
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                            Generando liga...
+                          </>
+                        ) : (
+                          <>
+                            <Trophy className="w-5 h-5" />
+                            Generar partidos de la liga
+                          </>
+                        )}
                       </button>
                     </div>
                   )}
@@ -267,7 +311,11 @@ export default function LeagueDetailsPage() {
               </Collapsible.Trigger>
               <Collapsible.Content>
                 <CardContent className="p-0">
-                  <LeagueScheduleCard leagueId={leagueId} />
+                  <LeagueScheduleCard 
+                    key={key}
+                    leagueId={leagueId} 
+                    onMatchesLoaded={setHasGeneratedMatches}
+                  />
                 </CardContent>
               </Collapsible.Content>
             </Card>

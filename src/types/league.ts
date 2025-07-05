@@ -35,6 +35,7 @@ export interface League {
     };
   }[];
   matches?: LeagueMatch[];
+  hasGeneratedMatches?: boolean;
 }
 
 export interface LeagueTeam {

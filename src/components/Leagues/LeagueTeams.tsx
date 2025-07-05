@@ -35,9 +35,10 @@ interface LeagueTeamsProps {
   maxTeams: number;
   status: string;
   leagueId: string;
+  hasGeneratedMatches: boolean;
 }
 
-export function LeagueTeams({ teams: initialTeams, maxTeams, status, leagueId }: LeagueTeamsProps) {
+export function LeagueTeams({ teams: initialTeams, maxTeams, status, leagueId, hasGeneratedMatches }: LeagueTeamsProps) {
   const [teams, setTeams] = useState<Team[]>(initialTeams);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -218,6 +219,8 @@ export function LeagueTeams({ teams: initialTeams, maxTeams, status, leagueId }:
                 size="sm"
                 className="flex items-center"
                 onClick={() => handleDeleteClick(team)}
+                disabled={hasGeneratedMatches}
+                title={hasGeneratedMatches ? "No se puede eliminar un equipo cuando ya hay partidos generados" : ""}
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Eliminar
