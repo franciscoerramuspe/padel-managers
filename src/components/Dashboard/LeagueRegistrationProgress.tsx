@@ -138,24 +138,30 @@ export function LeagueRegistrationProgress({ leagues, categories }: LeagueRegist
               >
                 {filteredLeagues
                   .slice(pageIndex * CARDS_PER_PAGE, (pageIndex + 1) * CARDS_PER_PAGE)
-                  .map((league) => (
-                    <LeagueCard 
-                      key={league.id} 
-                      category={categories.find(cat => cat.id === league.category_id)!} 
-                      league={league} 
-                    />
-                  ))}
+                  .map((league) => {
+                    const category = categories.find(cat => cat.id === league.category_id);
+                    return (
+                      <LeagueCard 
+                        key={league.id} 
+                        category={category || { id: 'unknown', name: 'Categoría no encontrada' }} 
+                        league={league} 
+                      />
+                    );
+                  })}
               </div>
             ))
           ) : (
             // Grid view
-            filteredLeagues.map((league) => (
-              <LeagueCard 
-                key={league.id} 
-                category={categories.find(cat => cat.id === league.category_id)!} 
-                league={league} 
-              />
-            ))
+            filteredLeagues.map((league) => {
+              const category = categories.find(cat => cat.id === league.category_id);
+              return (
+                <LeagueCard 
+                  key={league.id} 
+                  category={category || { id: 'unknown', name: 'Categoría no encontrada' }} 
+                  league={league} 
+                />
+              );
+            })
           )}
         </div>
 
@@ -227,7 +233,7 @@ function LeagueCard({ category, league }: { category: Category; league: League }
         {/* Estado de la liga y categoría */}
         <div className="flex items-center justify-between mb-4">
           <span className="px-2.5 py-0.5 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300">
-            {category.name}
+            {category?.name || 'Categoría no encontrada'}
           </span>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusStyle(league.status)}`}>
             {getStatusText(league.status)}
