@@ -5,6 +5,7 @@ import { sendLeagueConfirmation, sendMatchesGeneratedNotification } from './invi
 const TIME_INCREMENT_MINUTES = 45;
 
 export async function createLeague(req, res) {
+  console.log('🚀 Starting createLeague with body:', req.body);
   const { 
     name, 
     categories, 
@@ -15,8 +16,11 @@ export async function createLeague(req, res) {
     team_size, 
     inscription_cost,
     image_url,
-    description
+    description,
+    category_days // Agregamos category_days
   } = req.body;
+
+  console.log('📅 Category days received:', category_days);
 
   // Validaciones
   if (!name || !Array.isArray(categories) || categories.length === 0) {
@@ -61,6 +65,51 @@ export async function createLeague(req, res) {
     return res.status(400).json({ message: 'El campo inscription_cost debe ser un número.' });
   }
 
+  // Actualizar los play_day de las categorías
+  if (category_days) {
+    console.log('🔄 Updating play_days for categories:', category_days);
+    for (const [categoryId, playDay] of Object.entries(category_days)) {
+      console.log(`📌 Updating category ${categoryId} with play_day: ${playDay}`);
+      
+      const { data: currentCategory, error: getCategoryError } = await supabase
+        .from('categories')
+        .select('play_day')
+        .eq('id', categoryId)
+        .single();
+
+      if (getCategoryError) {
+        console.error('❌ Error getting current category:', getCategoryError);
+      } else {
+        console.log('📋 Current category play_day:', currentCategory?.play_day);
+      }
+
+      const { error: updateError } = await supabase
+        .from('categories')
+        .update({ play_day: playDay })
+        .eq('id', categoryId);
+
+      if (updateError) {
+        console.error('❌ Error updating play_day for category:', categoryId, updateError);
+        return res.status(500).json({ message: 'Error actualizando días de juego de las categorías' });
+      }
+
+      // Verificar la actualización
+      const { data: updatedCategory, error: verifyError } = await supabase
+        .from('categories')
+        .select('play_day')
+        .eq('id', categoryId)
+        .single();
+
+      if (verifyError) {
+        console.error('❌ Error verifying update:', verifyError);
+      } else {
+        console.log('✅ Category updated successfully. New play_day:', updatedCategory?.play_day);
+      }
+    }
+  } else {
+    console.log('⚠️ No category_days provided in request');
+  }
+
   // Crear una liga por cada categoría
   const leaguesToCreate = categories.map(category_id => ({
     name,
@@ -82,9 +131,11 @@ export async function createLeague(req, res) {
     .select(); // Removemos la selección de categoría ya que no es necesaria
 
   if (error) {
-    console.error('Error creando ligas:', error);
+    console.error('❌ Error creating leagues:', error);
     return res.status(500).json({ message: error.message });
   }
+
+  console.log('✅ Leagues created successfully:', data);
 
   res.status(201).json({
     message: 'Ligas creadas exitosamente',
@@ -1598,5 +1649,74 @@ export async function updateInscriptionPaymentStatus(req, res) {
     message: `Estado de pago ${inscription_paid ? 'confirmado' : 'pendiente'} exitosamente`,
     league_team_id,
     inscription_paid
+  });
+}
+
+export async function updateLeague(req, res) {
+  const league_id = req.params.id;
+  const { 
+    name, 
+    description, 
+    inscription_cost
+  } = req.body;
+
+  // Verificar que la liga existe
+  const { data: existingLeague, error: leagueError } = await supabase
+    .from('leagues')
+    .select('*')
+    .eq('id', league_id)
+    .single();
+
+  if (leagueError || !existingLeague) {
+    return res.status(404).json({ message: 'Liga no encontrada' });
+  }
+
+  // Validaciones de campos
+  const updates = {};
+
+  if (name !== undefined) {
+    if (!name.trim()) {
+      return res.status(400).json({ message: 'El nombre no puede estar vacío' });
+    }
+    updates.name = name;
+  }
+
+  if (description !== undefined) {
+    if (!description.trim()) {
+      return res.status(400).json({ message: 'La descripción no puede estar vacía' });
+    }
+    updates.description = description;
+  }
+
+  if (inscription_cost !== undefined) {
+    if (typeof inscription_cost !== 'number' || isNaN(inscription_cost) || inscription_cost < 0) {
+      return res.status(400).json({ message: 'El costo de inscripción debe ser un número válido y no negativo' });
+    }
+    updates.inscription_cost = inscription_cost;
+  }
+
+  // Si no hay campos para actualizar
+  if (Object.keys(updates).length === 0) {
+    return res.status(400).json({ 
+      message: 'No se proporcionaron campos válidos para actualizar' 
+    });
+  }
+
+  // Realizar la actualización
+  const { data: updatedLeague, error: updateError } = await supabase
+    .from('leagues')
+    .update(updates)
+    .eq('id', league_id)
+    .select()
+    .single();
+
+  if (updateError) {
+    console.error('Error updating league:', updateError);
+    return res.status(500).json({ message: 'Error al actualizar la liga' });
+  }
+
+  res.status(200).json({
+    message: 'Liga actualizada exitosamente',
+    league: updatedLeague
   });
 }

@@ -21,6 +21,8 @@ import {
 import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
 import { useToast } from "@/components/ui/use-toast"
 import { LeagueTeams } from '@/components/Leagues/LeagueTeams'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 // Definir la interfaz Team con la estructura exacta del backend
 interface RegisteredTeam {
@@ -374,14 +376,24 @@ export default function LeagueDetailsPage() {
                           <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                           <span className="text-sm text-blue-600 dark:text-blue-400">Inicio:</span>
                           <span className="text-sm font-medium text-blue-900 dark:text-blue-200">
-                            {new Date(league.start_date).toLocaleDateString()}
+                            {new Date(league.start_date.replace('Z', '')).toLocaleDateString('es-UY', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              timeZone: 'UTC'
+                            })}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                           <span className="text-sm text-blue-600 dark:text-blue-400">Fin:</span>
                           <span className="text-sm font-medium text-blue-900 dark:text-blue-200">
-                            {new Date(league.end_date).toLocaleDateString()}
+                            {new Date(league.end_date.replace('Z', '')).toLocaleDateString('es-UY', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              timeZone: 'UTC'
+                            })}
                           </span>
                         </div>
                       </div>

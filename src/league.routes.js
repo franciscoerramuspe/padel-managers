@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { createLeague, joinLeague, getLeaguesByUser, getLeagueById, getAllLeagues, generateStandings, getStandings, getStandingById, updateMatchResult, updateMatchSchedule, getMatchesByUserId, getMatchesByRound, getMatchesByLeague, removeTeamFromLeague, updateInscriptionPaymentStatus } from '../controllers/league.controller.js'
+import { createLeague, joinLeague, getLeaguesByUser, getLeagueById, getAllLeagues, generateStandings, getStandings, getStandingById, updateMatchResult, updateMatchSchedule, getMatchesByUserId, getMatchesByRound, getMatchesByLeague, removeTeamFromLeague, updateInscriptionPaymentStatus, updateLeague } from '../controllers/league.controller.js'
 import { verifyToken } from '../middlewares/auth.middleware.js'
 import { verifyAdmin } from '../middlewares/admin.middleware.js'
 
@@ -34,5 +34,6 @@ router.post('/match/result/:id', updateMatchResult);
 router.put('/match/schedule/:id', verifyToken, verifyAdmin, updateMatchSchedule);
 router.delete('/remove-team', verifyToken, verifyAdmin, removeTeamFromLeague);
 router.put('/inscription-payment', verifyToken, verifyAdmin, updateInscriptionPaymentStatus);
+router.put('/update/:id', verifyToken, verifyAdmin, updateLeague);
 
 export default router 

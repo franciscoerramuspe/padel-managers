@@ -100,11 +100,16 @@ export function LeagueScheduleInfo({
       return acc;
     }, {} as Record<string, string>);
 
+    console.log('🎯 Category days before update:', categoryDays);
+    console.log('🎯 Category play days after conversion:', categoryPlayDays);
+
     // Actualizar el formData con los días asignados
     setFormData({
       ...formData,
       category_days: categoryPlayDays
     });
+
+    console.log('🎯 Updated formData:', formData);
 
     // Limpiar errores relacionados con días de juego
     setErrors(errors.filter(error => !error.includes('día de juego')));
@@ -136,6 +141,7 @@ export function LeagueScheduleInfo({
 
   // Validar el formulario antes de enviar
   const handleSubmit = () => {
+    console.log('🚀 Submitting form with data:', formData);
     const newErrors: string[] = [];
 
     // Validar que todas las categorías tengan un día asignado
@@ -144,6 +150,7 @@ export function LeagueScheduleInfo({
     );
 
     if (unassignedCategories.length > 0) {
+      console.warn('⚠️ Found unassigned categories:', unassignedCategories);
       newErrors.push('Debes asignar un día de juego a todas las categorías');
       setErrors(newErrors);
       return;
@@ -157,6 +164,7 @@ export function LeagueScheduleInfo({
       const minimumDays = calculateMinimumDays(formData.team_size, formData.frequency);
 
       if (diffDays < minimumDays) {
+        console.warn('⚠️ Date range insufficient:', { diffDays, minimumDays });
         newErrors.push(
           `El rango de fechas es insuficiente. Para ${formData.team_size} equipos con frecuencia ${
             formData.frequency.toLowerCase()
@@ -168,7 +176,10 @@ export function LeagueScheduleInfo({
     setErrors(newErrors);
     
     if (newErrors.length === 0) {
+      console.log('✅ Form validation passed, submitting with data:', formData);
       onSubmit(formData);
+    } else {
+      console.warn('❌ Form validation failed:', newErrors);
     }
   };
 
