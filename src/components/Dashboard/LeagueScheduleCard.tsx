@@ -117,12 +117,14 @@ export function LeagueScheduleCard({ leagueId, onMatchesLoaded }: LeagueSchedule
     return {
       time: new Intl.DateTimeFormat('es', {  
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        timeZone: 'UTC'
       }).format(date),
       date: new Intl.DateTimeFormat('es', {
         day: 'numeric',
         month: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
+        timeZone: 'UTC'
       }).format(date)
     };
   };

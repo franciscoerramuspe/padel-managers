@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
+import { cn, formatUruguayDateTime } from "@/lib/utils";
 
 // Añadir estilos para el marcador digital
 const digitalScoreStyle = "font-['DS-Digital'] text-5xl font-bold tracking-wider";
@@ -41,16 +41,7 @@ interface LeagueMatchModalProps {
 }
 
 function formatMatchDate(dateStr: string) {
-  // Crear la fecha usando el string directamente sin modificar la zona horaria
-  const date = new Date(dateStr.replace('Z', ''));
-  return {
-    date: date.toLocaleDateString('es-UY'),
-    time: date.toLocaleTimeString('es-UY', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false 
-    })
-  };
+  return formatUruguayDateTime(dateStr);
 }
 
 export function LeagueMatchModal({

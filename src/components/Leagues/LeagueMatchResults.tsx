@@ -15,33 +15,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+import { formatUruguayDateTime } from "@/lib/utils";
 
 interface LeagueMatchResultsProps {
   matches: LeagueMatch[]
   onSaveResults: (results: LeagueMatch[]) => void
-}
-
-function formatMatchDate(dateStr: string) {
-  // Crear un objeto Date con la fecha UTC
-  const date = new Date(dateStr);
-  
-  // Ajustar a la zona horaria de Uruguay (UTC-3)
-  const uruguayDate = new Date(date.getTime());
-  uruguayDate.setHours(uruguayDate.getHours() - 3);
-  
-  return {
-    date: uruguayDate.toLocaleDateString('es-UY', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }),
-    time: uruguayDate.toLocaleTimeString('es-UY', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: false,
-      timeZone: 'America/Montevideo'
-    })
-  };
 }
 
 export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResultsProps) {
@@ -245,7 +223,7 @@ export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResult
       ) : (
         <div className="grid gap-4">
           {matches.map((match) => {
-            const { date, time } = formatMatchDate(match.match_date);
+            const { date, time } = formatUruguayDateTime(match.match_date);
             return (
               <div
                 key={match.id}

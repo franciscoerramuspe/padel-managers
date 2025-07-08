@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { LeagueMatchModal } from "@/components/Leagues/LeagueMatchModal"
 import { updateMatchResult, updateMatchSchedule } from "@/services/leagueService"
 import { toast } from "@/components/ui/use-toast"
+import { formatUruguayDateTime } from "@/lib/utils"
 import {
   Select,
   SelectContent,
@@ -46,15 +47,8 @@ interface MatchResult {
 }
 
 function formatMatchDate(dateStr: string) {
-  const date = new Date(dateStr.replace('Z', ''));
-  return {
-    date: date.toLocaleDateString('es-UY'),
-    time: date.toLocaleTimeString('es-UY', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false 
-    })
-  };
+  const { date, time } = formatUruguayDateTime(dateStr);
+  return { date, time };
 }
 
 export default function LeagueMatchesPage() {
