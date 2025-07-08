@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, ChevronLeft, ChevronRight, ListFilter } from "lucide-react";
+import { CalendarDays, Clock, ChevronLeft, ChevronRight, ListFilter, MapPin } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/Spinner";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,7 @@ interface Match {
   team1: string;
   team2: string;
   match_date: string;
-  court: string;
+  court_name: string;
   status: "SCHEDULED" | "COMPLETED" | "WALKOVER";
   team1_sets1_won: number;
   team1_sets2_won: number;
@@ -330,7 +330,7 @@ export function LeagueScheduleCard({ leagueId, onMatchesLoaded }: LeagueSchedule
                                  bg-gray-900/5 dark:bg-white/5 
                                  text-gray-700 dark:text-gray-300
                                  border border-gray-200/50 dark:border-gray-700/30">
-                      {match.court || 'Sin asignar'}
+                      {match.court_name || 'Sin asignar'}
                     </span>
                   </div>
 

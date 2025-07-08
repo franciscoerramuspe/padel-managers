@@ -6,7 +6,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
 import { useLeague } from "@/hooks/useLeague"
 import { useCategories } from "@/hooks/useCategories"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { ArrowLeft, CalendarDays, Clock, Filter, ListFilter, ChevronLeft, ChevronRight, CheckCircle, XCircle, Calendar } from "lucide-react"
+import { ArrowLeft, CalendarDays, Clock, Filter, ListFilter, ChevronLeft, ChevronRight, CheckCircle, XCircle, Calendar, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -31,7 +31,7 @@ interface Match {
   team1: string;
   team2: string;
   match_date: string;
-  court: string;
+  court_name: string;
   status: "SCHEDULED" | "COMPLETED" | "WALKOVER";
   team1_sets1_won: number;
   team1_sets2_won: number;
@@ -423,6 +423,12 @@ export default function LeagueMatchesPage() {
                                     <span className="text-sm text-gray-500 dark:text-gray-400">
                                       {time}
                                     </span>
+                                    <div className="flex items-center gap-1">
+                                      <MapPin className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        {match.court_name || 'Sin asignar'}
+                                      </span>
+                                    </div>
                                   </div>
                                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                                     <div className="text-right md:text-left">
@@ -483,6 +489,12 @@ export default function LeagueMatchesPage() {
                                         <span className="text-sm text-gray-500 dark:text-gray-400">
                                           {time}
                                         </span>
+                                        <div className="flex items-center gap-1">
+                                          <MapPin className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                                          <span className="text-sm text-gray-500 dark:text-gray-400">
+                                            {match.court_name || 'Sin asignar'}
+                                          </span>
+                                        </div>
                                       </div>
                                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                                         <div className="text-right md:text-left">

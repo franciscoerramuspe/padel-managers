@@ -291,19 +291,30 @@ export function LeagueMatchResults({ matches, onSaveResults }: LeagueMatchResult
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       {date} {time}
                     </span>
+                    {match.court && (
+                      <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                        {match.court.name}
+                      </Badge>
+                    )}
+                    {match.court && (
+                      <Badge variant="outline" className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+                        {match.court.name}
+                      </Badge>
+                    )}
+                    {(match.status === "COMPLETED" || match.status === "WALKOVER") && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleMatchClick(match)}
+                        disabled={isLoading}
+                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-900/20"
+                      >
+                        Ver detalles
+                      </Button>
+                    )}
                   </div>
 
-                  {(match.status === "COMPLETED" || match.status === "WALKOVER") && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleMatchClick(match)}
-                      disabled={isLoading}
-                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:bg-purple-900/20"
-                    >
-                      Ver detalles
-                    </Button>
-                  )}
+                  
                 </div>
               </div>
             )

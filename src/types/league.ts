@@ -76,4 +76,9 @@ export interface LeagueMatch {
   walkover: boolean;
   walkover_team_id: string | null;
   category_id: string;
+  court_id: string;
+  court?: Court;
+  court_name?: string;
 } 
+
+import type { Court } from './court'; 
