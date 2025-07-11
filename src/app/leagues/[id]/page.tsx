@@ -6,8 +6,11 @@ import { LeagueScheduleCard } from "@/components/Dashboard/LeagueScheduleCard"
 import { useCategories } from "@/hooks/useCategories"
 import { useLeague } from "@/hooks/useLeague"
 import { useStandings } from "@/hooks/useStandings"
+import { useGallery } from "@/hooks/useGallery"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import * as Collapsible from "@radix-ui/react-collapsible"
+import { GalleryUploadForm } from "@/components/Leagues/Gallery/GalleryUploadForm"
+import { GalleryGrid } from "@/components/Leagues/Gallery/GalleryGrid"
 import { 
   ArrowLeft, 
   CalendarDays, 
@@ -16,7 +19,8 @@ import {
   FileText, 
   Trophy,
   Users2,
-  ChevronDown
+  ChevronDown,
+  Image as ImageIcon
 } from 'lucide-react'
 import { CategoryStandings } from "@/components/Dashboard/CategoryStandings"
 import { useToast } from "@/components/ui/use-toast"
@@ -76,6 +80,9 @@ export default function LeagueDetailsPage() {
   const [isInfoOpen, setIsInfoOpen] = useState(true)
   const [isStandingsOpen, setIsStandingsOpen] = useState(true)
   const [isMatchesOpen, setIsMatchesOpen] = useState(true)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(true)
+  
+  const { images, isLoading: isLoadingGallery, uploadImage, deleteImage } = useGallery(leagueId)
 
   if (isLoadingLeague || isLoadingCategories || isLoadingStandings) {
     return (
@@ -462,6 +469,53 @@ export default function LeagueDetailsPage() {
                     standings={standings}
                     isLoading={isLoadingStandings}
                   />
+                </CardContent>
+              </Collapsible.Content>
+            </Card>
+          </Collapsible.Root>
+
+          {/* Galería de Imágenes */}
+          <Collapsible.Root
+            open={isGalleryOpen}
+            onOpenChange={setIsGalleryOpen}
+            className="w-full"
+          >
+            <Card className="w-full bg-white dark:bg-[#0E1629] border-gray-200 dark:border-gray-700/50 shadow-sm overflow-hidden">
+              <Collapsible.Trigger asChild>
+                <CardHeader className={`hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer ${isGalleryOpen ? 'border-b border-gray-200 dark:border-gray-700/50' : ''}`}>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                      <div className="flex items-center gap-2">
+                        <ImageIcon className="w-5 h-5" />
+                        Galería de Imágenes
+                      </div>
+                    </CardTitle>
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isGalleryOpen ? 'transform rotate-180' : ''}`} />
+                  </div>
+                </CardHeader>
+              </Collapsible.Trigger>
+              <Collapsible.Content>
+                <CardContent className="p-6 space-y-6">
+                  <GalleryUploadForm
+                    leagueId={leagueId}
+                    onUploadSuccess={() => {
+                      // La galería se actualizará automáticamente gracias a React Query
+                    }}
+                  />
+                  
+                  {isLoadingGallery ? (
+                    <div className="flex justify-center items-center py-12">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    </div>
+                  ) : (
+                    <GalleryGrid
+                      images={images || []}
+                      isAdmin={true}
+                      onImageDelete={() => {
+                        // La galería se actualizará automáticamente gracias a React Query
+                      }}
+                    />
+                  )}
                 </CardContent>
               </Collapsible.Content>
             </Card>

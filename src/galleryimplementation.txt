@@ -1,0 +1,162 @@
+IMPLEMENTACIÓN DE GALERÍA PARA LIGAS - GUÍA TÉCNICA
+
+1. BACKEND IMPLEMENTADO (API)
+============================
+
+Endpoints disponibles:
+--------------------
+POST /gallery/upload
+- Requiere autenticación de admin
+- Acepta multipart/form-data
+- Campos: image (file), league_id (number), caption (string), match_id (number, opcional)
+- Límite de archivo: 5MB
+- Formatos permitidos: jpeg, png, webp
+
+GET /gallery/:leagueId
+- Obtiene todas las imágenes de una liga específica
+- Retorna array de objetos con: id, league_id, image_url, caption, match_id, uploaded_at
+
+DELETE /gallery/:imageId
+- Requiere autenticación de admin
+- Elimina imagen de Supabase Storage y registro de base de datos
+
+Configuración de Storage:
+-----------------------
+- Bucket: 'league-gallery'
+- Acceso público de lectura
+- Escritura solo para admins
+- Limpieza automática de imágenes > 30 días
+
+Estructura de Base de Datos:
+--------------------------
+Tabla: league_gallery
+Campos:
+- id (uuid, primary key)
+- league_id (uuid, foreign key)
+- image_url (text)
+- caption (text)
+- match_id (uuid, opcional)
+- uploaded_at (timestamp)
+
+2. GUÍA DE IMPLEMENTACIÓN FRONTEND
+================================
+
+Componentes Necesarios:
+---------------------
+1. GalleryPage
+   - Página principal de la galería
+   - Ruta sugerida: /admin/leagues/:leagueId/gallery
+
+2. GalleryUploadForm
+   - Formulario para subir imágenes
+   - Componentes:
+     - Input de archivo con preview
+     - Campo de caption
+     - Selector de partido (opcional)
+     - Botón de submit
+
+3. GalleryGrid
+   - Grid de imágenes con vista previa
+   - Funcionalidad de eliminación para admins
+   - Lightbox para ver imágenes en tamaño completo
+
+Hooks Necesarios:
+---------------
+1. useGallery
+   ```typescript
+   interface UseGalleryReturn {
+     images: GalleryImage[];
+     isLoading: boolean;
+     error: Error | null;
+     uploadImage: (data: FormData) => Promise<void>;
+     deleteImage: (imageId: string) => Promise<void>;
+   }
+   
+   // Uso:
+   const { images, isLoading, uploadImage, deleteImage } = useGallery(leagueId);
+   ```
+
+2. useGalleryUpload
+   ```typescript
+   interface UseGalleryUploadReturn {
+     upload: (file: File, caption: string, matchId?: string) => Promise<void>;
+     isUploading: boolean;
+     progress: number;
+     error: Error | null;
+   }
+   ```
+
+Integración con React Query:
+--------------------------
+Queries sugeridas:
+```typescript
+const galleryKeys = {
+  all: ['gallery'] as const,
+  league: (leagueId: string) => [...galleryKeys.all, leagueId] as const,
+  image: (imageId: string) => [...galleryKeys.all, imageId] as const,
+};
+
+// Query para obtener imágenes
+useQuery(galleryKeys.league(leagueId), () => fetchGalleryImages(leagueId));
+
+// Mutation para subir imagen
+useMutation(uploadImage, {
+  onSuccess: () => {
+    queryClient.invalidateQueries(galleryKeys.league(leagueId));
+  },
+});
+
+// Mutation para eliminar imagen
+useMutation(deleteImage, {
+  onSuccess: () => {
+    queryClient.invalidateQueries(galleryKeys.league(leagueId));
+  },
+});
+```
+
+UI/UX Recomendaciones:
+--------------------
+1. Implementar carga lazy de imágenes
+2. Mostrar preview antes de subir
+3. Implementar drag & drop para subida de archivos
+4. Mostrar progreso de carga
+5. Implementar confirmación antes de eliminar
+6. Usar grid responsive para diferentes tamaños de pantalla
+7. Implementar lightbox para ver imágenes en tamaño completo
+
+Ejemplo de Estructura de Archivos Frontend:
+----------------------------------------
+```
+src/
+  pages/
+    admin/
+      leagues/
+        [leagueId]/
+          gallery/
+            index.tsx
+            components/
+              GalleryUploadForm.tsx
+              GalleryGrid.tsx
+              GalleryImage.tsx
+            hooks/
+              useGallery.ts
+              useGalleryUpload.ts
+            types.ts
+```
+
+Dependencias Recomendadas:
+------------------------
+- react-query: Manejo de estado y cache
+- react-dropzone: Drag & drop de archivos
+- react-lightbox-component: Visualización de imágenes
+- react-toastify: Notificaciones
+- tailwind-css: Estilos (si ya está en uso)
+
+Notas de Seguridad:
+-----------------
+1. Validar tipos de archivo en frontend antes de subir
+2. Implementar compresión de imágenes en cliente si es necesario
+3. Manejar errores de red apropiadamente
+4. Verificar permisos de admin antes de mostrar acciones de administración
+
+Esta guía contiene toda la información necesaria para implementar la interfaz de usuario de la galería de imágenes, aprovechando la API que hemos creado en el backend. 

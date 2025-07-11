@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans, Orbitron } from 'next/font/google';
 import './globals.css';
 import { UserProvider } from '@/components/UserProvider';
-import { Toaster } from "@/components/ui/toaster"
-import { ThemeProvider } from "@/components/theme-provider"
+import Providers from './providers';
 import { ThemeToggle } from "@/components/theme-toggle"
 
 const plusJakarta = Plus_Jakarta_Sans({ 
@@ -33,12 +32,7 @@ export default function RootLayout({
         <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet" />
       </head>
       <body className={`${plusJakarta.variable} ${orbitron.variable} font-sans antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Providers>
           <div className="fixed top-4 right-4 z-50">
             <ThemeToggle />
           </div>
@@ -46,8 +40,7 @@ export default function RootLayout({
           <UserProvider>
             {children}
           </UserProvider>
-          <Toaster />
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );
