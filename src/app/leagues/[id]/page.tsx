@@ -27,6 +27,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { LeagueTeams } from '@/components/Leagues/LeagueTeams'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { LeagueHeader } from "@/components/Leagues/LeagueHeader"
 
 // Definir la interfaz Team con la estructura exacta del backend
 interface RegisteredTeam {
@@ -140,32 +141,13 @@ export default function LeagueDetailsPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120]">
       {/* Header */}
-      <div className="bg-white dark:bg-[#0E1629] border-b border-gray-200 dark:border-gray-700/50">
-        <div className="container mx-auto px-4 py-6">
-          <button
-            onClick={() => router.push("/leagues")}
-            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Volver a ligas</span>
-          </button>
-          
-          <div className="flex flex-col gap-2">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {league.name}
-            </h1>
-            <div className="flex items-center gap-3">
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
-                {category?.name || 'Categoría no disponible'}
-              </span>
-              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 dark:bg-gray-700/30 text-gray-700 dark:text-gray-400">
-                {league.status}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <LeagueHeader 
+        league={league}
+        categories={categories}
+        onBack={() => router.push("/leagues")}
+      />
+      
+      {/* Content */}
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col gap-8">
           {/* Equipos Registrados */}
